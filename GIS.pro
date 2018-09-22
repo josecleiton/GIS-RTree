@@ -25,12 +25,14 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        RTree.cpp
+        RTree.cpp \
+    SpatialData.cpp
 
 HEADERS += \
     RTree.hpp \
     stdlib.hpp \
-    mainwindow.hpp
+    mainwindow.hpp \
+    SpatialData.hpp
 
 FORMS += \
         mainwindow.ui
