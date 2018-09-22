@@ -4,8 +4,6 @@
 #include <vector>
 namespace SpatialData{
 
-#define NUM_PONTOS_RETANGULO 4
-
 class Ponto{
 private:
     double x{}, y{};
@@ -22,18 +20,29 @@ public:
 
 };
 
-class Retangulo{
+class Poligono{
+protected:
     vector<Ponto> Coordenadas;
+    size_t NumVertices;
+    size_t NumArestas;
 public:
-    Retangulo(const Ponto& MenorEixoX, const Ponto& MaiorEixoX, const Ponto& MenorEixoY, const Ponto& MaiorEixoY):
-        Coordenadas(NUM_PONTOS_RETANGULO) {
+    vector<Ponto>& GetCoordenadas(){
+        return Coordenadas;
+    }
+    size_t GetNumVertices(){
+        return NumVertices;
+    }
+};
+
+class Retangulo: Poligono{
+public:
+    Retangulo(const Ponto& MenorEixoX, const Ponto& MaiorEixoX, const Ponto& MenorEixoY, const Ponto& MaiorEixoY){
+            NumArestas = NumVertices = 4;
+            Coordenadas.resize(NumVertices);
             Coordenadas[0] = MenorEixoX;
             Coordenadas[1] = MaiorEixoX;
             Coordenadas[2] = MenorEixoY;
             Coordenadas[3] = MaiorEixoY;
-    }
-    vector<Ponto>& GetCoordenadas(){
-        return Coordenadas;
     }
 };
 
