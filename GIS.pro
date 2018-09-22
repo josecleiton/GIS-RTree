@@ -25,11 +25,12 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    backend.cpp
+        RTree.cpp
 
 HEADERS += \
-        mainwindow.h \
-    backend.h
+    RTree.hpp \
+    stdlib.hpp \
+    mainwindow.hpp
 
 FORMS += \
         mainwindow.ui
