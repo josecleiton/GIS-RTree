@@ -8,7 +8,7 @@ namespace SpatialIndex{
 
 class Node{
     friend class RTree;
-    typedef Retangulo Bounding_Rectangle;
+    typedef Retangulo BoundingRectangle;
     size_t m_count; // Contador de elementos no nó
     size_t m_level; // Nível do nós em relação a raiz
     union{
@@ -16,10 +16,13 @@ class Node{
         //vector<DataElement> Elements; // Vetor de Elementos (se este nó for uma folha)
     };
     vector<string> Identifier; // Vetor de Identificadores para cada elemento no nó
-    //vector<Bounding_Rectangle> Mbb; // Vetor de retangulos
+    vector<BoundingRectangle> Mbb; // Vetor de Retangulos
+
+    void SetCount(size_t Count){ m_count = Count; }
+    void SetLevel(size_t Level){ m_level = Level; }
 public:
-    Node(size_t level): // construtor da classe
-        m_count(0), m_level(level), Identifier(DEGREE-1){
+    Node(): // construtor da classe
+        Identifier(DEGREE-1){
         if(IsInternalNode()){
             ChildPointers.resize(DEGREE);
         }
