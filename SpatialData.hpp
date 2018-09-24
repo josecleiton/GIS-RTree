@@ -36,6 +36,9 @@ protected:
     double Perimetro; // Perimetro
     double Area; // Area
     void SetDiagonais(){ this->NumDiagonais = ((NumVertices)*(NumVertices-3))/2; }
+    enum NomePoligono{
+      TRIANGULO=3, QUADRILATERO, PENTAGONO, HEXAGONO, HEPTAGONO, OCTOGONO, ENEAGONO, DECAGONO
+    };
 public:
     vector<Ponto>& GetCoordenadas(){ return Coordenadas; }
     size_t GetNumCoordenadas() { return Coordenadas.size(); }
@@ -47,7 +50,7 @@ class Retangulo: Poligono{ // Herdando os atributos da classe poligono
 public:
     Retangulo(const Ponto& MenorEixoX = Ponto(0.0, 0.0), const Ponto& MaiorEixoX = Ponto(0.0, 0.0),\
               const Ponto& MenorEixoY = Ponto(0.0, 0.0), const Ponto& MaiorEixoY = Ponto(0.0, 0.0)){
-            NumVertices = 4;
+            NumVertices = QUADRILATERO;
             SetDiagonais(); // Numero de diagonais é atualizado em relação ao numero de vertices
             Coordenadas.resize(static_cast<size_t>(NumVertices));
             Coordenadas[0] = MenorEixoX;
