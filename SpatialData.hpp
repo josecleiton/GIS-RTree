@@ -17,16 +17,16 @@ namespace SpatialData{
 
 class Ponto{
 private:
-    double x, y; // Coordenadas do Ponto
+    pair<double, double> P; // Coordenadas do Ponto
 public:
-    Ponto(double X = 0.0, double Y = 0.0){
-        x = X;
-        y = Y;
+    Ponto(double x = 0.0, double y = 0.0){
+        P.first = x;
+        P.second = y;
     }
-    double GetX() const{ return x; }
-    double GetY() const{ return y; }
+    double GetX() const{ return P.first; }
+    double GetY() const{ return P.second; }
     double Distancia(const Ponto& OtherPoint){ // Distância Euclidiana entre pontos
-        return sqrt(pow((this->x - OtherPoint.x), 2) + pow((this->y - OtherPoint.y), 2));
+        return sqrt(pow((this->P.first - OtherPoint.P.first), 2) + pow((this->P.second - OtherPoint.P.second), 2));
     }
     friend Ponto& operator+(const Ponto& This, const Ponto& Other);
     friend Ponto& operator-(const Ponto& This, const Ponto& Other);
