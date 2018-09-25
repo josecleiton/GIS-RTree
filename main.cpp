@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     cout << "Area do triangulo: " << T.GetArea() << endl << endl;
     cout << "Numero de arestas de um quadrilatero: " << Q.GetArestas() << endl;
     cout << "Perimetro do quadrilatero: " << Q.GetPerimetro() << endl;
-    cout << "Area do quadrilatero: " << Q.GetArea() << endl;
+    cout << "Area do quadrilatero: " << Q.GetArea() << endl << endl;
     cout << "Sa porra roda! POGCHAMP! " << endl;
 
     return a.exec();

@@ -25,7 +25,7 @@ public:
     }
     double GetX() const{ return P.first; }
     double GetY() const{ return P.second; }
-    double Distancia(const Ponto& OtherPoint){ // Distância Euclidiana entre pontos
+    double Distance(const Ponto& OtherPoint){ // Distância Euclidiana entre pontos
         return sqrt(pow((this->P.first - OtherPoint.P.first), 2) + pow((this->P.second - OtherPoint.P.second), 2));
     }
     friend Ponto& operator+(const Ponto& This, const Ponto& Other);
@@ -34,21 +34,21 @@ public:
 
 class Linha{
 protected:
-    vector<Ponto> Coordenada;
-    double Distancia;
+    vector<Ponto> Coordenadas;
+    double Medida;
 public:
-    Linha(const Ponto& A = Ponto(0.0, 0.0), const Ponto& B = Ponto(0.0, 0.0)): Coordenada(2){
-        Coordenada[0] = A;
-        Coordenada[1] = B;
-        Distancia = Coordenada[0].Distancia(Coordenada[1]);
+    Linha(const Ponto& A = Ponto(0.0, 0.0), const Ponto& B = Ponto(0.0, 0.0)): Coordenadas(2){
+        Coordenadas[0] = A;
+        Coordenadas[1] = B;
+        Medida = Coordenadas[0].Distance(Coordenadas[1]);
     }
-    vector<Ponto>& GetCoordenada(){ return Coordenada; }
-    double GetDistance() const{ return Distancia; }
+    vector<Ponto>& GetCoordenadas(){ return Coordenadas; }
+    double GetMedida() const{ return Medida; }
 };
 
 class Poligonal{
 protected:
-    vector<Linha> LineList; // Lista de linhas
+    vector<Linha> LineList; // Lista de linhas que formam a poligonal
     double Perimetro{};
     unsigned short Arestas;
 public:
@@ -60,16 +60,16 @@ public:
         LineList = Input;
         Arestas = static_cast<unsigned short>(LineList.size());
         for(auto Aresta:LineList)
-            Perimetro += Aresta.GetDistance();
+            Perimetro += Aresta.GetMedida();
     }
-    vector<Linha>& GetCoordenada(){ return LineList; }
+    vector<Linha>& GetCoordenadas(){ return LineList; }
     double GetPerimetro() const{ return Perimetro; }
     unsigned short GetArestas() const{ return Arestas; }
 };
 
 class Poligono: public Poligonal{
 protected:
-    unsigned short Diagonais;
+    unsigned short Diagonais; // Lista de linhas que forma o poligono
     double Area;
     enum NomePoligono{
       TRIANGULO=3, QUADRILATERO, PENTAGONO, HEXAGONO, HEPTAGONO, OCTOGONO, ENEAGONO, DECAGONO
@@ -85,13 +85,13 @@ class Triangulo: public Poligono{
 public:
     Triangulo(vector<Linha>& Input): Poligono(Input){
         /*
-         * Usando a fórmula de Herons para calcular a área sem precisar calcular a altura do triangulo
+         * Usando a fórmula de Heron para calcular a área sem precisar calcular a altura do triangulo
          */
         double S = 0.0;
-        for(auto Aresta: Input)
-            S+=Aresta.GetDistance();
+        for(auto Aresta: LineList)
+            S+=Aresta.GetMedida();
         S /= 2;
-        Area = sqrt(S*(S-Input[0].GetDistance())*(S-Input[1].GetDistance())*(S-Input[2].GetDistance()));
+        Area = sqrt(S*(S-LineList[0].GetMedida())*(S-LineList[1].GetMedida())*(S-LineList[2].GetMedida()));
     }
 };
 
@@ -100,8 +100,8 @@ private:
     double Base, Altura;
 public:
     Quadrilatero(vector<Linha>& Input): Poligono(Input){
-        Base = Input[0].GetDistance();
-        Altura = Input[1].GetDistance();
+        Base = Input[0].GetMedida();
+        Altura = Input[1].GetMedida();
         Area = Base * Altura;
     }
 };
