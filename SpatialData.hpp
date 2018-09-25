@@ -8,6 +8,13 @@
 #include "stdlib.hpp"
 namespace SpatialData{
 
+/*
+ * Namespace SpatialData
+ * -> Contém os objetos que descrevem as formas geográficas
+ * Disciplina para a criação de objetos:
+ * Forneça os pontos em sentido anti-horário
+ */
+
 class Ponto{
 private:
     double x, y; // Coordenadas do Ponto
@@ -25,44 +32,78 @@ public:
     friend Ponto& operator-(const Ponto& This, const Ponto& Other);
 };
 
-/*
- * Super-classe dos polígonos, quaisquer poligonos deve herdar dessa classe
- */
-class Poligono{
+class Linha{
 protected:
-    vector<Ponto> Coordenadas; //Todo poligono tem suas coordenadas
-    short NumVertices; // Numero de vertices do poligono
-    short NumDiagonais; // Numero de diagonais
-    double Perimetro; // Perimetro
-    double Area; // Area
-    void SetDiagonais(){ this->NumDiagonais = ((NumVertices)*(NumVertices-3))/2; }
+    vector<Ponto> Coordenada;
+    double Distancia;
+public:
+    Linha(const Ponto& A = Ponto(0.0, 0.0), const Ponto& B = Ponto(0.0, 0.0)): Coordenada(2){
+        Coordenada[0] = A;
+        Coordenada[1] = B;
+        Distancia = Coordenada[0].Distancia(Coordenada[1]);
+    }
+    vector<Ponto>& GetCoordenada(){ return Coordenada; }
+    double GetDistance() const{ return Distancia; }
+};
+
+class Poligonal{
+protected:
+    vector<Linha> LineList; // Lista de linhas
+    double Perimetro{};
+    unsigned short Arestas;
+public:
+    Poligonal(){
+        for(short i=0; i<2; i++)
+            LineList.push_back(Linha());
+    }
+    Poligonal(vector<Linha>& Input){
+        LineList = Input;
+        Arestas = static_cast<unsigned short>(LineList.size());
+        for(auto Aresta:LineList)
+            Perimetro += Aresta.GetDistance();
+    }
+    vector<Linha>& GetCoordenada(){ return LineList; }
+    double GetPerimetro() const{ return Perimetro; }
+    unsigned short GetArestas() const{ return Arestas; }
+};
+
+class Poligono: public Poligonal{
+protected:
+    unsigned short Diagonais;
+    double Area;
     enum NomePoligono{
       TRIANGULO=3, QUADRILATERO, PENTAGONO, HEXAGONO, HEPTAGONO, OCTOGONO, ENEAGONO, DECAGONO
     };
 public:
-    vector<Ponto>& GetCoordenadas(){ return Coordenadas; }
-    size_t GetNumCoordenadas() { return Coordenadas.size(); }
-    short GetNumVertices() const{ return NumVertices; }
-    double GetPerimetro() const{ return Perimetro; }
+    Poligono(vector<Linha>& Input): Poligonal(Input){
+        Diagonais = (Arestas*(Arestas-3))/2;
+    }
+    double GetArea() const{ return Area; }
 };
 
-class Retangulo: Poligono{ // Herdando os atributos da classe poligono
+class Triangulo: public Poligono{
 public:
-    Retangulo(const Ponto& MenorEixoX = Ponto(0.0, 0.0), const Ponto& MaiorEixoX = Ponto(0.0, 0.0),\
-              const Ponto& MenorEixoY = Ponto(0.0, 0.0), const Ponto& MaiorEixoY = Ponto(0.0, 0.0)){
-            NumVertices = QUADRILATERO;
-            SetDiagonais(); // Numero de diagonais é atualizado em relação ao numero de vertices
-            Coordenadas.resize(static_cast<size_t>(NumVertices));
-            Coordenadas[0] = MenorEixoX;
-            Coordenadas[1] = MaiorEixoX;
-            Coordenadas[2] = MenorEixoY;
-            Coordenadas[3] = MaiorEixoY;
-            double Base = Coordenadas[0].Distancia(Coordenadas[1]);
-            double Altura = Coordenadas[2].Distancia(Coordenadas[0]);
-            Perimetro = 2*Base + 2*Altura;
-            Area = Base * Altura;
+    Triangulo(vector<Linha>& Input): Poligono(Input){
+        /*
+         * Usando a fórmula de Herons para calcular a área sem precisar calcular a altura do triangulo
+         */
+        double S = 0.0;
+        for(auto Aresta: Input)
+            S+=Aresta.GetDistance();
+        S /= 2;
+        Area = sqrt(S*(S-Input[0].GetDistance())*(S-Input[1].GetDistance())*(S-Input[2].GetDistance()));
     }
 };
 
-}
+class Quadrilatero: public Poligono{
+private:
+    double Base, Altura;
+public:
+    Quadrilatero(vector<Linha>& Input): Poligono(Input){
+        Base = Input[0].GetDistance();
+        Altura = Input[1].GetDistance();
+        Area = Base * Altura;
+    }
+};
+} // NAMESPACE SPATIALDATA
 #endif // SPATIALDATA_HPP

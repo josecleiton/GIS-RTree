@@ -24,7 +24,7 @@ class RTree{
     struct Node;
 
     struct Branch{
-        Retangulo MBR;
+        Quadrilatero MBR;
         union{
             Node* ChildPointer;
             // DADO m_dado;
