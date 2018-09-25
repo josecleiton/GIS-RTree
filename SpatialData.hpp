@@ -15,6 +15,8 @@ namespace SpatialData{
  * Forneça os pontos em sentido anti-horário
  */
 
+#define PI acos(-1)
+
 class Ponto{
 private:
     pair<double, double> P; // Coordenadas do Ponto
@@ -23,6 +25,7 @@ public:
         P.first = x;
         P.second = y;
     }
+
     double GetX() const{ return P.first; }
     double GetY() const{ return P.second; }
     double Distance(const Ponto& OtherPoint){ // Distância Euclidiana entre pontos
@@ -46,6 +49,12 @@ public:
     double GetMedida() const{ return Medida; }
 };
 
+class Shape{
+protected:
+    double Area;
+    double Perimetro;
+};
+
 class Poligonal{
 protected:
     vector<Linha> LineList; // Lista de linhas que formam a poligonal
@@ -67,10 +76,9 @@ public:
     unsigned short GetArestas() const{ return Arestas; }
 };
 
-class Poligono: public Poligonal{
+class Poligono: public Poligonal, public Shape{
 protected:
     unsigned short Diagonais; // Lista de linhas que forma o poligono
-    double Area;
     enum NomePoligono{
       TRIANGULO=3, QUADRILATERO, PENTAGONO, HEXAGONO, HEPTAGONO, OCTOGONO, ENEAGONO, DECAGONO
     };
@@ -105,5 +113,25 @@ public:
         Area = Base * Altura;
     }
 };
+
+class Circulo: public Shape{
+private:
+    Ponto Centro;
+    double Raio;
+public:
+    Circulo(const Ponto& Centro = Ponto(), const double Raio = 0.0): Centro(Centro), Raio(Raio){
+        Area = PI*Raio*Raio;
+        Perimetro = PI*2*Raio;
+    }
+    Ponto GetCentro() const{ return Centro; }
+    double GetRaio() const{ return Raio; }
+    bool PointInCircle(const Ponto& P){
+        Ponto temp = P;
+        double Distance = Distance(Centro);
+        if(Distance <= Raio) return true;
+        else return false;
+    }
+};
+
 } // NAMESPACE SPATIALDATA
 #endif // SPATIALDATA_HPP

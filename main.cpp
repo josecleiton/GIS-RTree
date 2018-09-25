@@ -20,6 +20,9 @@ int main(int argc, char *argv[])
     V2.push_back(SpatialData::Linha(SpatialData::Ponto(12,10), SpatialData::Ponto(12,2)));
     SpatialData::Quadrilatero Q(V2);
 
+    SpatialData::Circulo C(SpatialData::Ponto(2,-2), 2);
+    cout << C.PointInCircle(SpatialData::Ponto(3,-3)) << endl << endl;
+
     cout << "Numero de arestas de um triangulo: " << T.GetArestas() << endl;
     cout << "Perimetro do triangulo: " << T.GetPerimetro() << endl;
     cout << "Area do triangulo: " << T.GetArea() << endl << endl;
