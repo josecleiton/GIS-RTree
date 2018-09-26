@@ -6,36 +6,77 @@
 #ifndef SPATIALDATA_HPP
 #define SPATIALDATA_HPP
 #include "stdlib.hpp"
+#include "circular_list.hpp"
 namespace SpatialData{
 
 /*
  * Namespace SpatialData
  * -> Contém os objetos que descrevem as formas geográficas
- * Disciplina para a criação de objetos:
- * Forneça os pontos em sentido anti-horário
  */
 
 #define PI acos(-1)
+enum {ESQUERDA, DIREITA, FRENTE, ATRAS, ENTRE, ORIGEM, DESTINO}; // USADO NA CLASSIFICAÇÃO
+enum{HORARIO, ANTIHORARIO}; // SENTIDO DAS ROTAÇÕES NA LISTA DUPLAMENTE ENCADEADA DE VERTICES
+
+class Aresta;
 
 class Ponto{
-private:
+protected:
     double x, y;
 public:
-    Ponto(double X = 0.0, double Y = 0.0): x(X), y(Y){
-    }
-
-    Ponto(const Ponto& P = Ponto(0.0, 0.0)){
-        x = P.GetX();
-        y = P.GetY();
-    }
-
+    Ponto(double X = 0.0, double Y = 0.0);
+    int Classificacao(Ponto&, Ponto&);
+    int Classificacao(Aresta&);
+    int Orientacao(Ponto&, Ponto&, Ponto&);
+    double AnguloPolar();
+    double Tamanho();
+    double Distancia(Aresta&);
+    double Distancia(Ponto&, Ponto&);
     double GetX() const{ return x; }
     double GetY() const{ return y; }
-    double Distance(const Ponto& OtherPoint){ // Distância Euclidiana entre pontos
-        return sqrt(pow((this->x - OtherPoint.x), 2) + pow((this->y - OtherPoint.y), 2));
-    }
-    double operator[](unsigned index){ return (index%2)?y:x; }
+    double operator[](int);
 };
+
+class Vertice: public CircularList::Node, public Ponto{
+public:
+    Vertice(double x, double y);
+    Vertice(Ponto&);
+    Vertice* Horario(); // percorre a lista em sentido horário
+    Vertice* Antihorario(); // percorre a lista em sentido antihorário
+    Vertice* Vizinho(int); // retorna o nó vizinho
+    Ponto& GetPonto();
+    Vertice* Push(Vertice*);
+    Vertice* Pop();
+    void Splice(Vertice*);
+    Vertice* Split(Vertice*);
+    friend class Poligono;
+};
+
+class Poligono{
+private:
+    Vertice* List;
+    unsigned m_size;
+    void resize();
+public:
+    Poligono();
+    Poligono(Poligono&);
+    Poligono(Vertice*);
+    ~Poligono();
+    Vertice* GetVertice();
+    unsigned GetSize();
+    Ponto& GetPonto();
+    Aresta GetAresta();
+    Vertice* Avancar(int);
+    Vertice* Horario();
+    Vertice* Antihorario();
+    Vertice* Vizinho(int);
+    Vertice* SetV(Vertice*);
+    Vertice* Push(Ponto&);
+    void Pop();
+    void Resize();
+    Poligono* Split(Vertice*);
+};
+
 /*
 class Linha{
 protected:

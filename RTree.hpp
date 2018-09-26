@@ -12,7 +12,7 @@ namespace SpatialIndex{
 class Dado{
 
 };
-
+/*
 class RTree{
 
     enum{
@@ -37,5 +37,6 @@ class RTree{
         vector<Branch> m_Branch;
     };
 };
+*/
 }
 #endif // RTREE_HPP
