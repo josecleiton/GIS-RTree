@@ -65,11 +65,11 @@ int Ponto::Classificacao(Ponto& p0, Ponto& p1){
         return DESTINO;
     return ENTRE;
 }
-/*
-int Ponto::Classificacao(Aresta& E){
-    return Classificacao(E.origem, E.dest);
+
+int Ponto::Classificacao(Aresta E){
+    return Classificacao(E.origem, E.destino);
 }
-*/
+
 double Ponto::AnguloPolar(){
     if((x==0.0) and (y==0.0))
         return -1.0;
@@ -81,7 +81,18 @@ double Ponto::AnguloPolar(){
         return (y>=0.0)?theta:360+theta;
     else // quadrante 2 e 3
         return 180+theta;
+}
 
+double Ponto::Distancia(Aresta& E){
+    Aresta ab = E;
+    ab.Flip().Rotacao(); // rotacional em 90º antihorario
+    Ponto n(ab.destino-ab.origem); // n = vetor perpendincular a e;
+    n = (1.0/n.Tamanho())*n; // normalizando n
+    Ponto k = (*this)+n;
+    Aresta f(*this, k); // f = n
+    double t;
+    f.Intersect(E, t);
+    return t;
 }
 
 double Ponto::Tamanho(){
@@ -124,9 +135,18 @@ Vertice* Vertice::Pop(){
     return static_cast<Vertice*>(Node::Pop());
 }
 
-void Vertice::Splice(Vertice* V){
+void Vertice::Splice(Vertice* V){ // TENHO QUE EXPLICAR PARA OS MENINOS
     Node::Splice(V);
 }
+
+Vertice* Vertice::Split(Vertice* b){ // TENHO QUE EXPLICAR PARA OS MENINOS
+    Vertice* bp = b->Horario()->Push(new Vertice(b->GetPonto()));
+    Push(new Vertice(GetPonto()));
+    Splice(bp);
+    return bp;
+}
+
+// CLASS POLIGONO
 
 Poligono::Poligono(): List(nullptr), m_size(0){
 }
@@ -203,7 +223,15 @@ Vertice* Poligono::SetV(Vertice* v){
     return List = v;
 }
 
-Vertice* Poligono::Push(Ponto &p){
+Vertice* Poligono::Push(Ponto p){
+    if(m_size++ == 0)
+        List = new Vertice(p);
+    else
+        List = List->Push(new Vertice(p));
+    return List;
+}
+
+Vertice* Poligono::Push(Ponto& p){
     if(m_size++ == 0)
         List = new Vertice(p);
     else
@@ -217,11 +245,130 @@ void Poligono::Pop(){
     delete aux->Pop();
 }
 
-/*
-Aresta& Poligono::GetAresta(){
+Poligono* Poligono::Split(Vertice* b){
+    Vertice* bp = List->Split(b);
+    Resize();
+    return new Poligono(bp);
+}
+
+
+Aresta Poligono::GetAresta(){
     return Aresta(GetPonto(), List->Horario()->GetPonto());
 }
-*/
+
+// CLASSE ARESTA
+
+Aresta::Aresta(Ponto& _origem, Ponto& _dest): origem(_origem), destino(_dest){
+}
+
+Aresta::Aresta(): origem(Ponto(0.0, 0.0)), destino(Ponto(0.0,0.0)){
+
+}
+
+Aresta& Aresta::Rotacao(){
+    Ponto m = 0.5 * (origem+destino);
+    Ponto v = destino - origem;
+    Ponto n(v.y, -v.x);
+    origem = m - 0.5 * n;
+    destino = m + 0.5 * n;
+    return *this;
+}
+
+Aresta& Aresta::Flip(){
+    return Rotacao().Rotacao();
+}
+
+Ponto Aresta::GetPonto(double& t){
+    return Ponto(origem + t * (destino-origem));
+}
+
+int Aresta::Intersect(Aresta& E, double& t){
+    Ponto a = origem;
+    Ponto b = destino;
+    Ponto c = E.origem;
+    Ponto d = E.destino;
+    Ponto n = Ponto((d-c).y, (c-d).x);
+    Ponto k = b-a;
+    double denom = ProdutodePontos(n, k);
+    if(denom == 0.0){
+        int aclass = origem.Classificacao(E);
+        if(aclass == ESQUERDA or aclass == DIREITA)
+            return PARALELA;
+        else
+            return COLINEAR;
+    }
+    k = a-c;
+    double num = ProdutodePontos(n, k);
+    t = -num/denom;
+    return CONSECUTIVO;
+}
+
+int Aresta::Cruza(Aresta& E, double& t){
+    double s;
+    int TipoCruzamento = E.Intersect(*this, s);
+    if(TipoCruzamento==COLINEAR or TipoCruzamento==PARALELA)
+        return TipoCruzamento;
+    if(s < 0.0 or s > 1.0)
+        return CONSECUTIVO_NAO_CRUZADO;
+    Intersect(E, t);
+    if(t >= 0.0 and t <= 1.0)
+        return CONSECUTIVO_CRUZADO;
+    return  CONSECUTIVO_NAO_CRUZADO;
+}
+
+bool Aresta::isVertical(){
+    double t = fabs(origem.x-destino.x);
+    return (t==0.0)?true:false;
+}
+
+double Aresta::Inclinacao(){
+    if(!isVertical())
+        return (destino.y - origem.y)/(destino.x - origem.y);
+    return 0;
+}
+
+double ProdutodePontos(Ponto& p0, Ponto& p1){
+    return p0.x*p1.x + p0.y+p1.y;
+}
+
+bool PontoNoPoligonoConvexo(Ponto &s, Poligono &p){
+    unsigned TamanhoPoligono = p.GetSize();
+    if(TamanhoPoligono == 1)
+        return s == p.GetPonto();
+    if(TamanhoPoligono == 2){
+        int aux = s.Classificacao(p.GetAresta());
+        return aux == ENTRE or aux == ORIGEM or aux == DESTINO;
+    }
+    Vertice* origem = p.GetVertice();
+    for(unsigned i=0; i<TamanhoPoligono; i++, p.Avancar(HORARIO)){
+        if(s.Classificacao(p.GetAresta()) == ESQUERDA){
+            p.SetV(origem);
+            return false;
+        }
+    }
+    return true;
+}
+
+Vertice* MenorVertice(Poligono &p, int (*cmp)(Ponto*, Ponto*)){
+    Vertice* aux = p.GetVertice();
+    p.Avancar(HORARIO);
+    for(unsigned i = 1; i < p.GetSize(); p.Avancar(HORARIO), i++){
+        if((*cmp)(p.GetVertice(), aux) < 0)
+            aux = p.GetVertice();
+    }
+    p.SetV(aux);
+    return aux;
+}
+
+int EsquerdaDireita(Ponto* a, Ponto* b){
+    if(*a < *b) return -1;
+    if(*a > *b) return 1;
+    return 0;
+}
+
+int DireitaEsquerda(Ponto* a, Ponto* b){
+    return EsquerdaDireita(b, a);
+}
 
 }// NAMESPACE SPATIAL DATA
 /*
