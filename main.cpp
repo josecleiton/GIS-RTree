@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
+    /*
     vector<SpatialData::Linha> V, V2;
     V.push_back(SpatialData::Linha(SpatialData::Ponto(5,2), SpatialData::Ponto(10,5)));
     V.push_back(SpatialData::Linha(SpatialData::Ponto(10,5), SpatialData::Ponto(2,10)));
@@ -30,6 +31,6 @@ int main(int argc, char *argv[])
     cout << "Perimetro do quadrilatero: " << Q.GetPerimetro() << endl;
     cout << "Area do quadrilatero: " << Q.GetArea() << endl << endl;
     cout << "Sa porra roda! POGCHAMP! " << endl;
-
+    */
     return a.exec();
 }

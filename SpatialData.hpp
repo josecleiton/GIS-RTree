@@ -19,22 +19,24 @@ namespace SpatialData{
 
 class Ponto{
 private:
-    pair<double, double> P; // Coordenadas do Ponto
+    double x, y;
 public:
-    Ponto(double x = 0.0, double y = 0.0){
-        P.first = x;
-        P.second = y;
+    Ponto(double X = 0.0, double Y = 0.0): x(X), y(Y){
     }
 
-    double GetX() const{ return P.first; }
-    double GetY() const{ return P.second; }
+    Ponto(const Ponto& P = Ponto(0.0, 0.0)){
+        x = P.GetX();
+        y = P.GetY();
+    }
+
+    double GetX() const{ return x; }
+    double GetY() const{ return y; }
     double Distance(const Ponto& OtherPoint){ // Distância Euclidiana entre pontos
-        return sqrt(pow((this->P.first - OtherPoint.P.first), 2) + pow((this->P.second - OtherPoint.P.second), 2));
+        return sqrt(pow((this->x - OtherPoint.x), 2) + pow((this->y - OtherPoint.y), 2));
     }
-    friend Ponto& operator+(const Ponto& This, const Ponto& Other);
-    friend Ponto& operator-(const Ponto& This, const Ponto& Other);
+    double operator[](unsigned index){ return (index%2)?y:x; }
 };
-
+/*
 class Linha{
 protected:
     vector<Ponto> Coordenadas;
@@ -74,7 +76,15 @@ public:
     vector<Linha>& GetCoordenadas(){ return LineList; }
     double GetPerimetro() const{ return Perimetro; }
     unsigned short GetArestas() const{ return Arestas; }
+protected:
+    unsigned index{};
+    unsigned GetIndex() const{ return index; }
+    Linha Prev();
+    Linha Next();
+    void Reset();
 };
+
+class Triangulo;
 
 class Poligono: public Poligonal, public Shape{
 protected:
@@ -87,14 +97,14 @@ public:
         Diagonais = (Arestas*(Arestas-3))/2;
     }
     double GetArea() const{ return Area; }
+    double GetDiagonais() const{ return Diagonais; }
+    vector<Triangulo> Triangulacao();
 };
 
 class Triangulo: public Poligono{
 public:
     Triangulo(vector<Linha>& Input): Poligono(Input){
-        /*
-         * Usando a fórmula de Heron para calcular a área sem precisar calcular a altura do triangulo
-         */
+         // Usando a fórmula de Heron para calcular a área sem precisar calcular a altura do triangulo
         double S = 0.0;
         for(auto Aresta: LineList)
             S+=Aresta.GetMedida();
@@ -127,11 +137,11 @@ public:
     double GetRaio() const{ return Raio; }
     bool PointInCircle(const Ponto& P){
         Ponto temp = P;
-        double Distance = Distance(Centro);
+        double Distance = temp.Distance(Centro);
         if(Distance <= Raio) return true;
         else return false;
     }
 };
-
+*/
 } // NAMESPACE SPATIALDATA
 #endif // SPATIALDATA_HPP
