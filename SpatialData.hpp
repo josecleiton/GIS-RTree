@@ -5,6 +5,7 @@
  */
 #ifndef SPATIALDATA_HPP
 #define SPATIALDATA_HPP
+#include <vector>
 #include "stdlib.hpp"
 #include "circular_list.hpp"
 namespace SpatialData{
@@ -31,7 +32,7 @@ public:
     double AnguloPolar();
     double Tamanho();
     double Distancia(Aresta&);
-    double Distancia(Ponto&, Ponto&);
+    double Distancia(Ponto&);
     double GetX() const{ return x; }
     double GetY() const{ return y; }
     double operator[](int);
@@ -88,6 +89,7 @@ public:
     Aresta& Rotacao();
     Aresta& Flip();
     Ponto GetPonto(double&);
+    double Dist() const;
     int Intersect(Aresta&, double&);
     int Cruza(Aresta&, double&);
     bool isVertical();
@@ -100,7 +102,11 @@ double ProdutodePontos(Ponto&, Ponto&);
 Vertice* MenorVertice(Poligono&, int (*cmp)(Ponto*, Ponto*));
 int EsquerdaDireita(Ponto*, Ponto*);
 int DireitaEsquerda(Ponto*, Ponto*);
-
+vector<Poligono*> Triangulacao(Poligono&);
+void FindVerticeConvexo(Poligono&);
+Vertice* FindIntrudingVertex(Poligono&);
+bool PontoNoTriangulo(Ponto&, Ponto&, Ponto&, Ponto&);
+double AreaNgono(vector<Poligono*>&);
 
 } // NAMESPACE SPATIALDATA
 #endif // SPATIALDATA_HPP

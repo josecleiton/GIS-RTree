@@ -99,8 +99,8 @@ double Ponto::Tamanho(){
     return sqrt(x*x+y*y);
 }
 
-double Ponto::Distancia(Ponto& p0, Ponto& p1){
-    return sqrt(pow(p0.x-p1.x, 2)+pow(p0.y-p1.y, 2));
+double Ponto::Distancia(Ponto& p1){
+    return sqrt(pow(x-p1.x, 2)+pow(y-p1.y, 2));
 }
 
 // IMPLEMENTAÇÕES DA CLASSE VERTICE ABAIXO
@@ -282,6 +282,10 @@ Ponto Aresta::GetPonto(double& t){
     return Ponto(origem + t * (destino-origem));
 }
 
+double Aresta::Dist() const{
+    return sqrt(pow(origem.x - destino.x, 2)+pow(origem.y - destino.y, 2));
+}
+
 int Aresta::Intersect(Aresta& E, double& t){
     Ponto a = origem;
     Ponto b = destino;
@@ -370,67 +374,88 @@ int DireitaEsquerda(Ponto* a, Ponto* b){
     return EsquerdaDireita(b, a);
 }
 
-}// NAMESPACE SPATIAL DATA
-/*
-Poligono(Vertice*);
-~Poligono();
-Vertice* GetVertice();
-unsigned GetSize();
-Ponto GetPonto();
-Aresta GetAresta();
-Vertice* Avancar(int);
-Vertice* SetV(Vertice*);
-Vertice* Push(Ponto&);
-void Pop();
-Poligono* Split(Vertice*);
+vector<Poligono*> Triangulacao(Poligono& P){
+    vector<Poligono*> triangulos;
+    unsigned tamanho = P.GetSize();
+    if(tamanho >= 3){
+        if(tamanho == 3)
+            triangulos.push_back(&P);
+        else{ // POLIGONO TEM MAIS DO QUE 3 LADOS
+            FindVerticeConvexo(P);
+            Vertice* d = FindIntrudingVertex(P);
+            if(d == nullptr){ // no intruding vertex
+                Vertice* c = P.Vizinho(HORARIO);
+                P.Avancar(ANTIHORARIO);
+                Poligono* q = P.Split(c);
+                auto r = Triangulacao(P);
+                for(auto it: r)
+                    triangulos.push_back(it);
+                triangulos.push_back(q);
 
-} // NAMESPACE SPATIAL DATA
-void Poligonal::Reset(){
-    index = 0U;
-}
-
-Linha Poligonal::Prev(){
-    if(!index) index = GetArestas()-1;
-    else index--;
-    return this->LineList[index];
-}
-
-Linha Poligonal::Next(){
-    if(index == GetArestas()-1) index = 0U;
-    else index++;
-    return this->LineList[index];
-}
-
-vector<Triangulo> Poligono::Triangulacao(){
-    Linha l0, l1, l2, l3, l4;
-    auto Length = this->LineList.size();
-
-    while(Length>3){
-        l2 = LineList[this->GetIndex()];
-        do{
-            if(l2.GetEar()){
-                l3 = this->Next();
-
+            }
+            else{
+                Poligono *q = P.Split(d);
+                auto r = Triangulacao(*q);
+                auto s = Triangulacao(P);
+                for(auto it: r)
+                    triangulos.push_back(it);
+                for(auto it: s)
+                    triangulos.push_back(it);
             }
         }
     }
+    return triangulos;
 }
 
-vector<Triangulo> Poligono::Triangulacao(){
-    vector<Linha> P = this->GetCoordenadas();
-    vector<Triangulo> Resultado;
-    if(this->GetArestas() == 3){
-        Triangulo temp(P);
-        Resultado.push_back(temp);
-        return Resultado;
+void FindVerticeConvexo(Poligono& p){
+    Vertice* a = p.Vizinho(ANTIHORARIO);
+    Vertice* b = p.GetVertice();
+    Vertice* c = p.Vizinho(HORARIO);
+    while(c->Classificacao(*a, *b) != DIREITA){
+        a = b;
+        b = p.Avancar(HORARIO);
+        c = p.Vizinho(ANTIHORARIO);
     }
-    else{
-        FindConvexVertex(this->GetCoordenadas());
-        Linha D = FindIntrudingVertex(this->GetCoordenadas());
-        if(D.GetMedida() == 0.0){
-            Linha C = P[];
+}
 
+Vertice* FindIntrudingVertex(Poligono& p){
+    Vertice* a = p.Vizinho(ANTIHORARIO);
+    Vertice* b = p.GetVertice();
+    Vertice* c = p.Avancar(HORARIO);
+    Vertice* d = nullptr;
+    double bestD = -1.0; // distancia ao melhor candidato;
+    Aresta ca(c->GetPonto(), a->GetPonto());
+    Vertice *v = p.Avancar(HORARIO);
+    while(v != a){
+        if(PontoNoTriangulo(*v, *a, *b, *c)){
+            double dist = v->Distancia(ca);
+            if(dist > bestD){
+                d = v;
+                bestD = dist;
+            }
         }
+        v = p.Avancar(HORARIO);
     }
+    p.SetV(b);
+    return d;
 }
-*/
+
+bool PontoNoTriangulo(Ponto& p, Ponto& a, Ponto& b, Ponto& c){
+    return ((p.Classificacao(a, b) != ESQUERDA) and
+            (p.Classificacao(b, c) != ESQUERDA) and
+            (p.Classificacao(c, a) != ESQUERDA));
+}
+
+double AreaNgono(vector<Poligono*>& Triangulos){
+    double S = 0.0, acumulador = 0.0;
+    for(auto it: Triangulos){
+        Ponto P1 = it->GetPonto();
+        Ponto P2 = it->Horario()->GetPonto();
+        Ponto P3 = it->Antihorario()->GetPonto();
+        S = (P1.Distancia(P2) + P2.Distancia(P3) + P3.Distancia(P1))/2;
+        acumulador += 2*sqrt(S*(S-P1.Distancia(P2))*(S-P2.Distancia(P3))*(S-P3.Distancia(P1)));
+    }
+    return acumulador;
+}
+
+}// NAMESPACE SPATIAL DATA
