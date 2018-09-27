@@ -462,4 +462,16 @@ double Poligono::AreaNgono(Poligono &P) const{
     return fabs(area/2.0);
 }
 
+double Poligono::AreaTriangulacao(vector<Poligono*>& Triangulos){
+    double S = 0.0, area = 0.0;
+    for(auto it: Triangulos){
+        Ponto P1 = it->GetPonto();
+        Ponto P2 = it->Horario()->GetPonto();
+        Ponto P3 = it->Antihorario()->GetPonto();
+        S = (P1.Distancia(P2) + P2.Distancia(P3) + P3.Distancia(P1))/2;
+        area += sqrt(S*(S-P1.Distancia(P2))*(S-P2.Distancia(P3))*(S-P3.Distancia(P1)));
+    }
+    return area;
+}
+
 }// NAMESPACE SPATIAL DATA

@@ -96,6 +96,7 @@ public:
     bool isVertical();
     double Inclinacao();
     double y(double);
+    double AreaTriangulacao(vector<Poligono*>&);
     friend class Ponto;
 };
 
