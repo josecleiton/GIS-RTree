@@ -55,7 +55,7 @@ public:
 
 class Poligono{
 private:
-    Vertice* List;
+    Vertice* list;
     unsigned m_size;
     void resize();
 public:
@@ -77,6 +77,7 @@ public:
     void Pop();
     void Resize();
     Poligono* Split(Vertice*);
+    double AreaNgono(Poligono&) const;
 };
 
 class Aresta{
@@ -106,7 +107,6 @@ vector<Poligono*> Triangulacao(Poligono&);
 void FindVerticeConvexo(Poligono&);
 Vertice* FindIntrudingVertex(Poligono&);
 bool PontoNoTriangulo(Ponto&, Ponto&, Ponto&, Ponto&);
-double AreaNgono(vector<Poligono*>&);
 
 } // NAMESPACE SPATIALDATA
 #endif // SPATIALDATA_HPP

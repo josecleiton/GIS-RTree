@@ -148,44 +148,44 @@ Vertice* Vertice::Split(Vertice* b){ // TENHO QUE EXPLICAR PARA OS MENINOS
 
 // CLASS POLIGONO
 
-Poligono::Poligono(): List(nullptr), m_size(0){
+Poligono::Poligono(): list(nullptr), m_size(0){
 }
 Poligono::Poligono(Poligono& p){
     m_size = p.m_size;
     if(!m_size)
-        List = nullptr;
+        list = nullptr;
     else{
-        List = new Vertice(p.GetPonto());
+        list = new Vertice(p.GetPonto());
         for(unsigned i=1; i<m_size; i++){
             p.Avancar(HORARIO);
-            List = List->Push(new Vertice(p.GetPonto()));
+            list = list->Push(new Vertice(p.GetPonto()));
         }
         p.Avancar(HORARIO);
-        List = List->Horario();
+        list = list->Horario();
     }
 }
 
-Poligono::Poligono(Vertice* ListaVertice): List(ListaVertice){
+Poligono::Poligono(Vertice* ListaVertice): list(ListaVertice){
     Resize();
 }
 
 void Poligono::Resize(){ // DEVE SER CHAMADO SEMPRE QUE UMA CADEIA DE VERTICES DE TAMANHO DESCONHECIDA FOR ADICIONADA AO POLIGONO
-    if(List == nullptr)
+    if(list == nullptr)
         m_size = 0;
     else{
-        Vertice* v = List->Horario();
-        for(m_size = 1; List != v; ++m_size, List = List->Horario());
+        Vertice* v = list->Horario();
+        for(m_size = 1; list != v; ++m_size, list = list->Horario());
     }
 }
 
 Poligono::~Poligono(){
-    if(List != nullptr){
-        Vertice* aux = List->Horario();
-        while(List != aux){
+    if(list != nullptr){
+        Vertice* aux = list->Horario();
+        while(list != aux){
             delete aux->Pop();
-            aux = List->Horario();
+            aux = list->Horario();
         }
-        delete List;
+        delete list;
     }
 }
 
@@ -193,7 +193,7 @@ Poligono::~Poligono(){
  * Funções de acesso à classe
  */
 Vertice* Poligono::GetVertice(){
-    return List;
+    return list;
 }
 
 unsigned Poligono::GetSize(){
@@ -201,59 +201,59 @@ unsigned Poligono::GetSize(){
 }
 
 Ponto& Poligono::GetPonto(){
-    return List->GetPonto();
+    return list->GetPonto();
 }
 
 Vertice* Poligono::Horario(){
-    return List->Horario();
+    return list->Horario();
 }
 
 Vertice* Poligono::Antihorario(){
-    return List->Antihorario();
+    return list->Antihorario();
 }
 Vertice* Poligono::Vizinho(int rotacao){
-    return List->Vizinho(rotacao);
+    return list->Vizinho(rotacao);
 }
 
 Vertice* Poligono::Avancar(int rotacao){
-    return List = List->Vizinho(rotacao);
+    return list = list->Vizinho(rotacao);
 }
 
 Vertice* Poligono::SetV(Vertice* v){
-    return List = v;
+    return list = v;
 }
 
 Vertice* Poligono::Push(Ponto p){
     if(m_size++ == 0)
-        List = new Vertice(p);
+        list = new Vertice(p);
     else
-        List = List->Push(new Vertice(p));
-    return List;
+        list = list->Push(new Vertice(p));
+    return list;
 }
 
 Vertice* Poligono::Push(Ponto& p){
     if(m_size++ == 0)
-        List = new Vertice(p);
+        list = new Vertice(p);
     else
-        List = List->Push(new Vertice(p));
-    return List;
+        list = list->Push(new Vertice(p));
+    return list;
 }
 
 void Poligono::Pop(){
-    Vertice* aux = List;
-    List = (--m_size == 0) ? nullptr : List->Antihorario();
+    Vertice* aux = list;
+    list = (--m_size == 0) ? nullptr : list->Antihorario();
     delete aux->Pop();
 }
 
 Poligono* Poligono::Split(Vertice* b){
-    Vertice* bp = List->Split(b);
+    Vertice* bp = list->Split(b);
     Resize();
     return new Poligono(bp);
 }
 
 
 Aresta Poligono::GetAresta(){
-    return Aresta(GetPonto(), List->Horario()->GetPonto());
+    return Aresta(GetPonto(), list->Horario()->GetPonto());
 }
 
 // CLASSE ARESTA
@@ -446,14 +446,14 @@ bool PontoNoTriangulo(Ponto& p, Ponto& a, Ponto& b, Ponto& c){
             (p.Classificacao(c, a) != ESQUERDA));
 }
 
-double AreaNgono(vector<Poligono*>& Triangulos){
-    double S = 0.0, acumulador = 0.0;
+double Poligono::AreaNgono(Poligono &P) const{
+    vector<Poligono*> Triangulos = Triangulacao(P);
+    double acumulador = 0.0;
     for(auto it: Triangulos){
         Ponto P1 = it->GetPonto();
         Ponto P2 = it->Horario()->GetPonto();
         Ponto P3 = it->Antihorario()->GetPonto();
-        S = (P1.Distancia(P2) + P2.Distancia(P3) + P3.Distancia(P1))/2;
-        acumulador += 2*sqrt(S*(S-P1.Distancia(P2))*(S-P2.Distancia(P3))*(S-P3.Distancia(P1)));
+        acumulador += (fabs((P2.x-P1.x)*(P3.y-P1.y)-(P3.x-P1.x)*(P2.y-P1.y)))/2.0;
     }
     return acumulador;
 }
