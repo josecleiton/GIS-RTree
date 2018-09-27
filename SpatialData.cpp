@@ -447,15 +447,19 @@ bool PontoNoTriangulo(Ponto& p, Ponto& a, Ponto& b, Ponto& c){
 }
 
 double Poligono::AreaNgono(Poligono &P) const{
-    vector<Poligono*> Triangulos = Triangulacao(P);
-    double acumulador = 0.0;
-    for(auto it: Triangulos){
-        Ponto P1 = it->GetPonto();
-        Ponto P2 = it->Horario()->GetPonto();
-        Ponto P3 = it->Antihorario()->GetPonto();
-        acumulador += (fabs((P2.x-P1.x)*(P3.y-P1.y)-(P3.x-P1.x)*(P2.y-P1.y)))/2.0;
+    double area= 0.0;
+    unsigned tam = P.GetSize();
+    vector<double> X(tam+1), Y(tam+1);
+    for(unsigned i=0; i<P.GetSize(); i++, P.Avancar(HORARIO)){
+        X[i]=P.GetPonto().x;
+        Y[i]=P.GetPonto().y;
     }
-    return acumulador;
+    X[tam] = X[0];
+    Y[tam] = Y[0];
+    for(unsigned i=0, j=tam-1; i<tam; j=i, i++){
+        area += (X[j]+X[i])*(Y[j]-Y[i]);
+    }
+    return fabs(area/2.0);
 }
 
 }// NAMESPACE SPATIAL DATA
