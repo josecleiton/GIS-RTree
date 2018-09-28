@@ -25,9 +25,10 @@ int main(int argc, char *argv[])
 
     double Area = Q1.AreaNgono(Q1);
 
+//    auto kek = SpatialData::Triangulacao(Q1);
     cout << "Triangulo = " << P.GetSize() << " lados" << endl;
     cout << "Quadrilatero = " << Q.GetSize() << " lados" << endl;
-    cout << "Area do Quadrilátero = " << Area << endl;
+    cout << "Area do Poligono = " << Area << endl;
     cout << "Sa porra roda! " << endl;
     return a.exec();
 }

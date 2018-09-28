@@ -173,8 +173,8 @@ void Poligono::Resize(){ // DEVE SER CHAMADO SEMPRE QUE UMA CADEIA DE VERTICES D
     if(list == nullptr)
         m_size = 0;
     else{
-        Vertice* v = list->Horario();
-        for(m_size = 1; list != v; ++m_size, list = list->Horario());
+        m_size = 1;
+        for(Vertice* v = list->Horario(); v != list; ++m_size, v = v->Horario());
     }
 }
 
@@ -331,6 +331,13 @@ double Aresta::Inclinacao(){
     return 0;
 }
 
+double Aresta::Slope(){
+    double k = origem.x - destino.x;
+    if(k != 0.0)
+        return (destino.y - origem.y)/(destino.x - origem.x);
+    return DBL_MAX;
+}
+
 double ProdutodePontos(Ponto& p0, Ponto& p1){
     return p0.x*p1.x + p0.y+p1.y;
 }
@@ -377,7 +384,7 @@ int DireitaEsquerda(Ponto* a, Ponto* b){
 vector<Poligono*> Triangulacao(Poligono& P){
     vector<Poligono*> triangulos;
     unsigned tamanho = P.GetSize();
-    if(tamanho >= 3){
+    //if(tamanho >= 3){
         if(tamanho == 3)
             triangulos.push_back(&P);
         else{ // POLIGONO TEM MAIS DO QUE 3 LADOS
@@ -397,13 +404,15 @@ vector<Poligono*> Triangulacao(Poligono& P){
                 Poligono *q = P.Split(d);
                 auto r = Triangulacao(*q);
                 auto s = Triangulacao(P);
-                for(auto it: r)
+                for(auto it: r){
                     triangulos.push_back(it);
-                for(auto it: s)
+                }
+                for(auto it: s){
                     triangulos.push_back(it);
+                }
             }
         }
-    }
+    //}// ELSE BASE DA RECURSÃO
     return triangulos;
 }
 
@@ -460,18 +469,6 @@ double Poligono::AreaNgono(Poligono &P) const{
         area += (X[j]+X[i])*(Y[j]-Y[i]);
     }
     return fabs(area/2.0);
-}
-
-double Poligono::AreaTriangulacao(vector<Poligono*>& Triangulos){
-    double S = 0.0, area = 0.0;
-    for(auto it: Triangulos){
-        Ponto P1 = it->GetPonto();
-        Ponto P2 = it->Horario()->GetPonto();
-        Ponto P3 = it->Antihorario()->GetPonto();
-        S = (P1.Distancia(P2) + P2.Distancia(P3) + P3.Distancia(P1))/2;
-        area += sqrt(S*(S-P1.Distancia(P2))*(S-P2.Distancia(P3))*(S-P3.Distancia(P1)));
-    }
-    return area;
 }
 
 }// NAMESPACE SPATIAL DATA
