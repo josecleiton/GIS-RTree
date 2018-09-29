@@ -1,8 +1,11 @@
 #include "disk.hpp"
 
 namespace DiskAPI{
-Disk::Disk(string name){
-    file.open(name, ios::binary|ios::out);
+Disk::Disk(string name, bool append){
+    if(append)
+        file.open(name, ios::binary|ios::app);
+    else
+        file.open(name, ios::binary|ios::out);
     if(!file.is_open())
         cout << "Arquivo não encontrado no disco." << endl;
 }
@@ -12,11 +15,11 @@ Disk::~Disk(){
         file.close();
 }
 
-bool Disk::SalvarForma(char _tipo, unsigned tam, Vertice* _vertices){
+bool Disk::SalvarForma(char _tipo, unsigned numeroVertices, Vertice* _vertices){
     if(file.is_open()){
         file.write(reinterpret_cast<char*>(&_tipo), sizeof(char));
-        file.write(reinterpret_cast<char*>(&tam), sizeof(unsigned));
-        for(unsigned i=0; i<tam; i++, _vertices->Horario()){
+        file.write(reinterpret_cast<char*>(&numeroVertices), sizeof(unsigned));
+        for(unsigned i=0; i<numeroVertices; i++, _vertices->Horario()){
             file.write(reinterpret_cast<char*>(&(_vertices->x)), sizeof(double));
             file.write(reinterpret_cast<char*>(&(_vertices->y)), sizeof(double));
         }

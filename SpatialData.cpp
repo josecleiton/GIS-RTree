@@ -257,11 +257,13 @@ Aresta Poligono::GetAresta(){
 }
 
 Aresta Vertice::Envelope(){
-    list<double> X, Y;
+    vector<double> X, Y;
     for(auto it = this->Antihorario(); it != this; it = it->Antihorario()){
         X.push_back(it->x);
         Y.push_back(it->y);
     }
+    X.push_back(this->x);
+    Y.push_back(this->y);
     sort(X.begin(), X.end());
     sort(Y.begin(), Y.end());
     Ponto origem(X.front(), Y.front());

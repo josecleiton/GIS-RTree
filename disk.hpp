@@ -11,24 +11,11 @@ namespace DiskAPI{
 
 enum TiposForma{PONTO, LINHA, POLIGONAL, POLIGONO, POLIGONO_CONVEXO, POLIGONO_NAO_CONVEXO, INDEFINIDO};
 
-#pragma pack(push, 1)
-struct VerticeArray{
-    double x, y;
-};
-
-struct Registro{
-    char tipo;
-    unsigned m_size;
-    struct VerticeArray *v{};
-    char fim[9] = "endfield";
-};
-#pragma pack(pop)
-
 class Disk{
 private:
     fstream file;
 public:
-    Disk(string);
+    Disk(string, bool);
     ~Disk();
     bool SalvarForma(char, unsigned, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
     bool Read(); // LE UM POR VEZ
