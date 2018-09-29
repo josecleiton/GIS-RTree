@@ -2,6 +2,7 @@
 #include <QApplication>
 #include "stdlib.hpp"
 #include "SpatialData.hpp"
+#include "disk.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -24,10 +25,14 @@ int main(int argc, char *argv[])
     Q1.Push(SpatialData::Ponto(1,8));
 
     double Q1Area = SpatialData::Area(Q1);
-    auto kek = SpatialData::Triangulacao(Q1);
+    //auto kek = SpatialData::Triangulacao(Q1);
     cout << "Triangulo = " << P.GetSize() << " lados" << endl;
     cout << "Quadrilatero = " << Q.GetSize() << " lados" << endl;
     cout << "Area do Poligono = " << Q1Area << endl;
     cout << "Sa porra roda! " << endl;
+
+    DiskAPI::Disk io(FILENAME);
+    io.Save(DiskAPI::POLIGONO_CONVEXO, Q.GetSize(), Q.GetVertice());
+
     return a.exec();
 }
