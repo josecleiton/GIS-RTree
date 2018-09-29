@@ -256,6 +256,19 @@ Aresta Poligono::GetAresta(){
     return Aresta(GetPonto(), list->Horario()->GetPonto());
 }
 
+Aresta Vertice::Envelope(){
+    list<double> X, Y;
+    for(auto it = this->Antihorario(); it != this; it = it->Antihorario()){
+        X.push_back(it->x);
+        Y.push_back(it->y);
+    }
+    sort(X.begin(), X.end());
+    sort(Y.begin(), Y.end());
+    Ponto origem(X.front(), Y.front());
+    Ponto destino(X.back(), Y.back());
+    return Aresta(origem, destino);
+}
+
 // CLASSE ARESTA
 
 Aresta::Aresta(Ponto& _origem, Ponto& _dest): origem(_origem), destino(_dest){

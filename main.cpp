@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     cout << "Sa porra roda! " << endl;
 
     DiskAPI::Disk io(FILENAME);
-    io.Save(DiskAPI::POLIGONO_CONVEXO, Q.GetSize(), Q.GetVertice());
+    io.SalvarForma(DiskAPI::POLIGONO_CONVEXO, Q.GetSize(), Q.GetVertice());
 
     return a.exec();
 }

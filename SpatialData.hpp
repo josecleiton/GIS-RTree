@@ -49,6 +49,7 @@ public:
     Vertice* Push(Vertice*);
     Vertice* Pop();
     void Splice(Vertice*);
+    Aresta Envelope(); // MINIMUM BOUNDING RECTANGLE PARA A R-TREE
     Vertice* Split(Vertice*);
     friend class Poligono;
 };

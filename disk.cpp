@@ -12,7 +12,7 @@ Disk::~Disk(){
         file.close();
 }
 
-bool Disk::Save(char _tipo, unsigned tam, Vertice* _vertices){
+bool Disk::SalvarForma(char _tipo, unsigned tam, Vertice* _vertices){
     if(file.is_open()){
         file.write(reinterpret_cast<char*>(&_tipo), sizeof(char));
         file.write(reinterpret_cast<char*>(&tam), sizeof(unsigned));
@@ -20,7 +20,8 @@ bool Disk::Save(char _tipo, unsigned tam, Vertice* _vertices){
             file.write(reinterpret_cast<char*>(&(_vertices->x)), sizeof(double));
             file.write(reinterpret_cast<char*>(&(_vertices->y)), sizeof(double));
         }
-        file.write("endfield|", sizeof(char)*9);
+        char delimitador[2] = {static_cast<char>(246),static_cast<char>(232)};
+        file.write(delimitador, sizeof(char)*2);
         return true;
     }
     cout << "Forma geométrica não pode ser salva no disco." << endl;

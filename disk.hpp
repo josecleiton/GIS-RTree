@@ -30,7 +30,7 @@ private:
 public:
     Disk(string);
     ~Disk();
-    bool Save(char, unsigned, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
+    bool SalvarForma(char, unsigned, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
     bool Read(); // LE UM POR VEZ
 };
 
