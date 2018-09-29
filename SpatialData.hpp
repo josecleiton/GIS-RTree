@@ -20,19 +20,20 @@ enum Classificadores {ESQUERDA, DIREITA, FRENTE, ATRAS, ENTRE, ORIGEM, DESTINO};
 enum Rotacao {HORARIO, ANTIHORARIO}; // SENTIDO DAS ROTAÇÕES NA LISTA DUPLAMENTE ENCADEADA DE VERTICES
 enum Posicao_Relativa_Retas {COLINEAR, PARALELA, CONSECUTIVO, CONSECUTIVO_CRUZADO, CONSECUTIVO_NAO_CRUZADO}; // USADA PELA POSIÇÃO RELATIVA ENTRE SEGMENTOS DE RETA (ARESTAS)
 
+class Retangulo;
 class Aresta;
 
 class Ponto{
 public:
     double x, y;
     Ponto(double X = 0.0, double Y = 0.0);
-    int Classificacao(Ponto&, Ponto&);
-    int Classificacao(Aresta);
-    int Orientacao(Ponto&, Ponto&, Ponto&);
+    int Classificacao(Ponto&, Ponto&); // CLASSIFICA UM PONTO EM RELAÇÃO A DOIS PONTOS (RETA)
+    int Classificacao(Aresta); // CLASSIFICA UM PONTO EM RELAÇÃO A UMA ARESTA
+    int Orientacao(Ponto&, Ponto&, Ponto&); // RETORNA SE OS PONTOS SÃO POSITIVO, NEGATIVO OU COLINEAR
     double AnguloPolar();
-    double Tamanho();
-    double Distancia(Aresta&);
-    double Distancia(Ponto&);
+    double Tamanho(); // DISTANCIA EM RELAÇÃO A ORIGEM
+    double Distancia(Aresta&); // DISTANCIA EM RELAÇÃO A UMA ARESTA
+    double Distancia(Ponto&); // DISTANCIA EM RELAÇÃO A OUTRO PONTO
     double GetX() const{ return x; }
     double GetY() const{ return y; }
     double operator[](int);
@@ -45,12 +46,12 @@ public:
     Vertice* Horario(); // percorre a lista em sentido horário
     Vertice* Antihorario(); // percorre a lista em sentido antihorário
     Vertice* Vizinho(int); // retorna o nó vizinho
-    Ponto& GetPonto();
-    Vertice* Push(Vertice*);
-    Vertice* Pop();
-    void Splice(Vertice*);
-    Aresta Envelope(); // MINIMUM BOUNDING RECTANGLE PARA A R-TREE
-    Vertice* Split(Vertice*);
+    Ponto& GetPonto(); // RETORNA OS PONTOS DO VERTICE
+    Vertice* Push(Vertice*); // COLOCA UM VERTICE NA LISTA
+    Vertice* Pop(); // RETIRA O VERTICE ATUAL DA LISTA
+    void Splice(Vertice*); // JUNTA DUAS LISTAS
+    Retangulo Envelope(); // MINIMUM BOUNDING RECTANGLE PARA A R-TREE
+    Vertice* Split(Vertice*); // DIVIDE A LISTA
     friend class Poligono;
 };
 
@@ -60,25 +61,25 @@ private:
     unsigned m_size;
     void resize();
 public:
-    Poligono();
-    Poligono(Poligono&);
-    Poligono(Vertice*);
+    Poligono(); // CONSTRUTOR PADRÃO
+    Poligono(Poligono&);  // COPIA UM POLIGONO PARA ESTE OBJETO
+    Poligono(Vertice*); // COPIA UMA LISTA DE VERTICES PARA ESTE OBJETO
     ~Poligono();
-    Vertice* GetVertice();
-    unsigned GetSize();
-    Ponto& GetPonto();
-    Aresta GetAresta();
-    Vertice* Avancar(int);
-    Vertice* Horario();
-    Vertice* Antihorario();
-    Vertice* Vizinho(int);
-    Vertice* SetV(Vertice*);
-    Vertice* Push(Ponto);
-    Vertice* Push(Ponto&);
-    void Pop();
-    void Resize();
-    Poligono* Split(Vertice*);
-    double AreaTriangulacao(vector<Poligono*>&) const;
+    Vertice* GetVertice(); // RETORNA A LISTA DE VERTICES
+    unsigned GetSize(); // RETORNA O TAMANHO DA LISTA DE VERTICES
+    Ponto& GetPonto(); // RETORNA O PONTO DO VERTICE ATUAL
+    Aresta GetAresta(); // RETORNA A ARESTA ATUAL
+    Vertice* Avancar(int); // AVANÇA NA LISTA DE VERTICE PARA O PROXIMO OU ANTERIOR
+    Vertice* Horario(); // AVANÇA NA LISTA DE VERTICE
+    Vertice* Antihorario(); // RETROCEDE NA LISTA DE VERTICE
+    Vertice* Vizinho(int); // RETORNA O VIZINHO (ANTERIOR OU PROXIMO)
+    Vertice* SetV(Vertice*); // MOVE A LISTA PARA UM DADO VERTICE
+    Vertice* Push(Ponto); // COLOCA UM PONTO NA LISTA DE VERTICE POR VALOR
+    Vertice* Push(Ponto&); // COLOCA UM PONTO NA LISTA DE VERTICE POR REFERENCIA
+    void Pop(); // RETIRA O VERTICE ATUAL DA LISTA
+    void Resize(); // RECALCULA O TAMANHO DA LISTA (NECESSÁRIO EM TODO PUSH OU POP)
+    Poligono* Split(Vertice*); // DIVIDE O POLIGONO EM RELAÇÃO A UM VERTICE
+    double AreaTriangulacao(vector<Poligono*>&) const; // RETORNA A AREA A PARTIR DE TRIANGULAÇÃO (NÃO USE)
 };
 
 class Aresta{
@@ -88,25 +89,25 @@ private:
 public:
     Aresta();
     Aresta(Ponto&, Ponto&);
-    Aresta& Rotacao();
-    Aresta& Flip();
+    Aresta& Rotacao(); // ROTACIONA A RETA EM 90º NO SENTIDO HORÁRIO
+    Aresta& Flip(); // ROTACIONA A RETA EM 180º NO SENTIDO HORÁRIO
     Ponto GetPonto(double&);
-    double Dist() const;
-    int Intersect(Aresta&, double&);
-    int Cruza(Aresta&, double&);
+    double Dist() const; // RETORNA A DISTANCIA ENTRE ORIGEM E DESTINO
+    int Interseccao(Aresta&, double&); // RETORNA O PONTO DE INTERSECÇÃO ENTRE DUAS RETAS E UM F
+    int Cruza(Aresta&, double&); // RETORNA SE AS RETAS SE CRUZAM
     bool isVertical();
-    double Inclinacao();
-    double y(double);
-    double Slope();
+    double Inclinacao(); // RETORNA A INCLINAÇÃO DA RETA
+    double y(double); // DADO UM X, RETORNA O Y (VISTO QUE A RETA É SEMPRE INFINITA)
     friend class Ponto;
 };
 
 class Retangulo{
-public:
+private:
     Ponto SE;
     Ponto NE;
     int ID;
-    Retangulo(Ponto&, Ponto&, int);
+public:
+    Retangulo(Ponto&, Ponto&, int _id = -1);
     Retangulo();
 };
 

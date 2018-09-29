@@ -91,7 +91,7 @@ double Ponto::Distancia(Aresta& E){
     Ponto k = (*this)+n;
     Aresta f(*this, k); // f = n
     double t;
-    f.Intersect(E, t);
+    f.Interseccao(E, t);
     return t;
 }
 
@@ -256,7 +256,7 @@ Aresta Poligono::GetAresta(){
     return Aresta(GetPonto(), list->Horario()->GetPonto());
 }
 
-Aresta Vertice::Envelope(){
+Retangulo Vertice::Envelope(){
     vector<double> X, Y;
     for(auto it = this->Antihorario(); it != this; it = it->Antihorario()){
         X.push_back(it->x);
@@ -268,7 +268,7 @@ Aresta Vertice::Envelope(){
     sort(Y.begin(), Y.end());
     Ponto origem(X.front(), Y.front());
     Ponto destino(X.back(), Y.back());
-    return Aresta(origem, destino);
+    return Retangulo(origem, destino);
 }
 
 // CLASSE ARESTA
@@ -301,7 +301,7 @@ double Aresta::Dist() const{
     return sqrt(pow(origem.x - destino.x, 2)+pow(origem.y - destino.y, 2));
 }
 
-int Aresta::Intersect(Aresta& E, double& t){
+int Aresta::Interseccao(Aresta& E, double& t){
     Ponto a = origem;
     Ponto b = destino;
     Ponto c = E.origem;
@@ -324,12 +324,12 @@ int Aresta::Intersect(Aresta& E, double& t){
 
 int Aresta::Cruza(Aresta& E, double& t){
     double s;
-    int TipoCruzamento = E.Intersect(*this, s);
+    int TipoCruzamento = E.Interseccao(*this, s);
     if(TipoCruzamento==COLINEAR or TipoCruzamento==PARALELA)
         return TipoCruzamento;
     if(s < 0.0 or s > 1.0)
         return CONSECUTIVO_NAO_CRUZADO;
-    Intersect(E, t);
+    Interseccao(E, t);
     if(t >= 0.0 and t <= 1.0)
         return CONSECUTIVO_CRUZADO;
     return  CONSECUTIVO_NAO_CRUZADO;
@@ -343,18 +343,11 @@ bool Aresta::isVertical(){
 double Aresta::Inclinacao(){
     if(!isVertical())
         return (destino.y - origem.y)/(destino.x - origem.y);
-    return 0;
+    return DBL_MAX;
 }
 
 Retangulo::Retangulo(Ponto& sudeste, Ponto& nordeste, int _id):
     SE(sudeste), NE(nordeste), ID(_id){
-}
-
-double Aresta::Slope(){
-    double k = origem.x - destino.x;
-    if(k != 0.0)
-        return (destino.y - origem.y)/(destino.x - origem.x);
-    return DBL_MAX;
 }
 
 double ProdutodePontos(Ponto& p0, Ponto& p1){
