@@ -27,14 +27,16 @@ SOURCES += \
         mainwindow.cpp \
         RTree.cpp \
     SpatialData.cpp \
-    circular_list.cpp
+    circular_list.cpp \
+    disk.cpp
 
 HEADERS += \
     RTree.hpp \
     stdlib.hpp \
     mainwindow.hpp \
     SpatialData.hpp \
-    circular_list.hpp
+    circular_list.hpp \
+    disk.hpp
 
 FORMS += \
         mainwindow.ui

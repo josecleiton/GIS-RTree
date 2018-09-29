@@ -23,12 +23,11 @@ int main(int argc, char *argv[])
     Q1.Push(SpatialData::Ponto(7,12));
     Q1.Push(SpatialData::Ponto(1,8));
 
-    double Area = Q1.AreaNgono(Q1);
-
-//    auto kek = SpatialData::Triangulacao(Q1);
+    double Q1Area = SpatialData::Area(Q1);
+    auto kek = SpatialData::Triangulacao(Q1);
     cout << "Triangulo = " << P.GetSize() << " lados" << endl;
     cout << "Quadrilatero = " << Q.GetSize() << " lados" << endl;
-    cout << "Area do Poligono = " << Area << endl;
+    cout << "Area do Poligono = " << Q1Area << endl;
     cout << "Sa porra roda! " << endl;
     return a.exec();
 }

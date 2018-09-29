@@ -5,8 +5,6 @@
  */
 #ifndef SPATIALDATA_HPP
 #define SPATIALDATA_HPP
-#include <vector>
-#include <algorithm>
 #include <cfloat>
 #include "stdlib.hpp"
 #include "circular_list.hpp"
@@ -79,7 +77,6 @@ public:
     void Pop();
     void Resize();
     Poligono* Split(Vertice*);
-    double AreaNgono(Poligono&) const;
     double AreaTriangulacao(vector<Poligono*>&) const;
 };
 
@@ -103,15 +100,25 @@ public:
     friend class Ponto;
 };
 
+class Retangulo{
+public:
+    Ponto SE;
+    Ponto NE;
+    int ID;
+    Retangulo(Ponto&, Ponto&, int);
+    Retangulo();
+};
+
 double ProdutodePontos(Ponto&, Ponto&);
 Vertice* MenorVertice(Poligono&, int (*cmp)(Ponto*, Ponto*));
 int EsquerdaDireita(Ponto*, Ponto*);
 int DireitaEsquerda(Ponto*, Ponto*);
 // PARA TRIANGULAR O(N^2)
-vector<Poligono*> Triangulacao(Poligono&);
+list<Poligono*> Triangulacao(Poligono&);
 void FindVerticeConvexo(Poligono&);
 Vertice* FindIntrudingVertex(Poligono&);
 bool PontoNoTriangulo(Ponto&, Ponto&, Ponto&, Ponto&);
+double Area(Poligono&);
 
 } // NAMESPACE SPATIALDATA
 #endif // SPATIALDATA_HPP

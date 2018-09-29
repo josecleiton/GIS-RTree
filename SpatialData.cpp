@@ -140,7 +140,7 @@ void Vertice::Splice(Vertice* V){ // TENHO QUE EXPLICAR PARA OS MENINOS
 }
 
 Vertice* Vertice::Split(Vertice* b){ // TENHO QUE EXPLICAR PARA OS MENINOS
-    Vertice* bp = b->Horario()->Push(new Vertice(b->GetPonto()));
+    Vertice* bp = b->Antihorario()->Push(new Vertice(b->GetPonto()));
     Push(new Vertice(GetPonto()));
     Splice(bp);
     return bp;
@@ -331,6 +331,10 @@ double Aresta::Inclinacao(){
     return 0;
 }
 
+Retangulo::Retangulo(Ponto& sudeste, Ponto& nordeste, int _id):
+    SE(sudeste), NE(nordeste), ID(_id){
+}
+
 double Aresta::Slope(){
     double k = origem.x - destino.x;
     if(k != 0.0)
@@ -381,11 +385,10 @@ int DireitaEsquerda(Ponto* a, Ponto* b){
     return EsquerdaDireita(b, a);
 }
 
-vector<Poligono*> Triangulacao(Poligono& P){
-    vector<Poligono*> triangulos;
-    unsigned tamanho = P.GetSize();
+list<Poligono*> Triangulacao(Poligono& P){
+    list<Poligono*> triangulos;
     //if(tamanho >= 3){
-        if(tamanho == 3)
+        if(P.GetSize() == 3)
             triangulos.push_back(&P);
         else{ // POLIGONO TEM MAIS DO QUE 3 LADOS
             FindVerticeConvexo(P);
@@ -395,21 +398,15 @@ vector<Poligono*> Triangulacao(Poligono& P){
                 P.Avancar(ANTIHORARIO);
                 Poligono* q = P.Split(c);
                 auto r = Triangulacao(P);
-                for(auto it: r)
-                    triangulos.push_back(it);
+                triangulos.splice(triangulos.end(), r);
                 triangulos.push_back(q);
-
             }
             else{
-                Poligono *q = P.Split(d);
+                Poligono* q = P.Split(d);
                 auto r = Triangulacao(*q);
                 auto s = Triangulacao(P);
-                for(auto it: r){
-                    triangulos.push_back(it);
-                }
-                for(auto it: s){
-                    triangulos.push_back(it);
-                }
+                triangulos.splice(triangulos.end(), r);
+                triangulos.splice(triangulos.end(), s);
             }
         }
     //}// ELSE BASE DA RECURSÃO
@@ -455,7 +452,7 @@ bool PontoNoTriangulo(Ponto& p, Ponto& a, Ponto& b, Ponto& c){
             (p.Classificacao(c, a) != ESQUERDA));
 }
 
-double Poligono::AreaNgono(Poligono &P) const{
+double Area(Poligono &P){
     double area= 0.0;
     unsigned tam = P.GetSize();
     vector<double> X(tam+1), Y(tam+1);

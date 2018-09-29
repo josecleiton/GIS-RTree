@@ -9,10 +9,6 @@ namespace SpatialIndex{
  * Não faço ideia de como implementar essa classe
  */
 
-class Dado{
-
-};
-/*
 class RTree{
 
     enum{
@@ -24,7 +20,7 @@ class RTree{
     struct Node;
 
     struct Branch{
-        Quadrilatero MBR;
+        Retangulo MBR;
         union{
             Node* ChildPointer;
             // DADO m_dado;
@@ -37,6 +33,5 @@ class RTree{
         vector<Branch> m_Branch;
     };
 };
-*/
 }
 #endif // RTREE_HPP
