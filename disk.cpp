@@ -16,15 +16,28 @@ Disk::~Disk(){
 }
 
 bool Disk::SalvarForma(char _tipo, unsigned numeroVertices, Vertice* _vertices){
+    /*
+     * SALVA UM REGISTRO NO SEGUINTE FORMATO:
+     * struct Registro{
+     *  bool isActive = true;
+     *  char tipo;
+     *  unsigned numeroVertices;
+     *  lista de vertices;
+     *  char delimitador[2];
+     * }
+     * Totalizando: (8+numeroVertices*16) bytes
+     */
     if(file.is_open()){
+        bool active = true; // BYTE UTILIZADO PARA A REMOÇÃO LÓGICA DE UM REGISTRO
+        file.write(reinterpret_cast<char*>(&active), sizeof(bool));
         file.write(reinterpret_cast<char*>(&_tipo), sizeof(char));
         file.write(reinterpret_cast<char*>(&numeroVertices), sizeof(unsigned));
         for(unsigned i=0; i<numeroVertices; i++, _vertices->Horario()){
             file.write(reinterpret_cast<char*>(&(_vertices->x)), sizeof(double));
             file.write(reinterpret_cast<char*>(&(_vertices->y)), sizeof(double));
         }
-        char delimitador[2] = {static_cast<char>(246),static_cast<char>(232)};
-        file.write(delimitador, sizeof(char)*2);
+        unsigned char delimitador[2] = {246,232};
+        file.write(reinterpret_cast<char*>(delimitador), sizeof(unsigned char)*2);
         return true;
     }
     cout << "Forma geométrica não pode ser salva no disco." << endl;

@@ -23,13 +23,13 @@ class RTree{
         Retangulo MBR;
         union{
             Node* ChildPointer;
-            // DADO m_dado;
+            size_t Dado; // Guarda o indice da forma em disco
         };
     };
 
     struct Node{
-        int Nivel;
-        int Count;
+        int m_Nivel;
+        int m_Count;
         vector<Branch> m_Branch;
     };
 };
