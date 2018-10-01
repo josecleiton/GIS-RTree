@@ -103,8 +103,7 @@ public:
 
 class Retangulo{
 private:
-    Ponto SE;
-    Ponto NE;
+    Aresta diagonal;
     int ID;
 public:
     Retangulo(Ponto&, Ponto&, int _id = -1);

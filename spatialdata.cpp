@@ -346,8 +346,7 @@ double Aresta::Inclinacao(){
     return DBL_MAX;
 }
 
-Retangulo::Retangulo(Ponto& sudeste, Ponto& nordeste, int _id):
-    SE(sudeste), NE(nordeste), ID(_id){
+Retangulo::Retangulo(Ponto& origem, Ponto& destino, int _id): diagonal(origem, destino), ID(_id){
 }
 
 double ProdutodePontos(Ponto& p0, Ponto& p1){
