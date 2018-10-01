@@ -14,7 +14,7 @@ class RTree{
     enum{
         ORDEM = 4,
         MINNODES = ORDEM/2,
-        MAXNODES = ORDEM-1,
+        MAXNODES = ORDEM,
     };
 
     struct Node;
