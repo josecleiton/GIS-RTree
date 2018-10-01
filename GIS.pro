@@ -25,18 +25,18 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        RTree.cpp \
-    SpatialData.cpp \
     circular_list.cpp \
-    disk.cpp
+    disk.cpp \
+    rtree.cpp \
+    spatialdata.cpp
 
 HEADERS += \
-    RTree.hpp \
     stdlib.hpp \
     mainwindow.hpp \
-    SpatialData.hpp \
     circular_list.hpp \
-    disk.hpp
+    disk.hpp \
+    rtree.hpp \
+    spatialdata.hpp
 
 FORMS += \
         mainwindow.ui

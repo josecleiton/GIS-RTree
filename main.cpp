@@ -1,7 +1,7 @@
 #include "mainwindow.hpp"
 #include <QApplication>
 #include "stdlib.hpp"
-#include "SpatialData.hpp"
+#include "spatialdata.hpp"
 #include "disk.hpp"
 
 int main(int argc, char *argv[])

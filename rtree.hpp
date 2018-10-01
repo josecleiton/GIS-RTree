@@ -1,7 +1,7 @@
 #ifndef RTREE_HPP
 #define RTREE_HPP
 #include "stdlib.hpp"
-#include "SpatialData.hpp"
+#include "spatialdata.hpp"
 using namespace SpatialData;
 namespace SpatialIndex{
 /*

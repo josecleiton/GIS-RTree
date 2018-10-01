@@ -2,7 +2,7 @@
 #define DISK_HPP
 #include <fstream>
 #include "stdlib.h"
-#include "SpatialData.hpp"
+#include "spatialdata.hpp"
 using namespace SpatialData;
 
 namespace DiskAPI{

@@ -1,4 +1,4 @@
-#include "SpatialData.hpp"
+#include "spatialdata.hpp"
 namespace SpatialData{
 
 Ponto::Ponto(double X, double Y): x(X), y(Y){
