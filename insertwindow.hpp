@@ -2,6 +2,10 @@
 #define INSERTWINDOW_HPP
 
 #include <QDialog>
+#include <iostream>
+#include <fstream>
+#include <vector>
+using namespace std;
 
 namespace Ui {
 class InsertWindow;
@@ -18,8 +22,11 @@ public:
 private slots:
     void on_pushButton_clicked();
 
+    void on_submit_clicked();
+
 private:
     Ui::InsertWindow *ui;
 };
+
 
 #endif // INSERTWINDOW_HPP

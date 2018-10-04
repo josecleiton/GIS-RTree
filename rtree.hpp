@@ -21,17 +21,18 @@ struct Node;
 struct Chave{
     Retangulo MBR;
     union{
-        Node* ChildPointer;
+        Node* ChildPointer{};
         size_t Dado; // Guarda o indice da forma em disco
     };
-    Chave();
+    Chave(Retangulo&, size_t);
+    Chave(Retangulo&, Node*);
 };
 
 struct Node{
     int m_Nivel;
     int m_Count;
     vector<Chave> mchaves;
-    Node();
+    Node(int nivel=0, int count=0);
 };
 
 class RTree{
@@ -40,6 +41,7 @@ private:
 
 public:
    RTree();
+   void Push();
 };
 
 }
