@@ -28,7 +28,8 @@ SOURCES += \
     circular_list.cpp \
     disk.cpp \
     rtree.cpp \
-    spatialdata.cpp
+    spatialdata.cpp \
+    insertwindow.cpp
 
 HEADERS += \
     stdlib.hpp \
@@ -36,10 +37,12 @@ HEADERS += \
     circular_list.hpp \
     disk.hpp \
     rtree.hpp \
-    spatialdata.hpp
+    spatialdata.hpp \
+    insertwindow.hpp
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    insertwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
