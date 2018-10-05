@@ -72,7 +72,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="numVert"/>
+       <widget class="QLineEdit" name="numVert">
+        <property name="maxLength">
+         <number>3</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -89,6 +93,9 @@
        <widget class="QLineEdit" name="tipoForma">
         <property name="text">
          <string/>
+        </property>
+        <property name="maxLength">
+         <number>500</number>
         </property>
        </widget>
       </item>

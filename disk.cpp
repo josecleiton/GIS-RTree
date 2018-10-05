@@ -15,7 +15,7 @@ Disk::~Disk(){
         file.close();
 }
 
-bool Disk::SalvarForma(char _tipo, unsigned numeroVertices, Vertice* _vertices){
+bool Disk::SalvarForma(unsigned char& _tipo, unsigned& numeroVertices, Vertice* _vertices){
     /*
      * SALVA UM REGISTRO NO SEGUINTE FORMATO:
      * struct Registro{
@@ -30,7 +30,7 @@ bool Disk::SalvarForma(char _tipo, unsigned numeroVertices, Vertice* _vertices){
     if(file.is_open()){
         bool active = true; // BYTE UTILIZADO PARA A REMOÇÃO LÓGICA DE UM REGISTRO
         file.write(reinterpret_cast<char*>(&active), sizeof(bool));
-        file.write(reinterpret_cast<char*>(&_tipo), sizeof(char));
+        file.write(reinterpret_cast<char*>(&_tipo), sizeof(unsigned char));
         file.write(reinterpret_cast<char*>(&numeroVertices), sizeof(unsigned));
         for(unsigned i=0; i<numeroVertices; i++, _vertices->Horario()){
             file.write(reinterpret_cast<char*>(&(_vertices->x)), sizeof(double));
@@ -42,6 +42,10 @@ bool Disk::SalvarForma(char _tipo, unsigned numeroVertices, Vertice* _vertices){
     }
     cout << "Forma geométrica não pode ser salva no disco." << endl;
     return false;
+}
+
+streamoff Disk::GetTell(){
+    return file.tellp();
 }
 
 } // DISK API NAMESPACE

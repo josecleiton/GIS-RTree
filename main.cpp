@@ -36,8 +36,5 @@ int main(int argc, char *argv[])
     cout << "Area do Poligono = " << Q1Area << endl;
     cout << "Sa porra roda! " << endl;
 
-    DiskAPI::Disk io(FILENAME, false);
-    io.SalvarForma(DiskAPI::POLIGONO_CONVEXO, Q.GetSize(), Q.GetVertice());
-
     return a.exec();
 }

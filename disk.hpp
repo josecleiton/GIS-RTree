@@ -11,16 +11,17 @@ namespace DiskAPI{
 
 #define FILENAME "../GIS/formas.bin"
 
-enum TiposForma{PONTO, LINHA, POLIGONAL, POLIGONO, POLIGONO_CONVEXO, POLIGONO_NAO_CONVEXO, INDEFINIDO};
+enum TiposForma{PONTO, LINHA, POLIGONAL, POLIGONO, POLIGONO_NAO_CONVEXO, INDEFINIDO};
 
 class Disk{
 private:
-    fstream file;
+    fstream file{};
 public:
     Disk(string, bool);
     ~Disk();
-    bool SalvarForma(char, unsigned, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
+    bool SalvarForma(unsigned char&, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
     bool Read(); // LE UM POR VEZ
+    streamoff GetTell();
 };
 
 } // DiskAPI
