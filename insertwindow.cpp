@@ -20,9 +20,11 @@ void InsertWindow::on_submit_clicked()
     resultado.push_back(ui->numVert->text().toStdString());
     resultado.push_back(ui->tipoForma->text().toStdString());
     resultado.push_back(ui->ID->text().toStdString());
-    fstream saida("../GIS/form", ios::out);
+    fstream saida(INSERT_FORM, ios::out);
     if(saida.is_open()){
         for(auto it: resultado)
             saida << it << endl;
+        saida.close();
     }
+    close();
 }

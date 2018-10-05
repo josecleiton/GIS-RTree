@@ -7,6 +7,8 @@
 #include <vector>
 using namespace std;
 
+#define INSERT_FORM "../GIS/form"
+
 namespace Ui {
 class InsertWindow;
 }
@@ -20,7 +22,6 @@ public:
     ~InsertWindow();
 
 private slots:
-    void on_pushButton_clicked();
 
     void on_submit_clicked();
 
