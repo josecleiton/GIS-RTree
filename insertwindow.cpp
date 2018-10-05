@@ -26,5 +26,6 @@ void InsertWindow::on_submit_clicked()
             saida << it << endl;
         saida.close();
     }
+
     close();
 }

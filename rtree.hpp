@@ -1,14 +1,15 @@
 #ifndef RTREE_HPP
 #define RTREE_HPP
-#include "stdlib.hpp"
+#include <iostream>
+#include <vector>
 #include "spatialdata.hpp"
+using namespace std;
 using namespace SpatialData;
 namespace SpatialIndex{
 /*
  * Forma geométrica no disco
  * Não faço ideia de como implementar essa classe
  */
-
 
 enum{
     ORDEM = 4,

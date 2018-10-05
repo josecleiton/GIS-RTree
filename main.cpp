@@ -1,8 +1,13 @@
 #include "mainwindow.hpp"
 #include <QApplication>
-#include "stdlib.hpp"
+#include <iostream>
+#include "variaveis.hpp"
+#include "rtree.hpp"
 #include "spatialdata.hpp"
 #include "disk.hpp"
+using namespace std;
+
+SpatialIndex::RTree root;
 
 int main(int argc, char *argv[])
 {
@@ -23,7 +28,6 @@ int main(int argc, char *argv[])
     Q1.Push(SpatialData::Ponto(8,8));
     Q1.Push(SpatialData::Ponto(7,12));
     Q1.Push(SpatialData::Ponto(1,8));
-
     double Q1Area = SpatialData::Area(Q1);
     Retangulo MBRQ1 = Q1.GetVertice()->Envelope();
     //auto kek = SpatialData::Triangulacao(Q1);

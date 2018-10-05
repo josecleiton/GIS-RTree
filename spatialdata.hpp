@@ -5,9 +5,14 @@
  */
 #ifndef SPATIALDATA_HPP
 #define SPATIALDATA_HPP
+#include <iostream>
+#include <vector>
+#include <list>
 #include <cfloat>
-#include "stdlib.hpp"
+#include <cmath>
+#include <algorithm>
 #include "circular_list.hpp"
+using namespace std;
 namespace SpatialData{
 
 /*

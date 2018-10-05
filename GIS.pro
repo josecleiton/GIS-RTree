@@ -32,13 +32,13 @@ SOURCES += \
     insertwindow.cpp
 
 HEADERS += \
-    stdlib.hpp \
     mainwindow.hpp \
     circular_list.hpp \
     disk.hpp \
     rtree.hpp \
     spatialdata.hpp \
-    insertwindow.hpp
+    insertwindow.hpp \
+    variaveis.hpp
 
 FORMS += \
         mainwindow.ui \

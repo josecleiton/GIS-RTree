@@ -1,8 +1,10 @@
 #ifndef DISK_HPP
 #define DISK_HPP
+#include <iostream>
 #include <fstream>
-#include "stdlib.h"
 #include "spatialdata.hpp"
+
+using namespace std;
 using namespace SpatialData;
 
 namespace DiskAPI{
