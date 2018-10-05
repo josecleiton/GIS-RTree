@@ -57,9 +57,8 @@ void InsertWindow::on_submit_clicked()
         VerticeWindow.close();
     }
 
-    DiskAPI::Disk io(FILENAME, true); // UMA API VAGABUNDA PARA AJUDAR NOS ACESSOS AO DISCO
-    streamoff posicao_forma = io.GetTell(); // posicao da proxima forma no disco.
-    io.SalvarForma(tipo, num_vertices, pontos);
+    DiskAPI::Disk io(FILENAME, !root.isEmpty()); // UMA API VAGABUNDA PARA AJUDAR NOS ACESSOS AO DISCO
+    streampos posicao_forma = io.SalvarForma(tipo, num_vertices, pontos); // posicao da forma
     Retangulo MBR = pontos->Envelope(); //MBR QUE ENVELOPA A FORMA
     root.Push(MBR, posicao_forma); // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
 

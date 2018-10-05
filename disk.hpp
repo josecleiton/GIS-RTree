@@ -3,25 +3,32 @@
 #include <iostream>
 #include <fstream>
 #include "spatialdata.hpp"
+#define FILENAME "../GIS/formas.bin"
 
 using namespace std;
 using namespace SpatialData;
 
 namespace DiskAPI{
 
-#define FILENAME "../GIS/formas.bin"
 
 enum TiposForma{PONTO, LINHA, POLIGONAL, POLIGONO, POLIGONO_NAO_CONVEXO, INDEFINIDO};
+
+struct Registro{
+    unsigned char tipo;
+    Vertice* lista{};
+    Registro(unsigned char, Vertice*);
+};
 
 class Disk{
 private:
     fstream file{};
 public:
     Disk(string, bool);
+    Disk(string);
     ~Disk();
-    bool SalvarForma(unsigned char&, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
-    bool Read(); // LE UM POR VEZ
-    streamoff GetTell();
+    streampos SalvarForma(unsigned char&, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
+    Registro* Read(streampos&); // LE UM POR VEZ
+    void Verifica(); // VERIFICA SE O ARQUIVO FOI ABERTO
 };
 
 } // DiskAPI

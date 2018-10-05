@@ -3,11 +3,22 @@
 namespace DiskAPI{
 Disk::Disk(string name, bool append){
     if(append)
-        file.open(name, ios::binary|ios::app);
+        file.open(name, ios::binary|ios::app|ios::in);
     else
         file.open(name, ios::binary|ios::out);
-    if(!file.is_open())
-        cout << "Arquivo não encontrado no disco." << endl;
+    Verifica();
+}
+
+Disk::Disk(string name){
+    file.open(name, ios::app|ios::binary|ios::in);
+    Verifica();
+}
+
+void Disk::Verifica(){
+    if(!file.is_open()){
+        cerr << "Arquivo não encontrado no disco." << endl;
+        exit(-1);
+    }
 }
 
 Disk::~Disk(){
@@ -15,7 +26,7 @@ Disk::~Disk(){
         file.close();
 }
 
-bool Disk::SalvarForma(unsigned char& _tipo, unsigned& numeroVertices, Vertice* _vertices){
+streampos Disk::SalvarForma(unsigned char& _tipo, unsigned& numeroVertices, Vertice* _vertices){
     /*
      * SALVA UM REGISTRO NO SEGUINTE FORMATO:
      * struct Registro{
@@ -23,12 +34,11 @@ bool Disk::SalvarForma(unsigned char& _tipo, unsigned& numeroVertices, Vertice* 
      *  char tipo;
      *  unsigned numeroVertices;
      *  lista de vertices;
-     *  char delimitador[2];
      * }
-     * Totalizando: (8+numeroVertices*16) bytes
      */
     if(file.is_open()){
         bool active = true; // BYTE UTILIZADO PARA A REMOÇÃO LÓGICA DE UM REGISTRO
+        streampos pos = file.tellp();
         file.write(reinterpret_cast<char*>(&active), sizeof(bool));
         file.write(reinterpret_cast<char*>(&_tipo), sizeof(unsigned char));
         file.write(reinterpret_cast<char*>(&numeroVertices), sizeof(unsigned));
@@ -36,16 +46,44 @@ bool Disk::SalvarForma(unsigned char& _tipo, unsigned& numeroVertices, Vertice* 
             file.write(reinterpret_cast<char*>(&(_vertices->x)), sizeof(double));
             file.write(reinterpret_cast<char*>(&(_vertices->y)), sizeof(double));
         }
-        unsigned char delimitador[2] = {246,232};
-        file.write(reinterpret_cast<char*>(delimitador), sizeof(unsigned char)*2);
-        return true;
+        return pos;
     }
     cout << "Forma geométrica não pode ser salva no disco." << endl;
     return false;
 }
 
-streamoff Disk::GetTell(){
-    return file.tellp();
+Registro* Disk::Read(streampos& pos){
+    if(file.is_open()){
+        file.seekg(pos, file.beg);
+        bool active = false;
+        file.read(reinterpret_cast<char*>(&active), sizeof(bool));
+        if(active){ // REGISTRO ATIVO
+            unsigned char tipo;
+            unsigned numeroVertices;
+            double x,y;
+            Vertice* Lista = nullptr, *temp = nullptr;
+            Registro* Reg = nullptr;
+            file.read(reinterpret_cast<char*>(&tipo), sizeof(unsigned char));
+            file.read(reinterpret_cast<char*>(&numeroVertices), sizeof(unsigned));
+            for(unsigned i=0; i<numeroVertices; i++){
+                file.read(reinterpret_cast<char*>(&x), sizeof(double));
+                file.read(reinterpret_cast<char*>(&y), sizeof(double));
+                if(Lista == nullptr)
+                    Lista = new Vertice(x,y);
+                else{
+                    temp = new Vertice(x,y);
+                    Lista->Push(temp);
+                }
+            }
+            Reg = new Registro(tipo, Lista);
+            return Reg;
+        }
+        clog << "Registro na posição: " << pos << " está inativo." << endl;
+    }
+    return nullptr;
+}
+
+Registro::Registro(unsigned char type, Vertice* v): tipo(type), lista(v){
 }
 
 } // DISK API NAMESPACE

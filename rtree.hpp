@@ -23,9 +23,9 @@ struct Chave{
     Retangulo MBR;
     union{
         Node* ChildPointer{};
-        streamoff Dado; // Guarda o indice da forma em disco
+        streampos Dado; // Guarda o indice da forma em disco
     };
-    Chave(Retangulo&, streamoff&);
+    Chave(Retangulo&, streampos&);
     Chave(Retangulo&, Node*);
 };
 
@@ -39,10 +39,12 @@ struct Node{
 class RTree{
 private:
     Node* raiz;
+    size_t count;
 
 public:
    RTree();
-   void Push(Retangulo&, streamoff&);
+   void Push(Retangulo&, streampos&);
+   bool isEmpty();
 };
 
 }
