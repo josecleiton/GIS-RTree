@@ -8,18 +8,15 @@
 
 InsertWindow::InsertWindow(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::InsertWindow)
-{
+    ui(new Ui::InsertWindow){
     ui->setupUi(this);
 }
 
-InsertWindow::~InsertWindow()
-{
+InsertWindow::~InsertWindow(){
     delete ui;
 }
 
-void InsertWindow::on_submit_clicked()
-{
+void InsertWindow::on_submit_clicked(){
     unsigned int num_vertices = ui->numVert->text().toUInt(); // NUM DE VERTICES DETERMINADO PELA GUI
     string forma = ui->tipoForma->text().toStdString();
     unsigned char tipo; // TIPO DA FORMA (POLIGONO, POLIGONAL ETC)
@@ -52,8 +49,10 @@ void InsertWindow::on_submit_clicked()
             Ponto temp = VerticeWindow.GetPonto();
             pontos = new Vertice(temp);
         }
-        Vertice* temp = VerticeWindow.GetVertice();
-        pontos->Push(temp);
+        else{
+            Vertice* temp = VerticeWindow.GetVertice();
+            pontos->Push(temp);
+        }
         VerticeWindow.close();
     }
 

@@ -16,7 +16,7 @@ enum TiposForma{PONTO, LINHA, POLIGONAL, POLIGONO, POLIGONO_NAO_CONVEXO, INDEFIN
 struct Registro{
     unsigned char tipo;
     Vertice* lista{};
-    Registro(unsigned char, Vertice*);
+    Registro(unsigned char type = INDEFINIDO, Vertice* v = nullptr);
 };
 
 class Disk{
