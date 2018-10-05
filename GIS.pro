@@ -53,4 +53,5 @@ DISTFILES += \
     README.md \
     LICENSE \
     .gitignore \
-    formas.bin
+    formas.bin \
+    form

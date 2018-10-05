@@ -7,7 +7,7 @@
 #include <vector>
 using namespace std;
 
-#define INSERT_FORM "../GIS/form"
+#define INSERT_FORM "../GIS/form" //ARQUIVO TEMPORÁRIO QUE 'SEGURA' A INFORMAÇÃO DA JANELA INSERT
 
 namespace Ui {
 class InsertWindow;
