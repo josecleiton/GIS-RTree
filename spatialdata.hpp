@@ -53,6 +53,7 @@ public:
     Vertice* Vizinho(int); // retorna o nó vizinho
     Ponto& GetPonto(); // RETORNA OS PONTOS DO VERTICE
     Vertice* Push(Vertice*); // COLOCA UM VERTICE NA LISTA
+    Vertice* Push(Ponto);
     Vertice* Pop(); // RETIRA O VERTICE ATUAL DA LISTA
     void Splice(Vertice*); // JUNTA DUAS LISTAS
     Retangulo Envelope(); // MINIMUM BOUNDING RECTANGLE PARA A R-TREE

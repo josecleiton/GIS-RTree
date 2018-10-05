@@ -4,8 +4,8 @@
 namespace CircularList{
 class Node{
 protected:
-    Node* m_next;
-    Node* m_prev;
+    Node* m_next{};
+    Node* m_prev{};
 public:
     Node();
     virtual ~Node();

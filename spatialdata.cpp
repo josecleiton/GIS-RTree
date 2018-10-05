@@ -131,6 +131,11 @@ Vertice* Vertice::Push(Vertice* V){
     return static_cast<Vertice*>(Node::Push(V));
 }
 
+Vertice* Vertice::Push(Ponto P){
+    Vertice* temp = new Vertice(P);
+    return Vertice::Push(temp);
+}
+
 Vertice* Vertice::Pop(){
     return static_cast<Vertice*>(Node::Pop());
 }

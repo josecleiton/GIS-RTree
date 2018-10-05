@@ -4,6 +4,7 @@
 #include "spatialdata.hpp"
 #include "disk.hpp"
 #include "variaveis.hpp"
+#include "pointinsert.hpp"
 
 InsertWindow::InsertWindow(QWidget *parent) :
     QDialog(parent),
@@ -19,12 +20,13 @@ InsertWindow::~InsertWindow()
 
 void InsertWindow::on_submit_clicked()
 {
-    unsigned int num_vertices = ui->numVert->text().toUInt();
+    unsigned int num_vertices = ui->numVert->text().toUInt(); // NUM DE VERTICES DETERMINADO PELA GUI
     string forma = ui->tipoForma->text().toStdString();
-    unsigned char tipo;
+    unsigned char tipo; // TIPO DA FORMA (POLIGONO, POLIGONAL ETC)
     Vertice* pontos = nullptr;
-    for(auto letra: forma)
-        letra = static_cast<char>(toupper(letra));
+
+    for(auto letra = forma.begin(); letra != forma.end(); letra++) // DEIXAR AS LETRAS MAIUSCULAS PARA A COMPARAÇÃO
+        *letra = static_cast<char>(toupper(*letra));
 
     if(forma == "POLIGONO")
         tipo = DiskAPI::POLIGONO;
@@ -39,22 +41,27 @@ void InsertWindow::on_submit_clicked()
     else
         tipo = DiskAPI::INDEFINIDO;
 
-    // PEGAR OS VERTICES POR UM MÉTODO
+    // PEGAR OS VERTICES POR UM MÉTODO USANDO GUI
     // CRIAR A LISTA DE VERTICES
+    // RESOLUÇÃO ABAIXO:
+    PointInsert VerticeWindow;
+    VerticeWindow.setModal(true);
+    for(unsigned i=0; i<num_vertices; i++){ // FOR PARA PEGAR TODOS OS PONTOS INSERIDOS PELO USUÁRIO VIA GUI
+        VerticeWindow.exec();
+        if(pontos == nullptr){
+            Ponto temp = VerticeWindow.GetPonto();
+            pontos = new Vertice(temp);
+        }
+        Vertice* temp = VerticeWindow.GetVertice();
+        pontos->Push(temp);
+        VerticeWindow.close();
+    }
 
-    DiskAPI::Disk io(FILENAME, true);
+    DiskAPI::Disk io(FILENAME, true); // UMA API VAGABUNDA PARA AJUDAR NOS ACESSOS AO DISCO
     streamoff posicao_forma = io.GetTell(); // posicao da proxima forma no disco.
     io.SalvarForma(tipo, num_vertices, pontos);
-    Retangulo MBR = pontos->Envelope();
-    root.Push(MBR, posicao_forma);
-
-    //string id = ui->ID->text().toStdString();
-    //fstream saida(INSERT_FORM, ios::out);
-    /*if(saida.is_open()){
-        for(auto it: resultado)
-            saida << it << endl;
-        saida.close();
-    }*/
+    Retangulo MBR = pontos->Envelope(); //MBR QUE ENVELOPA A FORMA
+    root.Push(MBR, posicao_forma); // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
 
     close(); // termina a janela
 }

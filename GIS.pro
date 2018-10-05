@@ -29,7 +29,8 @@ SOURCES += \
     disk.cpp \
     rtree.cpp \
     spatialdata.cpp \
-    insertwindow.cpp
+    insertwindow.cpp \
+    pointinsert.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -38,11 +39,13 @@ HEADERS += \
     rtree.hpp \
     spatialdata.hpp \
     insertwindow.hpp \
-    variaveis.hpp
+    variaveis.hpp \
+    pointinsert.hpp
 
 FORMS += \
         mainwindow.ui \
-    insertwindow.ui
+    insertwindow.ui \
+    pointinsert.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -53,5 +56,4 @@ DISTFILES += \
     README.md \
     LICENSE \
     .gitignore \
-    formas.bin \
-    form
+    formas.bin
