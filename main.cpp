@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     DiskAPI::Registro* R = io.Read(k);
     Poligono* P = reinterpret_cast<Poligono*>(R->Conversao());
     cout << "Tamanho do poligono em disco: " << P->GetSize() << endl;
+
     cout << "Sa porra roda! " << endl;
 
     return a.exec();

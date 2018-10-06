@@ -42,7 +42,7 @@ streampos Disk::SalvarForma(unsigned char& _tipo, unsigned& numeroVertices, Vert
         file.write(reinterpret_cast<char*>(&active), sizeof(bool));
         file.write(reinterpret_cast<char*>(&_tipo), sizeof(unsigned char));
         file.write(reinterpret_cast<char*>(&numeroVertices), sizeof(unsigned));
-        for(unsigned i=0; i<numeroVertices; i++, _vertices->Horario()){
+        for(unsigned i=0; i<numeroVertices; i++, _vertices = _vertices->Horario()){
             file.write(reinterpret_cast<char*>(&(_vertices->x)), sizeof(double));
             file.write(reinterpret_cast<char*>(&(_vertices->y)), sizeof(double));
         }

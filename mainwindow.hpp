@@ -17,6 +17,8 @@ public:
 
 private slots:
     void on_inserir_clicked();
+    void on_buscar_clicked();
+    void on_cancel_clicked();
 
 private:
     Ui::MainWindow *ui;

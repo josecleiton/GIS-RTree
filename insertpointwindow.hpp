@@ -24,6 +24,7 @@ public:
 
 private:
     Ui::InsertPoint *ui;
+    void Clear();
     friend class InsertWindow;
 };
 

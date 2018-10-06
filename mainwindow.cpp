@@ -20,3 +20,11 @@ void MainWindow::on_inserir_clicked()
     insertwindow.setModal(true);
     insertwindow.exec();
 }
+
+void MainWindow::on_buscar_clicked(){
+    cout << "IEIE" << endl;
+}
+
+void MainWindow::on_cancel_clicked(){
+    close();
+}
