@@ -30,7 +30,7 @@ SOURCES += \
     rtree.cpp \
     spatialdata.cpp \
     insertwindow.cpp \
-    pointinsert.cpp
+    insertpointwindow.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -40,12 +40,12 @@ HEADERS += \
     spatialdata.hpp \
     insertwindow.hpp \
     variaveis.hpp \
-    pointinsert.hpp
+    insertpointwindow.hpp
 
 FORMS += \
         mainwindow.ui \
     insertwindow.ui \
-    pointinsert.ui
+    insertpoint.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

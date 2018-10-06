@@ -1,9 +1,9 @@
-#include "pointinsert.hpp"
-#include "ui_pointinsert.h"
+#include "insertpointwindow.hpp"
+#include "ui_insertpoint.h"
 
-PointInsert::PointInsert(QWidget *parent) :
+InsertPoint::InsertPoint(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PointInsert)
+    ui(new Ui::InsertPoint)
 {
     ui->setupUi(this);
     QRegExp regx(REAL_NUMBER_REGEX);
@@ -12,16 +12,16 @@ PointInsert::PointInsert(QWidget *parent) :
     ui->campoY->setValidator(validator);
 }
 
-PointInsert::~PointInsert()
+InsertPoint::~InsertPoint()
 {
     delete ui;
 }
 
-SpatialData::Ponto PointInsert::GetPonto(){
+SpatialData::Ponto InsertPoint::GetPonto(){
     return SpatialData::Ponto(ui->campoX->text().toDouble(), ui->campoY->text().toDouble());
 }
 
-SpatialData::Vertice* PointInsert::GetVertice(){
+SpatialData::Vertice* InsertPoint::GetVertice(){
     SpatialData::Ponto p = GetPonto();
     SpatialData::Vertice* v = new SpatialData::Vertice(p);
     return v;

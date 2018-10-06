@@ -4,7 +4,7 @@
 #include "spatialdata.hpp"
 #include "disk.hpp"
 #include "variaveis.hpp"
-#include "pointinsert.hpp"
+#include "insertpointwindow.hpp"
 
 InsertWindow::InsertWindow(QWidget *parent) :
     QDialog(parent),
@@ -50,7 +50,7 @@ void InsertWindow::on_submit_clicked(){
     // PEGAR OS VERTICES POR UM MÉTODO USANDO GUI
     // CRIAR A LISTA DE VERTICES
     // RESOLUÇÃO ABAIXO:
-    PointInsert VerticeWindow;
+    InsertPoint VerticeWindow;
     VerticeWindow.setModal(true);
     for(unsigned i=0; i<num_vertices; i++){ // FOR PARA PEGAR TODOS OS PONTOS INSERIDOS PELO USUÁRIO VIA GUI
         VerticeWindow.exec();

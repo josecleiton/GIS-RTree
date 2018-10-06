@@ -9,21 +9,21 @@
 #define REAL_NUMBER_REGEX "^(-|\\+)?(([1-9][0-9]*)|(0))(?:\\.[0-9]+)?$"
 
 namespace Ui {
-class PointInsert;
+class InsertPoint;
 }
 
-class PointInsert : public QDialog
+class InsertPoint: public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit PointInsert(QWidget *parent = nullptr);
-    ~PointInsert();
+    explicit InsertPoint(QWidget *parent = nullptr);
+    ~InsertPoint();
     SpatialData::Ponto GetPonto();
     SpatialData::Vertice* GetVertice();
 
 private:
-    Ui::PointInsert *ui;
+    Ui::InsertPoint *ui;
     friend class InsertWindow;
 };
 
