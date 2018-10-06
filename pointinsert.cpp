@@ -6,6 +6,10 @@ PointInsert::PointInsert(QWidget *parent) :
     ui(new Ui::PointInsert)
 {
     ui->setupUi(this);
+    QRegExp regx(REAL_NUMBER_REGEX);
+    QRegExpValidator *validator = new QRegExpValidator(regx, this);
+    ui->campoX->setValidator(validator);
+    ui->campoY->setValidator(validator);
 }
 
 PointInsert::~PointInsert()

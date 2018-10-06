@@ -2,12 +2,17 @@
 #define INSERTWINDOW_HPP
 
 #include <QDialog>
+#include <QRegExpValidator>
 #include <iostream>
 #include <fstream>
 #include <vector>
 using namespace std;
 
 #define INSERT_FORM "../GIS/form" //ARQUIVO TEMPORÁRIO QUE 'SEGURA' A INFORMAÇÃO DA JANELA INSERT
+#define INTEGER_REGEX "([0-9])\\w+"
+#define WORD_REGEX "([A-Z]|[a-z])\\w+"
+#define NAME_REGEX "^([a-zA-Z]{2,}\\s[a-zA-z]{1,}'?-?[a-zA-Z]{2,}\\s?([a-zA-Z]{1,})?)"
+
 
 namespace Ui {
 class InsertWindow;

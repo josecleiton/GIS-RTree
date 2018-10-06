@@ -10,6 +10,15 @@ InsertWindow::InsertWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::InsertWindow){
     ui->setupUi(this);
+    QRegExp inteiro(INTEGER_REGEX);
+    QRegExp palavra(WORD_REGEX);
+    QRegExp nome(NAME_REGEX);
+    QRegExpValidator *ValidaInt = new QRegExpValidator(inteiro, this);
+    QRegExpValidator *ValidaPalavra = new QRegExpValidator(palavra, this);
+    QRegExpValidator *ValidaNome = new QRegExpValidator(nome, this);
+    ui->numVert->setValidator(ValidaInt);
+    ui->tipoForma->setValidator(ValidaPalavra);
+    ui->ID->setValidator(ValidaNome);
 }
 
 InsertWindow::~InsertWindow(){

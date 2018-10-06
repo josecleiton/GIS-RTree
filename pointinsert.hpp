@@ -2,8 +2,11 @@
 #define POINTINSERT_HPP
 
 #include <QDialog>
+#include <QRegExpValidator>
 #include "insertwindow.hpp"
 #include "spatialdata.hpp"
+
+#define REAL_NUMBER_REGEX "^(-|\\+)?(([1-9][0-9]*)|(0))(?:\\.[0-9]+)?$"
 
 namespace Ui {
 class PointInsert;
