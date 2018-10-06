@@ -1,6 +1,6 @@
 #include "rtree.hpp"
 #include "insertwindow.hpp"
-using namespace SpatialIndex;
+namespace SpatialIndex{
 
 Chave::Chave(Retangulo& _mbr, streampos& _dado): MBR(_mbr), Dado(_dado){
 }
@@ -22,3 +22,4 @@ void RTree::Push(Retangulo&, streampos&){
 bool RTree::isEmpty(){
     return !count;
 }
+} // NAMESPACE SPATIALINDEX

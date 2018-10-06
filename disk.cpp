@@ -48,8 +48,10 @@ streampos Disk::SalvarForma(unsigned char& _tipo, unsigned& numeroVertices, Vert
         }
         return pos;
     }
-    cout << "Forma geométrica não pode ser salva no disco." << endl;
-    return false;
+    else{
+        cerr << "Forma geométrica não pode ser salva no disco." << endl;
+        exit(-1);
+    }
 }
 
 Registro* Disk::Read(streampos& pos){
@@ -84,6 +86,26 @@ Registro* Disk::Read(streampos& pos){
 }
 
 Registro::Registro(unsigned char type, Vertice* v): tipo(type), lista(v){
+}
+
+void* Registro::Conversao(){ // SE A CONVERSÃO FOR PARA PONTO OU ARESTA, PRECISO DO delete
+    if(tipo == POLIGONO or tipo == POLIGONO_NAO_CONVEXO){
+        Poligono* P = new Poligono(lista);
+        return P;
+    }
+    else if(tipo == LINHA){
+        Ponto a, b;
+        a = lista->GetPonto();
+        b = lista->Horario()->GetPonto();
+        Aresta* A = new Aresta(a, b);
+        return A;
+    }
+    else if(tipo == PONTO){
+        Ponto* P = new Ponto(lista->GetPonto());
+        return P;
+    }
+    cerr << "Retornando a própria lista de vértices, tipo não suportado para conversão" << endl;
+    return lista;
 }
 
 } // DISK API NAMESPACE

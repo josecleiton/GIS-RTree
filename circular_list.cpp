@@ -40,4 +40,4 @@ void Node::Splice(Node* b){
     an->m_prev = b;
     bn->m_prev = a;
 }
-}
+} // NAMESPACE CIRCULAR LIST

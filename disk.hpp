@@ -17,6 +17,7 @@ struct Registro{
     unsigned char tipo;
     Vertice* lista{};
     Registro(unsigned char type = INDEFINIDO, Vertice* v = nullptr);
+    void* Conversao();
 };
 
 class Disk{
