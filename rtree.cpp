@@ -16,7 +16,7 @@ Node::Node(int nivel, int count): m_Nivel(nivel), m_Count(count){
 RTree::RTree(): raiz(nullptr), count(0){
 }
 
-void RTree::Push(Retangulo&, streampos&){
+void RTree::Push(Retangulo&, const streampos&){
 }
 
 bool RTree::isEmpty(){

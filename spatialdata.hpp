@@ -42,6 +42,7 @@ public:
     double GetX() const{ return x; }
     double GetY() const{ return y; }
     double operator[](int);
+    friend ostream& operator<<(ostream&, const Ponto&);
 };
 
 class Vertice: public CircularList::Node, public Ponto{

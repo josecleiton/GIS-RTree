@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
-    cout << root.isEmpty() << endl;
 
     // TESTE DA API
     DiskAPI::Disk io(FILENAME);
@@ -22,8 +21,11 @@ int main(int argc, char *argv[])
     DiskAPI::Registro* R = io.Read(k);
     Poligono* P = reinterpret_cast<Poligono*>(R->Conversao());
     cout << "Tamanho do poligono em disco: " << P->GetSize() << endl;
+    cout << "Vértices do poligono: " << endl;
+    for(unsigned i=0; i<P->GetSize(); i++, P->Avancar(HORARIO))
+        cout << P->GetPonto() << endl;
 
-    cout << "Sa porra roda! " << endl;
+    cout << endl << "Sa porra roda! " << endl;
 
     return a.exec();
 }

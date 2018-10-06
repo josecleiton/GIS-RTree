@@ -23,7 +23,7 @@ struct Chave{
     Retangulo MBR;
     union{
         Node* ChildPointer{};
-        streampos Dado; // Guarda o indice da forma em disco
+        const streampos Dado; // Guarda o indice da forma em disco
     };
     Chave(Retangulo&, streampos&);
     Chave(Retangulo&, Node*);
@@ -43,7 +43,7 @@ private:
 
 public:
    RTree();
-   void Push(Retangulo&, streampos&);
+   void Push(Retangulo&, const streampos&);
    bool isEmpty();
 };
 

@@ -103,6 +103,11 @@ double Ponto::Distancia(Ponto& p1){
     return sqrt(pow(x-p1.x, 2)+pow(y-p1.y, 2));
 }
 
+ostream& operator<<(ostream& out, const Ponto& P){
+    out << "(" << P.GetX() << ", " << P.GetY() << ")";
+    return out;
+}
+
 // IMPLEMENTAÇÕES DA CLASSE VERTICE ABAIXO
 
 Vertice::Vertice(double x, double y): Ponto(x,y){
