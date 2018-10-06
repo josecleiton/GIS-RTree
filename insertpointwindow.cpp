@@ -1,5 +1,5 @@
 #include "insertpointwindow.hpp"
-#include "ui_insertpoint.h"
+#include "ui_insertpointwindow.h"
 
 InsertPoint::InsertPoint(QWidget *parent) :
     QDialog(parent),

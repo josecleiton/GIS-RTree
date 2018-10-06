@@ -45,7 +45,7 @@ HEADERS += \
 FORMS += \
         mainwindow.ui \
     insertwindow.ui \
-    insertpoint.ui
+    insertpointwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
