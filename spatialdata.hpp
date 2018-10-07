@@ -115,6 +115,8 @@ private:
 public:
     Retangulo(Ponto&, Ponto&, int _id = -1);
     Retangulo();
+    bool InterRetang(Ponto A , Ponto B ,Ponto C,Ponto D); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
+
 };
 
 double ProdutodePontos(Ponto&, Ponto&);

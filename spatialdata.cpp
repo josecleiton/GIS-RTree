@@ -359,6 +359,28 @@ double Aresta::Inclinacao(){
 Retangulo::Retangulo(Ponto& origem, Ponto& destino, int _id): diagonal(origem, destino), ID(_id){
 }
 
+bool Retangulo::InterRetang(Ponto A , Ponto B ,Ponto C,Ponto D){
+
+    Ponto Pmax, Pmin,Pmin2,Pmax2;
+
+        Pmin.x= min(A.x,B.x);
+        Pmin.y= min(A.y,B.y);
+        Pmax.x= max(A.x,B.x);
+        Pmax.y= max(A.y,B.y);
+        Pmin2.x= min(C.x,D.x);
+        Pmin2.y= min(C.y,D.y);
+        Pmax2.x= max(C.x,D.x);
+        Pmax2.y= max(C.y,D.y);
+
+
+    if((Pmax.x >= Pmin2.x) && (Pmax2.x >= Pmin.x) && (Pmax.y >= Pmin2.y) && (Pmax2.y >= Pmin.y))
+        return true;
+
+        return false;
+
+}
+
+
 double ProdutodePontos(Ponto& p0, Ponto& p1){
     return p0.x*p1.x + p0.y+p1.y;
 }
