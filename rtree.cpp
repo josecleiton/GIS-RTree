@@ -9,6 +9,10 @@ Chave::Chave(Retangulo& _mbr, Node* ptr): MBR(_mbr), ChildPointer(ptr){
 
 }
 
+bool Chave::Contem(Ponto& P){
+
+}
+
 Node::Node(int nivel, int count): m_Nivel(nivel), m_Count(count){
 
 }
@@ -19,7 +23,33 @@ RTree::RTree(): raiz(nullptr), count(0){
 void RTree::Push(Retangulo&, const streampos&){
 }
 
-bool RTree::isEmpty(){
+bool RTree::IsEmpty(){
     return !count;
 }
+
+Node* RTree::GetPtr(){
+    return raiz;
+}
+
+list<Node*> RTree::Traversal(Node* raiz, Ponto& P){
+    list<Node*> resultado;
+    if(raiz->Folha())
+        resultado.push_back(raiz);
+    else{
+        for(auto it: raiz->mchaves){
+            if(it.Contem(P)){
+
+            }
+        }
+    }
+}
+
+list<streampos&> RTree::Busca(Ponto& P){
+
+}
+
+bool Node::Folha(){
+    return !m_Nivel;
+}
+
 } // NAMESPACE SPATIALINDEX

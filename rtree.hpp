@@ -2,6 +2,7 @@
 #define RTREE_HPP
 #include <iostream>
 #include <vector>
+#include <list>
 #include "spatialdata.hpp"
 using namespace std;
 using namespace SpatialData;
@@ -27,6 +28,7 @@ struct Chave{
     };
     Chave(Retangulo&, streampos&);
     Chave(Retangulo&, Node*);
+    bool Contem(Ponto&);
 };
 
 struct Node{
@@ -34,6 +36,7 @@ struct Node{
     int m_Count;
     vector<Chave> mchaves;
     Node(int nivel=0, int count=0);
+    bool Folha();
 };
 
 class RTree{
@@ -44,7 +47,10 @@ private:
 public:
    RTree();
    void Push(Retangulo&, const streampos&);
-   bool isEmpty();
+   bool IsEmpty();
+   Node* GetPtr();
+   list<Node*> Traversal(Node*, Ponto&);
+   list<streampos&> Busca(Ponto&);
 };
 
 }

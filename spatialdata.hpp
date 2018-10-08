@@ -141,6 +141,7 @@ double ProdutodePontos(Ponto&, Ponto&);
 Vertice* MenorVertice(Poligono&, int (*cmp)(Ponto*, Ponto*));
 int EsquerdaDireita(Ponto*, Ponto*);
 int DireitaEsquerda(Ponto*, Ponto*);
+bool PontoNoPoligonoConvexo(Ponto&, Poligono&);
 // PARA TRIANGULAR O(N^2)
 list<Poligono*> Triangulacao(Poligono&);
 void FindVerticeConvexo(Poligono&);
