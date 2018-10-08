@@ -119,6 +119,27 @@ public:
 
 };
 
+class Circulo{
+    public:
+        Ponto centro;
+        double raio;
+
+        Circulo();
+        Circulo(double,Ponto);
+        ~Circulo(); //DESTRUTOR
+        double Diametro();
+        double Comprimento();
+        double Area();
+        int CirculoPoint(Ponto& ); //INTERSEÇÃO PONTO ESTA OU NÃO NO CIRCULO
+        int InterCirculo( Circulo&, Circulo& );// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
+        Ponto PontinterCirculo( Circulo& , Circulo& ); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
+        Ponto CirculoIntRetas( Circulo& ,  Ponto& , Ponto& ); // INTERSEÇÃO CIRCULO E RETAS;
+
+};
+
+
+
+
 double ProdutodePontos(Ponto&, Ponto&);
 Vertice* MenorVertice(Poligono&, int (*cmp)(Ponto*, Ponto*));
 int EsquerdaDireita(Ponto*, Ponto*);
