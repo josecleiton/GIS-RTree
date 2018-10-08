@@ -359,7 +359,7 @@ double Aresta::Inclinacao(){
 Retangulo::Retangulo(Ponto& origem, Ponto& destino, int _id): diagonal(origem, destino), ID(_id){
 }
 
-bool Retangulo::InterRetang(Ponto A , Ponto B ,Ponto C,Ponto D){
+bool Retangulo::InterRetang(Ponto& A , Ponto& B ,Ponto& C,Ponto& D){
 
     Ponto Pmax, Pmin,Pmin2,Pmax2;
 
