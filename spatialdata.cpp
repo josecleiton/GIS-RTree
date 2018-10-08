@@ -15,6 +15,11 @@ Ponto operator-(const Ponto& This, const Ponto& Other){
 Ponto operator*(double K, const Ponto& Other){
     return Ponto(K*Other.GetX(), K*Other.GetY());
 }
+
+double operator*(const Ponto& P, const Ponto& K){
+    return P.x*K.x+P.y*K.y;
+}
+
 bool operator==(Ponto& This, Ponto& Other){
     double DX = fabs(This.GetX()-Other.GetX());
     double DY = fabs(This.GetY()-Other.GetY());
@@ -318,7 +323,7 @@ int Aresta::Interseccao(Aresta& E, double& t){
     Ponto d = E.destino;
     Ponto n = Ponto((d-c).y, (c-d).x);
     Ponto k = b-a;
-    double denom = ProdutodePontos(n, k);
+    double denom = n*k;
     if(denom == 0.0){
         int aclass = origem.Classificacao(E);
         if(aclass == ESQUERDA or aclass == DIREITA)
@@ -327,7 +332,7 @@ int Aresta::Interseccao(Aresta& E, double& t){
             return COLINEAR;
     }
     k = a-c;
-    double num = ProdutodePontos(n, k);
+    double num = n*k;
     t = -num/denom;
     return CONSECUTIVO;
 }
@@ -376,7 +381,7 @@ bool Retangulo::InterRetang(Ponto& A , Ponto& B ,Ponto& C,Ponto& D){
     if((Pmax.x >= Pmin2.x) && (Pmax2.x >= Pmin.x) && (Pmax.y >= Pmin2.y) && (Pmax2.y >= Pmin.y))
         return true;
 
-        return false;
+    return false;
 
 }
 
@@ -411,95 +416,79 @@ int Circulo::CirculoPoint(Ponto &P){
         return -1; // PONTO FORA
     else return 0; // PONTO NA CIRCUNFER?NCIA
 
-        }
+}
 
 int Circulo::InterCirculo( Circulo& c1, Circulo& c2)// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
 {
-            double dist= sqrt ( pow ((c2.centro.x - c1.centro.x), 2.0 ) + pow((c2.centro.y - c1.centro.y ), 2.0 ));
-            double soma=c1.raio+c2.raio;
-            double subt= c1.raio-c2.raio;
+    double dist= sqrt ( pow ((c2.centro.x - c1.centro.x), 2.0 ) + pow((c2.centro.y - c1.centro.y ), 2.0 ));
+    double soma=c1.raio+c2.raio;
+    double subt= c1.raio-c2.raio;
 
-            if(dist>soma|| dist<fabs(subt))
-                return -1; // círculos não se interceptam
-            if(dist ==0.0 && c1.raio==c2.raio)
-                return 0; // circulos idênticos
+    if(dist>soma|| dist<fabs(subt))
+        return -1; // círculos não se interceptam
+    if(dist==0.0 && c1.raio==c2.raio)
+        return 0; // circulos idênticos
 
-            return 1; //exite interseção
+    return 1; //exite interseção
 }
 
-Ponto Circulo::PontinterCirculo( Circulo& c1, Circulo& c2){ //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
+Vertice* Circulo::PontinterCirculo(Circulo& c1, Circulo& c2){ //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
+    double dist= sqrt ( pow ((c2.centro.x - c1.centro.x), 2.0 ) + pow((c2.centro.y - c1.centro.y ), 2.0 ));
+    double A , H;
+    Ponto P,P1 ,P2;
 
-                double dist= sqrt ( pow ((c2.centro.x - c1.centro.x), 2.0 ) + pow((c2.centro.y - c1.centro.y ), 2.0 ));
+    A= (pow(c1.raio,2.0)-pow(c2.raio,2.0)+pow(dist,2.0))/dist*2.0;
+    H= sqrt(pow(c1.raio,2.0)) - pow(A,2.0);
 
-                double A , H;
-                Ponto P,P1 ,P2;
+    P.x=c1.centro.x + A*(c2.centro.x-c1.centro.x)/dist;
+    P.y=c1.centro.y +A*(c2.centro.y-c1.centro.y)/dist;
 
-                A= (pow(c1.raio,2.0)-pow(c2.raio,2.0)+pow(dist,2.0))/dist*2.0;
-                H= sqrt(pow(c1.raio,2.0)) - pow(A,2.0);
-
-                P.x=c1.centro.x + A*(c2.centro.x-c1.centro.x)/dist;
-                P.y=c1.centro.y +A*(c2.centro.y-c1.centro.y)/dist;
-
-                P1.x= P.x + H*(c2.centro.y-c1.centro.y)/dist;
-                P1.y= P.y - H*(c2.centro.x-c1.centro.x)/dist;
-                double soma=c1.raio+c2.raio;
-
-            if(dist==soma) //intercepta em um ponto
-                            return  P1;
-            else{ //intercepta em um dois
-                P2.x= P.x - H*(c2.centro.y-c1.centro.y)/dist;
-                P2.y= P.y + H*(c2.centro.x-c1.centro.x)/dist;
-                // retornar P1 E P2
-            }
-
+    P1.x= P.x + H*(c2.centro.y-c1.centro.y)/dist;
+    P1.y= P.y - H*(c2.centro.x-c1.centro.x)/dist;
+    double soma=c1.raio+c2.raio;
+    Vertice* resultado = new Vertice(P1);
+    if(dist!=soma){ //intercepta em um dois
+        P2.x= P.x - H*(c2.centro.y-c1.centro.y)/dist;
+        P2.y= P.y + H*(c2.centro.x-c1.centro.x)/dist;
+        resultado->Push(P2);
+    }
+    return resultado;
 }
 
+Vertice* Circulo::CirculoIntRetas(Circulo& T, Ponto& p1, Ponto& p2){
+    Vertice* resultado;
+    double A ,B, C, Delta;
+    double u1,u2;
+    Ponto R1,R2;
 
+    A= pow((p2.x-p1.x),2.0) + pow((p2.y-p1.y),2.0);
+    B= -2.0*(p1.x*p1.x+p1.y*p1.y-p1.x*p2.x-p1.y*p2.y+T.centro.x*(p2.x-p1.x)+T.centro.y*(p2.y-p1.y));
+    C= pow((T.centro.x-p1.x),2.0)+ pow((T.centro.y-p1.y),2.0)- pow(T.raio,2.0);
 
-      Ponto Circulo::CirculoIntRetas(Circulo & T, Ponto& p1, Ponto& p2){
-            double A ,B, C, Delta;
-            double u1,u2;
-            Ponto R1,R2;
+    Delta = B*B- 4.0* A * C;
 
-            A= pow((p2.x-p1.x),2.0) + pow((p2.y-p1.y),2.0);
-            B= -2.0*(p1.x*p1.x+p1.y*p1.y-p1.x*p2.x-p1.y*p2.y+T.centro.x*(p2.x-p1.x)+T.centro.y*(p2.y-p1.y));
-            C= pow((T.centro.x-p1.x),2.0)+ pow((T.centro.y-p1.y),2.0)- pow(T.raio,2.0);
+    u1 = (-B + sqrt(Delta))/(2.0*A);
+    R1.x= p1.x+ u1*(p2.x-p1.x);
+    R1.y=p1.y+ u1*(p2.y-p1.y);
 
-
-
-
-                Delta = B*B- 4.0* A * C;
-
-                u1 = (-B + sqrt(Delta))/(2.0*A);
-                R1.x= p1.x+ u1*(p2.x-p1.x);
-                R1.y=p1.y+ u1*(p2.y-p1.y);
-
-
-                if(Delta==0.0) {// um ponto de interseção
-                    u1=-B /(2.0*A);
-                    R1.x= p1.x + (p2.x-p1.x)*u1;
-                    R1.y=p1.y + (p2.y-p1.y)*u1;
-                    return R1;
-                }
-                if(Delta>0) // dois pontos de interseção
-                {        u1 = (-B - sqrt(Delta))/(2.0*A);
-                         u2 = (-B + sqrt(Delta))/(2*A);
-                         R1.x= p1.x + (p2.x-p1.x)*u1;
-                         R1.y= p1.y + (p2.y-p1.y)*u1;
-                         R2.x= p1.x+ (p2.x-p1.x)*u2;
-                         R2.y= p1.y+ (p2.y-p1.y)*u2;
-                        // Retornar R1 e R2
-                }
-
-        }
-
-
-
-
-
-
-double ProdutodePontos(Ponto& p0, Ponto& p1){
-    return p0.x*p1.x + p0.y+p1.y;
+    if(Delta==0.0) {// um ponto de interseção
+        u1=-B /(2.0*A);
+        R1.x= p1.x + (p2.x-p1.x)*u1;
+        R1.y=p1.y + (p2.y-p1.y)*u1;
+        resultado = new Vertice(R1);
+    }
+    else if(Delta>0) // dois pontos de interseção
+    {        u1 = (-B - sqrt(Delta))/(2.0*A);
+             u2 = (-B + sqrt(Delta))/(2*A);
+             R1.x= p1.x + (p2.x-p1.x)*u1;
+             R1.y= p1.y + (p2.y-p1.y)*u1;
+             R2.x= p1.x+ (p2.x-p1.x)*u2;
+             R2.y= p1.y+ (p2.y-p1.y)*u2;
+             resultado = new Vertice(R1);
+             resultado->Push(R2);
+            // Retornar R1 e R2
+    }
+    return resultado;
 }
 
 bool PontoNoPoligonoConvexo(Ponto &s, Poligono &p){

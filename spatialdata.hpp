@@ -11,7 +11,7 @@
 #include <cfloat>
 #include <cmath>
 #include <algorithm>
-#include "circular_list.hpp"
+#include "circularlist.hpp"
 using namespace std;
 namespace SpatialData{
 
@@ -132,13 +132,10 @@ class Circulo{
         double Area();
         int CirculoPoint(Ponto& ); //INTERSEÇÃO PONTO ESTA OU NÃO NO CIRCULO
         int InterCirculo( Circulo&, Circulo& );// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
-        Ponto PontinterCirculo( Circulo& , Circulo& ); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
-        Ponto CirculoIntRetas( Circulo& ,  Ponto& , Ponto& ); // INTERSEÇÃO CIRCULO E RETAS;
+        Vertice* PontinterCirculo( Circulo& , Circulo& ); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
+        Vertice* CirculoIntRetas( Circulo& ,  Ponto& , Ponto& ); // INTERSEÇÃO CIRCULO E RETAS;
 
 };
-
-
-
 
 double ProdutodePontos(Ponto&, Ponto&);
 Vertice* MenorVertice(Poligono&, int (*cmp)(Ponto*, Ponto*));

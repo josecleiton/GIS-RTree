@@ -25,22 +25,22 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    circular_list.cpp \
     disk.cpp \
     rtree.cpp \
     spatialdata.cpp \
     insertwindow.cpp \
-    insertpointwindow.cpp
+    insertpointwindow.cpp \
+    circularlist.cpp
 
 HEADERS += \
     mainwindow.hpp \
-    circular_list.hpp \
     disk.hpp \
     rtree.hpp \
     spatialdata.hpp \
     insertwindow.hpp \
     variaveis.hpp \
-    insertpointwindow.hpp
+    insertpointwindow.hpp \
+    circularlist.hpp
 
 FORMS += \
         mainwindow.ui \
