@@ -72,3 +72,8 @@ void InsertWindow::on_submit_clicked(){
 
     close(); // termina a janela
 }
+
+void InsertWindow::on_cancel_clicked()
+{
+    close();
+}

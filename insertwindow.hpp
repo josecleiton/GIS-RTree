@@ -27,8 +27,9 @@ public:
     ~InsertWindow();
 
 private slots:
-
     void on_submit_clicked();
+
+    void on_cancel_clicked();
 
 private:
     Ui::InsertWindow *ui;
