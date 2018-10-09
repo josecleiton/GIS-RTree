@@ -32,7 +32,7 @@ streampos& RTree::GetPos(){
     return posRaiz;
 }
 
-Node* ReadPage(streampos& no){
+Node* RTree::ReadPage(streampos& no){
     ifstream file(RTREE_FILE, ios::binary);
     if(file.is_open()){
         bool active;
@@ -93,6 +93,10 @@ list<streampos&> RTree::Busca(Ponto& P){
 
 bool Node::Folha(){
     return !m_Nivel;
+}
+
+bool Node::Overflow(){
+    return (m_Count > MAXCHAVES)?true:false;
 }
 
 } // NAMESPACE SPATIALINDEX

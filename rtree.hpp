@@ -15,8 +15,8 @@ namespace SpatialIndex{
 
 enum{
     ORDEM = 4,
-    MINNODES = ORDEM/2,
-    MAXNODES = ORDEM,
+    MINCHAVES = ORDEM/2,
+    MAXCHAVES = ORDEM,
 };
 
 struct Node;
@@ -38,12 +38,13 @@ struct Node{
     vector<Chave> Chaves;
     Node(unsigned nivel, unsigned count, vector<Chave>&);
     bool Folha();
+    bool Overflow();
 };
 
 class RTree{
 private:
     Node* raiz{};
-    streampos posRaiz;
+    streampos posRaiz{};
     size_t count;
 
 public:
@@ -55,6 +56,7 @@ public:
    list<Node*> Traversal(streampos&, Ponto&); // PERCORRE A ARVORE
    list<streampos&> Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
    Node* ReadPage(streampos&);
+
 };
 
 }
