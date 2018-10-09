@@ -386,7 +386,7 @@ bool Retangulo::InterRetang(Ponto& A , Ponto& B ,Ponto& C,Ponto& D){
 }
 
 bool Retangulo::Contem(Ponto& P){
-
+    return((P.x<=max(this->diagonal.origem.x,this->diagonal.destino.x))&& (P.x >=min(this->diagonal.origem.x,this->diagonal.destino.x))&&(P.y<=max(this->diagonal.origem.y,this->diagonal.destino.y))&& (P.y >=min(this->diagonal.origem.y,this->diagonal.destino.y)));
 }
 
 Circulo::Circulo(){

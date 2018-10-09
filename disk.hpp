@@ -22,7 +22,7 @@ struct Registro{
 
 class Disk{
 private:
-    fstream file{};
+    fstream file;
 public:
     Disk(string, bool);
     Disk(string);

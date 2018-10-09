@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include "spatialdata.hpp"
+#define RTREE_FILE "../GIS/rtree.bin"
 using namespace std;
 using namespace SpatialData;
 namespace SpatialIndex{
@@ -19,29 +20,30 @@ enum{
 };
 
 struct Node;
-
+#pragma pack(push, 1)
 struct Chave{
     Retangulo MBR;
     union{
-        Node* ChildPointer{};
-        const streampos Dado; // Guarda o indice da forma em disco
+        streampos ChildPtr; // Ponteiro para o proximo nó em disco
+        streampos Dado; // Guarda o indice da forma em disco
     };
-    Chave(Retangulo&, streampos&);
-    Chave(Retangulo&, Node*);
+    Chave(Retangulo&, streampos&, bool);
     bool Contem(Ponto&);
 };
+#pragma pack(pop)
 
 struct Node{
-    int m_Nivel;
-    int m_Count;
+    unsigned m_Nivel;
+    unsigned m_Count;
     vector<Chave> Chaves;
-    Node(int nivel=0, int count=0);
+    Node(unsigned nivel, unsigned count, vector<Chave>&);
     bool Folha();
 };
 
 class RTree{
 private:
-    Node* raiz;
+    Node* raiz{};
+    streampos posRaiz;
     size_t count;
 
 public:
@@ -49,8 +51,10 @@ public:
    void Push(Retangulo&, const streampos&);
    bool IsEmpty();
    Node* GetPtr();
-   list<Node*> Traversal(Node*, Ponto&);
-   list<streampos&> Busca(Ponto&);
+   streampos& GetPos();
+   list<Node*> Traversal(streampos&, Ponto&); // PERCORRE A ARVORE
+   list<streampos&> Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
+   Node* ReadPage(streampos&);
 };
 
 }

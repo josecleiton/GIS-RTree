@@ -106,6 +106,7 @@ public:
     double Inclinacao(); // RETORNA A INCLINAÇÃO DA RETA
     double y(double); // DADO UM X, RETORNA O Y (VISTO QUE A RETA É SEMPRE INFINITA)
     friend class Ponto;
+    friend class Retangulo;
 };
 
 class Retangulo{
@@ -117,6 +118,7 @@ public:
     Retangulo();
     bool InterRetang(Ponto&, Ponto&, Ponto&, Ponto&); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
     bool Contem(Ponto&);
+    const Aresta& GetDiagonal();
 };
 
 class Circulo{

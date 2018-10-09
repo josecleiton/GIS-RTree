@@ -24,7 +24,9 @@ int main(int argc, char *argv[])
     cout << "Vértices do poligono: " << endl;
     for(unsigned i=0; i<P->GetSize(); i++, P->Avancar(HORARIO))
         cout << P->GetPonto() << endl;
-
+    Ponto x(2,0), j(10,5), l(3,4);
+    Retangulo test(x, j);
+    cout << test.Contem(l) << endl;
     cout << endl << "Sa porra roda! " << endl;
 
     return a.exec();
