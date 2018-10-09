@@ -28,7 +28,6 @@ struct Chave{
         streampos Dado; // Guarda o indice da forma em disco
     };
     Chave(Retangulo&, streampos&, bool);
-    bool Contem(Ponto&);
 };
 #pragma pack(pop)
 
@@ -49,13 +48,14 @@ private:
 
 public:
    RTree();
-   void Push(Retangulo&, const streampos&);
+   void Inserir(Retangulo&, const streampos&);
    bool IsEmpty();
    Node* GetPtr();
    streampos& GetPos();
-   list<Node*> Traversal(streampos&, Ponto&); // PERCORRE A ARVORE
-   list<streampos&> Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
+   list<Node*>* Traversal(streampos&, Ponto&); // PERCORRE A ARVORE
+   list<streampos>* Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
    Node* ReadPage(streampos&);
+   Node* EscolhaSubArvore(Node*, Retangulo&);
 
 };
 

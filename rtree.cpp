@@ -17,9 +17,6 @@ Node::Node(unsigned nivel, unsigned count, vector<Chave>& itens):
 RTree::RTree(): count(0){
 }
 
-void RTree::Push(Retangulo&, const streampos&){
-}
-
 bool RTree::IsEmpty(){
     return !count;
 }
@@ -62,35 +59,54 @@ Node* RTree::ReadPage(streampos& no){
     return nullptr;
 }
 
-list<Node*> RTree::Traversal(streampos& raizPos, Ponto& P){
-    list<Node*> resultado;
+list<Node*>* RTree::Traversal(streampos& raizPos, Ponto& P){
+    list<Node*>* resultado = new list<Node*>;
     Node* no = ReadPage(raizPos);
     if(no->Folha())
-        resultado.push_back(no);
+        resultado->push_back(no);
     else{
         for(auto chave: no->Chaves){
             if(chave.MBR.Contem(P)){
-                resultado.splice(resultado.end(), Traversal(chave.ChildPtr, P));
+                resultado->splice(resultado->end(), *(Traversal(chave.ChildPtr, P)));
             }
         }
     }
     return resultado;
 }
 
-list<streampos&> RTree::Busca(Ponto& P){
-    list<streampos&> resultado;
-    list<Node*> SL = Traversal(root.GetPos(), P);
-    for(auto node: SL){
-        if(node->Folha()){
-            for(auto chave: node->Chaves){
-                if(chave.Contem(P))
-                    resultado.push_back(chave.Dado);
+list<streampos>* RTree::Busca(Ponto& P){
+    list<streampos>* resultado = new list<streampos>;
+    list<Node*>* SL = Traversal(root.GetPos(), P);
+    for(auto no: *SL){
+        if(no->Folha()){
+            for(auto chave: no->Chaves){
+                if(chave.MBR.Contem(P))
+                    resultado->push_back(chave.Dado);
             }
         }
     }
     return resultado;
 }
+void RTree::Inserir(Retangulo& FigureToInsert, const streampos& pos){
+}
 
+/*
+void RTree::Inserir(Retangulo& FigureToInsert, const streampos& pos){
+    Node* no = root.GetPtr();
+    while(!no->Folha())
+        no = EscolhaSubArvore(no, FigureToInsert);
+    if(InsertInLeaf(no, FigureToInsert, pos))
+        DividirEAjustar(no);
+    else
+        AjustaCaminho(no);
+}
+
+Node* RTree::EscolhaSubArvore(Node* no, Retangulo& FigureToInsert){
+    for(auto chaves: no->Chaves){
+        //chaves.MBR.Contem(FigureToInsert); IMPLEMENTAR MÉTODO DE INTERSECÇÃO DE RETANGULOS
+    }
+}
+*/
 bool Node::Folha(){
     return !m_Nivel;
 }
