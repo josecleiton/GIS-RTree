@@ -33,9 +33,9 @@ struct Chave{
 
 struct Node{
     unsigned m_Nivel;
-    unsigned m_Count;
     vector<Chave> Chaves;
-    Node(unsigned nivel, unsigned count, vector<Chave>&);
+    Node(unsigned, vector<Chave>&);
+    Node(streampos&);
     bool Folha();
     bool Overflow();
 };
@@ -54,7 +54,6 @@ public:
    streampos& GetPos();
    list<Node*>* Traversal(streampos&, Ponto&); // PERCORRE A ARVORE
    list<streampos>* Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
-   Node* ReadPage(streampos&);
    Node* EscolhaSubArvore(Node*, Retangulo&);
 
 };

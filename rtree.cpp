@@ -10,8 +10,37 @@ Chave::Chave(Retangulo& _mbr, streampos& _dado, bool folha): MBR(_mbr){
         this->ChildPtr = _dado;
 }
 
-Node::Node(unsigned nivel, unsigned count, vector<Chave>& itens):
-    m_Nivel(nivel), m_Count(count), Chaves(itens){
+Node::Node(unsigned nivel, vector<Chave>& itens):
+    m_Nivel(nivel), Chaves(itens){
+}
+
+Node::Node(streampos& no){
+    ifstream file(RTREE_FILE, ios::binary);
+    if(file.is_open()){
+        bool active;
+        file.seekg(no);
+        file.read(reinterpret_cast<char*>(&active), sizeof(bool));
+        if(active){
+            vector<Chave> temp;
+            struct Chave* key = nullptr;
+            unsigned int nivel, count;
+            file.read(reinterpret_cast<char*>(&nivel), sizeof(unsigned));
+            file.read(reinterpret_cast<char*>(&count), sizeof(unsigned));
+            for(unsigned i=0; i<count; i++){
+                file.read(reinterpret_cast<char*>(key), sizeof(struct Chave));
+                temp.push_back(*key);
+            }
+            this->m_Nivel = nivel;
+            this->Chaves = temp;
+            file.close();
+        }
+        else{
+            cerr << "Página inválida! Reorganize antes de fazer outra requisição." << endl;
+            file.close();
+            exit(10);
+        }
+    }
+    cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
 }
 
 RTree::RTree(): count(0){
@@ -29,39 +58,9 @@ streampos& RTree::GetPos(){
     return posRaiz;
 }
 
-Node* RTree::ReadPage(streampos& no){
-    ifstream file(RTREE_FILE, ios::binary);
-    if(file.is_open()){
-        bool active;
-        file.seekg(no);
-        file.read(reinterpret_cast<char*>(&active), sizeof(bool));
-        if(active){
-            vector<Chave> temp;
-            struct Chave* key = nullptr;
-            unsigned int nivel, count;
-            file.read(reinterpret_cast<char*>(&nivel), sizeof(unsigned));
-            file.read(reinterpret_cast<char*>(&count), sizeof(unsigned));
-            for(unsigned i=0; i<count; i++){
-                file.read(reinterpret_cast<char*>(key), sizeof(struct Chave));
-                temp.push_back(*key);
-            }
-            Node* resultado = new Node(nivel, count, temp);
-            file.close();
-            return resultado;
-        }
-        else{
-            cerr << "Página inválida! Reorganize antes de fazer outra requisição." << endl;
-            file.close();
-            exit(10);
-        }
-    }
-    cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
-    return nullptr;
-}
-
 list<Node*>* RTree::Traversal(streampos& raizPos, Ponto& P){
     list<Node*>* resultado = new list<Node*>;
-    Node* no = ReadPage(raizPos);
+    Node* no = new Node(raizPos);
     if(no->Folha())
         resultado->push_back(no);
     else{
@@ -70,6 +69,7 @@ list<Node*>* RTree::Traversal(streampos& raizPos, Ponto& P){
                 resultado->splice(resultado->end(), *(Traversal(chave.ChildPtr, P)));
             }
         }
+        delete no;
     }
     return resultado;
 }
@@ -88,6 +88,7 @@ list<streampos>* RTree::Busca(Ponto& P){
     return resultado;
 }
 void RTree::Inserir(Retangulo& FigureToInsert, const streampos& pos){
+
 }
 
 /*
@@ -102,9 +103,17 @@ void RTree::Inserir(Retangulo& FigureToInsert, const streampos& pos){
 }
 
 Node* RTree::EscolhaSubArvore(Node* no, Retangulo& FigureToInsert){
+    list<pair<Node*, double>> contem;
     for(auto chaves: no->Chaves){
         //chaves.MBR.Contem(FigureToInsert); IMPLEMENTAR MÉTODO DE INTERSECÇÃO DE RETANGULOS
+        if(chaves.MBR.Contem(FigureToInsert)){
+            Node* ptrNo = new Node(chaves.ChildPtr);
+            double area = chaves.MBR.GetArea();
+            pair<Node*, double> candidato = make_pair(ptrNo, area);
+            contem.push_back(candidato);
+        }
     }
+
 }
 */
 bool Node::Folha(){
@@ -112,7 +121,7 @@ bool Node::Folha(){
 }
 
 bool Node::Overflow(){
-    return (m_Count > MAXCHAVES)?true:false;
+    return (Chaves.size() > MAXCHAVES)?true:false;
 }
 
 } // NAMESPACE SPATIALINDEX

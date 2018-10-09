@@ -389,6 +389,17 @@ bool Retangulo::Contem(Ponto& P){
     return((P.x<=max(this->diagonal.origem.x,this->diagonal.destino.x))&& (P.x >=min(this->diagonal.origem.x,this->diagonal.destino.x))&&(P.y<=max(this->diagonal.origem.y,this->diagonal.destino.y))&& (P.y >=min(this->diagonal.origem.y,this->diagonal.destino.y)));
 }
 
+double Retangulo::GetArea(){
+    Ponto A = diagonal.destino;
+    Ponto B = diagonal.origem;
+    Ponto C(B.GetX(), B.GetY()-A.GetY());
+    Vertice* v = new Vertice(A);
+    v->Push(B);
+    v->Push(C);
+    Poligono P(v);
+    return Area(P);
+}
+
 Circulo::Circulo(){
     raio= 0.0;
     centro.x=0.0;

@@ -68,7 +68,7 @@ void InsertWindow::on_submit_clicked(){
     DiskAPI::Disk io(FILENAME, !root.IsEmpty()); // UMA API VAGABUNDA PARA AJUDAR NOS ACESSOS AO DISCO
     streampos posicao_forma = io.SalvarForma(tipo, num_vertices, pontos); // posicao da forma
     Retangulo MBR = pontos->Envelope(); //MBR QUE ENVELOPA A FORMA
-    root.Inserir(MBR, posicao_forma); // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
+    root.Inserir(MBR, posicao_forma);  // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
 
     close(); // termina a janela
 }

@@ -118,6 +118,7 @@ public:
     Retangulo();
     bool InterRetang(Ponto&, Ponto&, Ponto&, Ponto&); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
     bool Contem(Ponto&);
+    double GetArea();
     const Aresta& GetDiagonal();
 };
 
