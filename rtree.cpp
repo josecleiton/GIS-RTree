@@ -9,10 +9,6 @@ Chave::Chave(Retangulo& _mbr, Node* ptr): MBR(_mbr), ChildPointer(ptr){
 
 }
 
-bool Chave::Contem(Ponto& P){
-
-}
-
 Node::Node(int nivel, int count): m_Nivel(nivel), m_Count(count){
 
 }
@@ -36,8 +32,8 @@ list<Node*> RTree::Traversal(Node* raiz, Ponto& P){
     if(raiz->Folha())
         resultado.push_back(raiz);
     else{
-        for(auto it: raiz->mchaves){
-            if(it.Contem(P)){
+        for(auto it: raiz->Chaves){
+            if(it.MBR.Contem(P)){
 
             }
         }

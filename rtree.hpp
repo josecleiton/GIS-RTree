@@ -34,7 +34,7 @@ struct Chave{
 struct Node{
     int m_Nivel;
     int m_Count;
-    vector<Chave> mchaves;
+    vector<Chave> Chaves;
     Node(int nivel=0, int count=0);
     bool Folha();
 };

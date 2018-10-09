@@ -385,6 +385,10 @@ bool Retangulo::InterRetang(Ponto& A , Ponto& B ,Ponto& C,Ponto& D){
 
 }
 
+bool Retangulo::Contem(Ponto& P){
+
+}
+
 Circulo::Circulo(){
     raio= 0.0;
     centro.x=0.0;
@@ -456,7 +460,7 @@ Vertice* Circulo::PontinterCirculo(Circulo& c1, Circulo& c2){ //   PONTOS QUE IN
 }
 
 Vertice* Circulo::CirculoIntRetas(Circulo& T, Ponto& p1, Ponto& p2){
-    Vertice* resultado;
+    Vertice* resultado = nullptr;
     double A ,B, C, Delta;
     double u1,u2;
     Ponto R1,R2;

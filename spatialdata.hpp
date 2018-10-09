@@ -116,7 +116,7 @@ public:
     Retangulo(Ponto&, Ponto&, int _id = -1);
     Retangulo();
     bool InterRetang(Ponto&, Ponto&, Ponto&, Ponto&); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
-
+    bool Contem(Ponto&);
 };
 
 class Circulo{
