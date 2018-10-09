@@ -430,7 +430,8 @@ int Circulo::InterCirculo( Circulo& c1, Circulo& c2)// VERIFICA SE EXISTE INTERS
 
     if(dist>soma|| dist<fabs(subt))
         return -1; // círculos não se interceptam
-    if(dist==0.0 && c1.raio==c2.raio)
+    double diff = c1.raio-c2.raio;
+    if(dist==0.0 && diff==0.0)
         return 0; // circulos idênticos
 
     return 1; //exite interseção
@@ -451,7 +452,8 @@ Vertice* Circulo::PontinterCirculo(Circulo& c1, Circulo& c2){ //   PONTOS QUE IN
     P1.y= P.y - H*(c2.centro.x-c1.centro.x)/dist;
     double soma=c1.raio+c2.raio;
     Vertice* resultado = new Vertice(P1);
-    if(dist!=soma){ //intercepta em um dois
+    double diff = dist-soma;
+    if(diff==0.0){ //intercepta em um dois
         P2.x= P.x - H*(c2.centro.y-c1.centro.y)/dist;
         P2.y= P.y + H*(c2.centro.x-c1.centro.x)/dist;
         resultado->Push(P2);
