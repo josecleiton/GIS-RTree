@@ -76,6 +76,7 @@ streampos Node::SalvarNo(){
             else
                 file.write(reinterpret_cast<char*>(key), sizeof(struct Chave));
         }
+        cout << sizeof(struct Chave) << endl;
         delete key;
         file.close();
     }

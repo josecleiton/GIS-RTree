@@ -14,7 +14,7 @@ namespace SpatialIndex{
  */
 
 enum{
-    ORDEM = 4,
+    ORDEM = 8,
     MINCHAVES = ORDEM/2,
     MAXCHAVES = ORDEM
 };
