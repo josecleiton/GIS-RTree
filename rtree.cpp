@@ -89,21 +89,21 @@ list<streampos>* RTree::Busca(Ponto& P){
 //}
 
 
-void RTree::Inserir(Retangulo& FigureToInsert, const streampos& pos){
+void RTree::Inserir(Retangulo& MbrForma, const streampos& pos){
     Node* no = root.GetPtr();
     while(!no->Folha())
-        no = EscolhaSubArvore(no, FigureToInsert);
-    if(InserirNaFolha(no, FigureToInsert, pos))
+        no = EscolhaSubArvore(no, MbrForma);
+    if(InserirNaFolha(no, MbrForma, pos))
         DividirEAjustar(no);
     else
         AjustaCaminho(no);
 }
 
-Node* RTree::EscolhaSubArvore(Node* no, Retangulo& FigureToInsert){
+Node* RTree::EscolhaSubArvore(Node* no, Retangulo& MbrForma){
     vector<pair<Node*, double>> contem;
     for(auto chaves: no->Chaves){
-        chaves.MBR.Contem(FigureToInsert);
-        if(chaves.MBR.Contem(FigureToInsert)){
+        chaves.MBR.Contem(MbrForma);
+        if(chaves.MBR.Contem(MbrForma)){
             Node* ptrNo = new Node(chaves.ChildPtr);
             double area = chaves.MBR.GetArea();
             pair<Node*, double> candidato = make_pair(ptrNo, area);
@@ -112,15 +112,13 @@ Node* RTree::EscolhaSubArvore(Node* no, Retangulo& FigureToInsert){
     }
 
     if(contem.size()){
-        if(contem.size()>1)
-            sort(contem.begin(), contem.end(), comparacao);
         Node* resultado = contem.front().first;
         contem.front().first = nullptr;
-        for(auto candidatos: contem){
-            if(candidatos.first != nullptr){
-                delete candidatos.first;
-                candidatos.first = nullptr;
-            }
+        if(contem.size()>1){
+            sort(contem.begin(), contem.end(), comparacao);
+            for(auto candidatos: contem)
+                if(candidatos.first != nullptr)
+                    delete candidatos.first;
         }
         return resultado;
     }
@@ -142,7 +140,7 @@ bool RTree::InserirNaFolha(Node* caminho, Retangulo& EntryMBR, streampos& EntryP
 }
 
 bool Node::Folha(){
-    return !m_Nivel;
+    return !Nivel;
 }
 
 bool Node::Overflow(){
