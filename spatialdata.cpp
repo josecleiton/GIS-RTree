@@ -389,6 +389,10 @@ bool Retangulo::Contem(Ponto& P){
     return((P.x<=max(this->diagonal.origem.x,this->diagonal.destino.x))&& (P.x >=min(this->diagonal.origem.x,this->diagonal.destino.x))&&(P.y<=max(this->diagonal.origem.y,this->diagonal.destino.y))&& (P.y >=min(this->diagonal.origem.y,this->diagonal.destino.y)));
 }
 
+bool Retangulo::Contem(Retangulo& R){
+
+}
+
 double Retangulo::GetArea(){
     Ponto A = diagonal.destino;
     Ponto B = diagonal.origem;

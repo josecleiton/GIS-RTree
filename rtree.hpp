@@ -16,8 +16,10 @@ namespace SpatialIndex{
 enum{
     ORDEM = 4,
     MINCHAVES = ORDEM/2,
-    MAXCHAVES = ORDEM,
+    MAXCHAVES = ORDEM
 };
+
+enum ChaveID{FOLHA, INTERNO};
 
 struct Node;
 #pragma pack(push, 1)
@@ -27,12 +29,13 @@ struct Chave{
         streampos ChildPtr; // Ponteiro para o proximo nó em disco
         streampos Dado; // Guarda o indice da forma em disco
     };
-    Chave(Retangulo&, streampos&, bool);
+    Chave(Retangulo&, streampos&, int);
 };
 #pragma pack(pop)
 
 struct Node{
-    unsigned m_Nivel;
+    streampos DiskPos;
+    unsigned Nivel;
     vector<Chave> Chaves;
     Node(unsigned, vector<Chave>&);
     Node(streampos&);
@@ -43,7 +46,6 @@ struct Node{
 class RTree{
 private:
     Node* raiz{};
-    streampos posRaiz{};
     size_t count;
 
 public:
@@ -51,12 +53,15 @@ public:
    void Inserir(Retangulo&, const streampos&);
    bool IsEmpty();
    Node* GetPtr();
-   streampos& GetPos();
    list<Node*>* Traversal(streampos&, Ponto&); // PERCORRE A ARVORE
    list<streampos>* Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
    Node* EscolhaSubArvore(Node*, Retangulo&);
-
+   bool InserirNaFolha(Node*, Retangulo&, streampos&);
 };
+
+bool comparacao(const pair<Node*, double>& primeiro, const pair<Node*, double>& segundo){
+    return primeiro.second < segundo.second;
+}
 
 }
 #endif // RTREE_HPP

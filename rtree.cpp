@@ -3,8 +3,8 @@
 #include "variaveis.hpp"
 namespace SpatialIndex{
 
-Chave::Chave(Retangulo& _mbr, streampos& _dado, bool folha): MBR(_mbr){
-    if(folha)
+Chave::Chave(Retangulo& _mbr, streampos& _dado, int id): MBR(_mbr){
+    if(id == FOLHA)
         this->Dado = _dado;
     else
         this->ChildPtr = _dado;
@@ -32,6 +32,7 @@ Node::Node(streampos& no){
             }
             this->m_Nivel = nivel;
             this->Chaves = temp;
+            this->DiskPos = no;
             file.close();
         }
         else{
@@ -52,10 +53,6 @@ bool RTree::IsEmpty(){
 
 Node* RTree::GetPtr(){
     return raiz;
-}
-
-streampos& RTree::GetPos(){
-    return posRaiz;
 }
 
 list<Node*>* RTree::Traversal(streampos& raizPos, Ponto& P){
@@ -87,25 +84,25 @@ list<streampos>* RTree::Busca(Ponto& P){
     }
     return resultado;
 }
-void RTree::Inserir(Retangulo& FigureToInsert, const streampos& pos){
+//void RTree::Inserir(Retangulo& FigureToInsert, const streampos& pos){
 
-}
+//}
 
-/*
+
 void RTree::Inserir(Retangulo& FigureToInsert, const streampos& pos){
     Node* no = root.GetPtr();
     while(!no->Folha())
         no = EscolhaSubArvore(no, FigureToInsert);
-    if(InsertInLeaf(no, FigureToInsert, pos))
+    if(InserirNaFolha(no, FigureToInsert, pos))
         DividirEAjustar(no);
     else
         AjustaCaminho(no);
 }
 
 Node* RTree::EscolhaSubArvore(Node* no, Retangulo& FigureToInsert){
-    list<pair<Node*, double>> contem;
+    vector<pair<Node*, double>> contem;
     for(auto chaves: no->Chaves){
-        //chaves.MBR.Contem(FigureToInsert); IMPLEMENTAR MÉTODO DE INTERSECÇÃO DE RETANGULOS
+        chaves.MBR.Contem(FigureToInsert);
         if(chaves.MBR.Contem(FigureToInsert)){
             Node* ptrNo = new Node(chaves.ChildPtr);
             double area = chaves.MBR.GetArea();
@@ -114,8 +111,36 @@ Node* RTree::EscolhaSubArvore(Node* no, Retangulo& FigureToInsert){
         }
     }
 
+    if(contem.size()){
+        if(contem.size()>1)
+            sort(contem.begin(), contem.end(), comparacao);
+        Node* resultado = contem.front().first;
+        contem.front().first = nullptr;
+        for(auto candidatos: contem){
+            if(candidatos.first != nullptr){
+                delete candidatos.first;
+                candidatos.first = nullptr;
+            }
+        }
+        return resultado;
+    }
+    else{ // SE NENHUM NO PODER CONTER AF ORMA, ESCOLHA O QUE PRECISA CRESCER MENOS
+
+    }
+
 }
-*/
+
+
+bool RTree::InserirNaFolha(Node* caminho, Retangulo& EntryMBR, streampos& EntryPOS){
+
+    if(caminho->Chaves.size()+1 > MAXCHAVES)
+        return true;
+    Chave inserir(EntryMBR, EntryPOS, FOLHA);
+    caminho->Chaves.push_back(inserir);
+
+    return false;
+}
+
 bool Node::Folha(){
     return !m_Nivel;
 }
