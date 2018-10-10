@@ -361,7 +361,14 @@ double Aresta::Inclinacao(){
     return DBL_MAX;
 }
 
+Retangulo::Retangulo(){
+    Ponto A, B;
+    Aresta R(A, B);
+    diagonal = R;
+}
+
 Retangulo::Retangulo(Ponto& origem, Ponto& destino, int _id): diagonal(origem, destino), ID(_id){
+    CalcularArea();
 }
 
 bool Retangulo::InterRetang(Ponto& A , Ponto& B ,Ponto& C,Ponto& D){
@@ -393,7 +400,7 @@ bool Retangulo::Contem(Retangulo& R){
 
 }
 
-double Retangulo::GetArea(){
+double Retangulo::CalcularArea(){
     Ponto A = diagonal.destino;
     Ponto B = diagonal.origem;
     Ponto C(B.GetX(), B.GetY()-A.GetY());
@@ -401,7 +408,12 @@ double Retangulo::GetArea(){
     v->Push(B);
     v->Push(C);
     Poligono P(v);
-    return Area(P);
+    area = Area(P);
+    return area;
+}
+
+double Retangulo::GetArea(){
+    return area;
 }
 
 Circulo::Circulo(){

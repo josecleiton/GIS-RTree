@@ -30,6 +30,7 @@ struct Chave{
         streampos Dado; // Guarda o indice da forma em disco
     };
     Chave(Retangulo&, streampos&, int);
+    Chave();
 };
 #pragma pack(pop)
 
@@ -39,6 +40,8 @@ struct Node{
     vector<Chave> Chaves;
     Node(unsigned, vector<Chave>&);
     Node(streampos&);
+    Node(Retangulo& R, streampos& PosR);
+    streampos SalvarNo();
     bool Folha();
     bool Overflow();
 };
@@ -50,18 +53,21 @@ private:
 
 public:
    RTree();
-   void Inserir(Retangulo&, const streampos&);
+   ~RTree();
+   void Inserir(Retangulo&, streampos&);
    bool IsEmpty();
    Node* GetPtr();
+   void CriaArvore(Retangulo&, streampos&);
    list<Node*>* Traversal(streampos&, Ponto&); // PERCORRE A ARVORE
    list<streampos>* Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
    Node* EscolhaSubArvore(Node*, Retangulo&);
    bool InserirNaFolha(Node*, Retangulo&, streampos&);
+   void AjustaCaminho(Node*);
+   void DividirEAjustar(Node*);
+   bool ArquivoVazio();
 };
 
-bool comparacao(const pair<Node*, double>& primeiro, const pair<Node*, double>& segundo){
-    return primeiro.second < segundo.second;
-}
+bool comparacao(const pair<Node*, double>&, const pair<Node*, double>&);
 
 }
 #endif // RTREE_HPP

@@ -9,9 +9,22 @@ Chave::Chave(Retangulo& _mbr, streampos& _dado, int id): MBR(_mbr){
     else
         this->ChildPtr = _dado;
 }
+/*
+Chave::Chave(){
+    Ponto A, B;
+    Retangulo vazio(A, B);
+    this->MBR = vazio;
+}
+*/
+Node::Node(Retangulo& R, streampos& PosR){
+    Chave k(R, PosR, FOLHA);
+    Chaves.push_back(k);
+    Nivel = FOLHA;
+
+}
 
 Node::Node(unsigned nivel, vector<Chave>& itens):
-    m_Nivel(nivel), Chaves(itens){
+    Nivel(nivel), Chaves(itens){
 }
 
 Node::Node(streampos& no){
@@ -30,7 +43,7 @@ Node::Node(streampos& no){
                 file.read(reinterpret_cast<char*>(key), sizeof(struct Chave));
                 temp.push_back(*key);
             }
-            this->m_Nivel = nivel;
+            this->Nivel = nivel;
             this->Chaves = temp;
             this->DiskPos = no;
             file.close();
@@ -44,7 +57,70 @@ Node::Node(streampos& no){
     cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
 }
 
-RTree::RTree(): count(0){
+streampos Node::SalvarNo(){
+    ofstream file;
+    file.open(RTREE_FILE, ios::binary|ios::app);
+    if(file.is_open()){
+        unsigned count = static_cast<unsigned>(this->Chaves.size());
+        Retangulo V;
+        streampos x = 0;
+        bool active = true;
+        Chave* key = new Chave(V, x, FOLHA);
+        file.seekp(this->DiskPos);
+        file.write(reinterpret_cast<char*>(&active), sizeof(bool));
+        file.write(reinterpret_cast<char*>(&(this->Nivel)), sizeof(unsigned));
+        file.write(reinterpret_cast<char*>(&count), sizeof(unsigned));
+        for(unsigned i=0; i<MAXCHAVES; i++){
+            if(i<count)
+                file.write(reinterpret_cast<char*>(&(this->Chaves[i])), sizeof(struct Chave));
+            else
+                file.write(reinterpret_cast<char*>(key), sizeof(struct Chave));
+        }
+        delete key;
+        file.close();
+    }
+    else
+        cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
+    return this->DiskPos;
+}
+
+RTree::RTree(){
+    if(!ArquivoVazio()){
+        ifstream file;
+        file.open(RTREE_FILE, ios::binary);
+        if(file.is_open()){
+            streampos PosicaoDaRaiz;
+            unsigned count;
+            file.read(reinterpret_cast<char*>(&PosicaoDaRaiz), sizeof(streampos));
+            file.read(reinterpret_cast<char*>(&count), sizeof(unsigned));
+            this->count = count;
+            this->raiz = new Node(PosicaoDaRaiz);
+            file.close();
+        }
+    }
+    else
+        this->raiz = nullptr;
+}
+
+RTree::~RTree(){
+    ofstream file(RTREE_FILE, ios::binary|ios::app);
+    if(file.is_open()){
+        file.seekp(0, ios::beg);
+        file.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
+        file.write(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
+        file.close();
+        delete this->raiz;
+    }
+}
+
+bool RTree::ArquivoVazio(){
+    ifstream file;
+    file.open(RTREE_FILE, ios::binary);
+    streampos inicio, fim;
+    inicio = file.tellg();
+    file.seekg(0, ios::end);
+    fim = file.tellg();
+    return inicio == fim;
 }
 
 bool RTree::IsEmpty(){
@@ -73,7 +149,7 @@ list<Node*>* RTree::Traversal(streampos& raizPos, Ponto& P){
 
 list<streampos>* RTree::Busca(Ponto& P){
     list<streampos>* resultado = new list<streampos>;
-    list<Node*>* SL = Traversal(root.GetPos(), P);
+    list<Node*>* SL = Traversal(root.GetPtr()->DiskPos, P);
     for(auto no: *SL){
         if(no->Folha()){
             for(auto chave: no->Chaves){
@@ -82,15 +158,38 @@ list<streampos>* RTree::Busca(Ponto& P){
             }
         }
     }
+    delete SL;
     return resultado;
 }
-//void RTree::Inserir(Retangulo& FigureToInsert, const streampos& pos){
 
-//}
+void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
+    ofstream file;
+    file.open(RTREE_FILE, ios::binary);
+    if(file.is_open()){
+        Node* raiz = new Node(MbrForma, pos);
+        streampos posicao = 1;
+        unsigned count = 1;
+        file.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
+        file.write(reinterpret_cast<char*>(&count), sizeof(unsigned));
+        posicao = file.tellp();
+        raiz->DiskPos = posicao;
+        file.seekp(0, ios::beg);
+        file.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
+        this->raiz = raiz;
+        raiz->SalvarNo();
+    }
+    else{
+        cerr << "Arquivo não foi aberto, finalizando o programa." << endl;
+        exit(-40);
+    }
+}
 
-
-void RTree::Inserir(Retangulo& MbrForma, const streampos& pos){
+void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
     Node* no = root.GetPtr();
+    if(no == nullptr){
+        CriaArvore(MbrForma, pos);
+        return;
+    }
     while(!no->Folha())
         no = EscolhaSubArvore(no, MbrForma);
     if(InserirNaFolha(no, MbrForma, pos))
@@ -99,10 +198,21 @@ void RTree::Inserir(Retangulo& MbrForma, const streampos& pos){
         AjustaCaminho(no);
 }
 
+void RTree::DividirEAjustar(Node* no){
+
+}
+
+void RTree::AjustaCaminho(Node* no){
+
+}
+
+bool comparacao(const pair<Node*, double>& primeiro, const pair<Node*, double>& segundo){
+    return primeiro.second < segundo.second;
+}
+
 Node* RTree::EscolhaSubArvore(Node* no, Retangulo& MbrForma){
     vector<pair<Node*, double>> contem;
     for(auto chaves: no->Chaves){
-        chaves.MBR.Contem(MbrForma);
         if(chaves.MBR.Contem(MbrForma)){
             Node* ptrNo = new Node(chaves.ChildPtr);
             double area = chaves.MBR.GetArea();
@@ -135,7 +245,7 @@ bool RTree::InserirNaFolha(Node* caminho, Retangulo& EntryMBR, streampos& EntryP
         return true;
     Chave inserir(EntryMBR, EntryPOS, FOLHA);
     caminho->Chaves.push_back(inserir);
-
+    caminho->SalvarNo();
     return false;
 }
 

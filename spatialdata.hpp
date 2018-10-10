@@ -113,12 +113,14 @@ class Retangulo{
 private:
     Aresta diagonal;
     int ID;
+    double area{};
 public:
     Retangulo(Ponto&, Ponto&, int _id = -1);
     Retangulo();
     bool InterRetang(Ponto&, Ponto&, Ponto&, Ponto&); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
     bool Contem(Ponto&);
-    bool contem(Retangulo&);
+    bool Contem(Retangulo&);
+    double CalcularArea();
     double GetArea();
     const Aresta& GetDiagonal();
 };
