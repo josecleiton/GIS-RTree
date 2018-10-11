@@ -9,13 +9,13 @@ Chave::Chave(Retangulo& _mbr, streampos& _dado, int id): MBR(_mbr){
     else
         this->ChildPtr = _dado;
 }
-/*
+
 Chave::Chave(){
     Ponto A, B;
     Retangulo vazio(A, B);
     this->MBR = vazio;
 }
-*/
+
 Node::Node(Retangulo& R, streampos& PosR){
     Chave k(R, PosR, FOLHA);
     Chaves.push_back(k);
@@ -28,14 +28,14 @@ Node::Node(unsigned nivel, vector<Chave>& itens):
 }
 
 Node::Node(streampos& no){
-    ifstream file(RTREE_FILE, ios::binary);
+    fstream file(RTREE_FILE, fstream::binary|fstream::in);
     if(file.is_open()){
         bool active;
         file.seekg(no);
         file.read(reinterpret_cast<char*>(&active), sizeof(bool));
         if(active){
             vector<Chave> temp;
-            struct Chave* key = nullptr;
+            struct Chave* key = new Chave;
             unsigned int nivel, count;
             file.read(reinterpret_cast<char*>(&nivel), sizeof(unsigned));
             file.read(reinterpret_cast<char*>(&count), sizeof(unsigned));
@@ -58,8 +58,7 @@ Node::Node(streampos& no){
 }
 
 streampos Node::SalvarNo(){
-    ofstream file;
-    file.open(RTREE_FILE, ios::binary|ios::app);
+    fstream file(RTREE_FILE, fstream::binary|fstream::in|fstream::out);
     if(file.is_open()){
         unsigned count = static_cast<unsigned>(this->Chaves.size());
         Retangulo V;
@@ -76,9 +75,8 @@ streampos Node::SalvarNo(){
             else
                 file.write(reinterpret_cast<char*>(key), sizeof(struct Chave));
         }
-        cout << sizeof(struct Chave) << endl;
-        delete key;
         file.close();
+        delete key;
     }
     else
         cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
@@ -87,16 +85,15 @@ streampos Node::SalvarNo(){
 
 RTree::RTree(){
     if(!ArquivoVazio()){
-        ifstream file;
-        file.open(RTREE_FILE, ios::binary);
+        fstream file(RTREE_FILE, fstream::binary|fstream::in);
         if(file.is_open()){
             streampos PosicaoDaRaiz;
             unsigned count;
             file.read(reinterpret_cast<char*>(&PosicaoDaRaiz), sizeof(streampos));
             file.read(reinterpret_cast<char*>(&count), sizeof(unsigned));
             this->count = count;
-            this->raiz = new Node(PosicaoDaRaiz);
             file.close();
+            this->raiz = new Node(PosicaoDaRaiz);
         }
     }
     else
@@ -104,9 +101,9 @@ RTree::RTree(){
 }
 
 RTree::~RTree(){
-    ofstream file(RTREE_FILE, ios::binary|ios::app);
+    fstream file(RTREE_FILE, fstream::binary|fstream::in|fstream::out);
     if(file.is_open()){
-        file.seekp(0, ios::beg);
+        file.seekp(0, fstream::beg);
         file.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
         file.write(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
         file.close();
@@ -115,12 +112,12 @@ RTree::~RTree(){
 }
 
 bool RTree::ArquivoVazio(){
-    ifstream file;
-    file.open(RTREE_FILE, ios::binary);
+    fstream file(RTREE_FILE, fstream::binary|fstream::in);
     streampos inicio, fim;
     inicio = file.tellg();
-    file.seekg(0, ios::end);
+    file.seekg(0, fstream::end);
     fim = file.tellg();
+    file.close();
     return inicio == fim;
 }
 
@@ -164,8 +161,7 @@ list<streampos>* RTree::Busca(Ponto& P){
 }
 
 void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
-    ofstream file;
-    file.open(RTREE_FILE, ios::binary);
+    fstream file(RTREE_FILE, fstream::binary|fstream::out|fstream::in);
     if(file.is_open()){
         Node* raiz = new Node(MbrForma, pos);
         streampos posicao = 1;
@@ -174,7 +170,7 @@ void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
         file.write(reinterpret_cast<char*>(&count), sizeof(unsigned));
         posicao = file.tellp();
         raiz->DiskPos = posicao;
-        file.seekp(0, ios::beg);
+        file.seekp(0, fstream::beg);
         file.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
         this->raiz = raiz;
         raiz->SalvarNo();

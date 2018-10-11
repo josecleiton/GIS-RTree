@@ -3,14 +3,14 @@
 namespace DiskAPI{
 Disk::Disk(string name, bool append){
     if(append)
-        file.open(name, ios::binary|ios::app|ios::in);
+        file.open(name, fstream::binary|fstream::app|fstream::in);
     else
-        file.open(name, ios::binary|ios::out);
+        file.open(name, fstream::binary|fstream::out);
     Verifica();
 }
 
 Disk::Disk(string name){
-    file.open(name, ios::app|ios::binary|ios::in);
+    file.open(name, fstream::app|fstream::binary|fstream::in);
     Verifica();
 }
 
@@ -38,6 +38,7 @@ streampos Disk::SalvarForma(unsigned char& _tipo, unsigned& numeroVertices, Vert
      */
     if(file.is_open()){
         bool active = true; // BYTE UTILIZADO PARA A REMOÇÃO LÓGICA DE UM REGISTRO
+        file.seekp(0, file.end);
         streampos pos = file.tellp();
         file.write(reinterpret_cast<char*>(&active), sizeof(bool));
         file.write(reinterpret_cast<char*>(&_tipo), sizeof(unsigned char));

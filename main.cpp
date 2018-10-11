@@ -15,6 +15,5 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
     cout << endl << "Sa porra roda! " << endl;
-
     return a.exec();
 }
