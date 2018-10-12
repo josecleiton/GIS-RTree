@@ -14,58 +14,40 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>40</y>
-      <width>151</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Bem-vindo ao GIS</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>100</y>
-      <width>361</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QPushButton" name="inserir">
-       <property name="text">
-        <string>Inserir</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buscar">
-       <property name="text">
-        <string>Buscar</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QDialogButtonBox" name="cancel">
-    <property name="geometry">
-     <rect>
-      <x>200</x>
-      <y>240</y>
-      <width>166</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="standardButtons">
-     <set>QDialogButtonBox::Cancel</set>
-    </property>
-   </widget>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Bem-vindo ao GIS</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="inserir">
+        <property name="text">
+         <string>Inserir</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buscar">
+        <property name="text">
+         <string>Buscar</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QDialogButtonBox" name="cancel">
+      <property name="standardButtons">
+       <set>QDialogButtonBox::Cancel</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>

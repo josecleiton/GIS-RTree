@@ -14,6 +14,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
+    SpatialIndex::Node* test = new SpatialIndex::Node(root.GetPtr()->DiskPos);
     cout << endl << "Sa porra roda! " << endl;
+    delete test;
     return a.exec();
 }

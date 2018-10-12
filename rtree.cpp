@@ -20,7 +20,6 @@ Node::Node(Retangulo& R, streampos& PosR){
     Chave k(R, PosR, FOLHA);
     Chaves.push_back(k);
     Nivel = FOLHA;
-
 }
 
 Node::Node(unsigned nivel, vector<Chave>& itens):
@@ -165,7 +164,8 @@ void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
     if(file.is_open()){
         Node* raiz = new Node(MbrForma, pos);
         streampos posicao = 1;
-        unsigned count = 1;
+        unsigned count;
+        this->count = count = 1u;
         file.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
         file.write(reinterpret_cast<char*>(&count), sizeof(unsigned));
         posicao = file.tellp();
