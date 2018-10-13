@@ -53,7 +53,7 @@ Node::Node(streampos& no){
             exit(10);
         }
     }
-    cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
+    else cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
 }
 
 streampos Node::SalvarNo(){

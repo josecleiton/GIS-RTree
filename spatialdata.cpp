@@ -21,19 +21,19 @@ double operator*(const Ponto& P, const Ponto& K){
 }
 
 bool operator==(Ponto& This, Ponto& Other){
-    double DX = fabs(This.GetX()-Other.GetX());
-    double DY = fabs(This.GetY()-Other.GetY());
+    double DX = abs(This.GetX()-Other.GetX());
+    double DY = abs(This.GetY()-Other.GetY());
     return (DX==0.0 and DY==0.0)?true:false;
 }
 bool operator!=(Ponto& This, Ponto& Other){
     return !(This==Other);
 }
 bool operator<(Ponto& This, Ponto& Other){
-    bool comparacao = (fabs(This.GetX()-This.GetY()) == 0.0)?true:false;
+    bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
     return ((This.GetX() < Other.GetX()) or ((comparacao) and (This.GetY() < Other.GetY())));
 }
 bool operator>(Ponto& This, Ponto& Other){
-    bool comparacao = (fabs(This.GetX()-This.GetY()) == 0.0)?true:false;
+    bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
     return ((This.GetX() > Other.GetX()) or ((comparacao) and (This.GetY() > Other.GetY())));
 }
 double Ponto::operator[](int k){
@@ -351,7 +351,7 @@ int Aresta::Cruza(Aresta& E, double& t){
 }
 
 bool Aresta::isVertical(){
-    double t = fabs(origem.x-destino.x);
+    double t = abs(origem.x-destino.x);
     return (t==0.0)?true:false;
 }
 
@@ -401,6 +401,9 @@ bool Retangulo::Contem(Retangulo& R){
 }
 
 double Retangulo::CalcularArea(){
+    this->area =  abs(diagonal.origem.x-diagonal.destino.x) * abs(diagonal.origem.y-diagonal.destino.y);
+    return this->area;
+/*
     Ponto A = diagonal.destino;
     Ponto B = diagonal.origem;
     Ponto C(B.GetX(), B.GetY()-A.GetY());
@@ -410,6 +413,7 @@ double Retangulo::CalcularArea(){
     Poligono P(v);
     area = Area(P);
     return area;
+*/
 }
 
 double Retangulo::GetArea(){
@@ -455,7 +459,7 @@ int Circulo::InterCirculo( Circulo& c1, Circulo& c2)// VERIFICA SE EXISTE INTERS
     double soma=c1.raio+c2.raio;
     double subt= c1.raio-c2.raio;
 
-    if(dist>soma|| dist<fabs(subt))
+    if(dist>soma|| dist<abs(subt))
         return -1; // círculos não se interceptam
     double diff = c1.raio-c2.raio;
     if(dist==0.0 && diff==0.0)
@@ -643,7 +647,7 @@ double Area(Poligono &P){
     for(unsigned i=0, j=tam-1; i<tam; j=i, i++){
         area += (X[j]+X[i])*(Y[j]-Y[i]);
     }
-    return fabs(area/2.0);
+    return abs(area/2.0);
 }
 
 }// NAMESPACE SPATIAL DATA
