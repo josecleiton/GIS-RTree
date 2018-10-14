@@ -50,7 +50,6 @@ Node::Node(streampos& no){
         else{
             cerr << "Página inválida! Reorganize antes de fazer outra requisição." << endl;
             file.close();
-            exit(10);
         }
     }
     else cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
@@ -219,17 +218,18 @@ Node* RTree::EscolhaSubArvore(Node* no, Retangulo& MbrForma){
     }
 
     if(contem.size()){
-        Node* resultado = contem.front().first;
-        contem.front().first = nullptr;
+        Node* resultado = nullptr;
         if(contem.size()>1){
             sort(contem.begin(), contem.end(), comparacao);
+            swap(resultado, contem.front().first);
             for(auto candidatos: contem)
                 if(candidatos.first != nullptr)
                     delete candidatos.first;
         }
+        swap(resultado, contem.front().first);
         return resultado;
     }
-    else{ // SE NENHUM NO PODER CONTER AF ORMA, ESCOLHA O QUE PRECISA CRESCER MENOS
+    else{ // SE NENHUM NO CONTER A FORMA, ESCOLHA O QUE PRECISA CRESCER MENOS (menor crescimento da área
 
     }
 
