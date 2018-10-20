@@ -1,6 +1,7 @@
 #ifndef RTREE_HPP
 #define RTREE_HPP
 #include <iostream>
+#include <stack>
 #include <vector>
 #include <list>
 #include "spatialdata.hpp"
@@ -42,8 +43,15 @@ struct Node{
     Node(streampos&);
     Node(Retangulo& R, streampos& PosR);
     streampos SalvarNo();
+    bool Cresce(Retangulo&, unsigned);
     bool Folha();
     bool Overflow();
+};
+
+struct NodeAux{
+    Node* ptr;
+    unsigned index;
+    NodeAux(Node* p = nullptr, unsigned i = 0): ptr(p), index(i){}
 };
 
 class RTree{
@@ -60,14 +68,14 @@ public:
    void CriaArvore(Retangulo&, streampos&);
    list<Node*>* Traversal(streampos&, Ponto&); // PERCORRE A ARVORE
    list<streampos>* Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
-   Node* EscolhaSubArvore(Node*, Retangulo&);
-   bool InserirNaFolha(Node*, Retangulo&, streampos&);
-   void AjustaCaminho(Node*);
-   void DividirEAjustar(Node*);
+   Node* EscolhaSubArvore(Node*, stack<NodeAux>&, Retangulo&);
+   void InserirNaFolha(Node*, stack<NodeAux>&, Retangulo&, streampos&);
+   void AjustaCaminho(Node*, stack<NodeAux>&, Retangulo&);
+   void DividirEAjustar(Node*, stack<NodeAux>&, Chave&);
    bool ArquivoVazio();
 };
 
-bool comparacao(const pair<Node*, double>&, const pair<Node*, double>&);
+bool comparacaoESA(const pair<NodeAux, double>&, const pair<NodeAux, double>&);
 
 }
 #endif // RTREE_HPP

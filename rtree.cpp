@@ -81,6 +81,12 @@ streampos Node::SalvarNo(){
     return this->DiskPos;
 }
 
+bool Node::Cresce(Retangulo& EntryMBR, unsigned indexChave){
+    bool cresceu = false;
+    this->Chaves[indexChave].MBR.CresceParaConter(EntryMBR, cresceu);
+    return cresceu;
+}
+
 RTree::RTree(){
     if(!ArquivoVazio()){
         fstream file(RTREE_FILE, fstream::binary|fstream::in);
@@ -183,67 +189,91 @@ void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
 void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
     Node* no = root.GetPtr();
     if(no == nullptr){
-        CriaArvore(MbrForma, pos);
-        return;
+        return CriaArvore(MbrForma, pos);
     }
+    stack<NodeAux> CaminhoNo;
     while(!no->Folha())
-        no = EscolhaSubArvore(no, MbrForma);
-    if(InserirNaFolha(no, MbrForma, pos))
-        DividirEAjustar(no);
-    else
-        AjustaCaminho(no);
+        no = EscolhaSubArvore(no, CaminhoNo, MbrForma);
+    delete CaminhoNo.top().ptr;
+    CaminhoNo.pop();
+    InserirNaFolha(no, CaminhoNo, MbrForma, pos);
 }
 
-void RTree::DividirEAjustar(Node* no){
-
-}
-
-void RTree::AjustaCaminho(Node* no){
-
-}
-
-bool comparacao(const pair<Node*, double>& primeiro, const pair<Node*, double>& segundo){
+bool comparacaoESA(const pair<NodeAux, double>& primeiro, const pair<NodeAux, double>& segundo){
     return primeiro.second < segundo.second;
 }
 
-Node* RTree::EscolhaSubArvore(Node* no, Retangulo& MbrForma){
-    vector<pair<Node*, double>> contem;
+Node* RTree::EscolhaSubArvore(Node* no, stack<NodeAux>& caminho, Retangulo& MbrForma){
+    vector<pair<NodeAux, double>> contem;
+    NodeAux temp;
+    bool inseriu = false;
+    unsigned index = 0;
     for(auto chaves: no->Chaves){
         if(chaves.MBR.Contem(MbrForma)){
             Node* ptrNo = new Node(chaves.ChildPtr);
             double area = chaves.MBR.GetArea();
-            pair<Node*, double> candidato = make_pair(ptrNo, area);
+            NodeAux aux(ptrNo, index);
+            pair<NodeAux, double> candidato = make_pair(aux, area);
             contem.push_back(candidato);
+            if(!inseriu){
+                temp.ptr = no;
+                inseriu = true;
+            }
         }
+        index++;
     }
-
     if(contem.size()){
         Node* resultado = nullptr;
         if(contem.size()>1){
-            sort(contem.begin(), contem.end(), comparacao);
-            swap(resultado, contem.front().first);
-            for(auto candidatos: contem)
-                if(candidatos.first != nullptr)
-                    delete candidatos.first;
+            sort(contem.begin(), contem.end(), comparacaoESA);
+            swap(resultado, contem.front().first.ptr);
+            for(auto &candidatos: contem)
+                if(candidatos.first.ptr != nullptr)
+                    delete candidatos.first.ptr;
         }
-        swap(resultado, contem.front().first);
+        else
+            swap(resultado, contem.front().first.ptr);
+        temp.index = contem.front().first.index;
+        caminho.push(temp);
         return resultado;
     }
-    else{ // SE NENHUM NO CONTER A FORMA, ESCOLHA O QUE PRECISA CRESCER MENOS (menor crescimento da área
+    else{ // SE NENHUMA CHAVE CONTER A FORMA, ESCOLHA O QUE PRECISA CRESCER MENOS (menor crescimento da área)
 
     }
 
 }
 
 
-bool RTree::InserirNaFolha(Node* caminho, Retangulo& EntryMBR, streampos& EntryPOS){
-
-    if(caminho->Chaves.size()+1 > MAXCHAVES)
-        return true;
+void RTree::InserirNaFolha(Node* no, stack<NodeAux>& caminho, Retangulo& EntryMBR, streampos& EntryPOS){
+    size_t limite = no->Chaves.size();
     Chave inserir(EntryMBR, EntryPOS, FOLHA);
-    caminho->Chaves.push_back(inserir);
-    caminho->SalvarNo();
-    return false;
+    if(limite+1 > MAXCHAVES)
+        return DividirEAjustar(no, caminho, inserir);
+    if(!limite) // NÓ VAZIO
+        no->Chaves.push_back(inserir);
+    else{
+        auto it = no->Chaves.begin();
+        for(size_t i=0; (i<limite) and (it->MBR < EntryMBR); i++, it++)
+        no->Chaves.insert(it, inserir);
+
+    }
+    no->SalvarNo();
+    AjustaCaminho(no, caminho, inserir.MBR);
+}
+
+void RTree::DividirEAjustar(Node* no, stack<NodeAux>& caminho, Chave& Entry){
+
+}
+
+void RTree::AjustaCaminho(Node* no, stack<NodeAux>& caminho, Retangulo& EntryMBR){
+    if(no == raiz) return;
+    delete no;
+    NodeAux pai = caminho.top();
+    caminho.pop();
+    if(pai.ptr->Cresce(EntryMBR, pai.index)){
+        pai.ptr->SalvarNo();
+        AjustaCaminho(pai.ptr, caminho, EntryMBR);
+    }
 }
 
 bool Node::Folha(){

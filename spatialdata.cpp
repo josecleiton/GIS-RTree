@@ -20,19 +20,19 @@ double operator*(const Ponto& P, const Ponto& K){
     return P.x*K.x+P.y*K.y;
 }
 
-bool operator==(Ponto& This, Ponto& Other){
+bool operator==(const Ponto& This, const Ponto& Other){
     double DX = abs(This.GetX()-Other.GetX());
     double DY = abs(This.GetY()-Other.GetY());
     return (DX==0.0 and DY==0.0)?true:false;
 }
-bool operator!=(Ponto& This, Ponto& Other){
+bool operator!=(const Ponto& This, const Ponto& Other){
     return !(This==Other);
 }
-bool operator<(Ponto& This, Ponto& Other){
+bool operator<(const Ponto& This, const Ponto& Other){
     bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
     return ((This.GetX() < Other.GetX()) or ((comparacao) and (This.GetY() < Other.GetY())));
 }
-bool operator>(Ponto& This, Ponto& Other){
+bool operator>(const Ponto& This, const Ponto& Other){
     bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
     return ((This.GetX() > Other.GetX()) or ((comparacao) and (This.GetY() > Other.GetY())));
 }
@@ -419,6 +419,18 @@ double Retangulo::CalcularArea(){
 
 double Retangulo::GetArea(){
     return area;
+}
+
+double Retangulo::CresceParaConter(Retangulo& R, bool& cresceu){
+    if(this->Contem(R)){
+        cresceu = false;
+        return 0.0;
+    }
+    cresceu = true;
+}
+
+bool operator<(const Retangulo& This, const Retangulo& Other){
+    return (This.diagonal.destino < Other.diagonal.destino) and (This.diagonal.origem < Other.diagonal.origem);
 }
 
 Circulo::Circulo(){

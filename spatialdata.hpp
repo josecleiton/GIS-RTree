@@ -107,6 +107,7 @@ public:
     double y(double); // DADO UM X, RETORNA O Y (VISTO QUE A RETA É SEMPRE INFINITA)
     friend class Ponto;
     friend class Retangulo;
+    friend bool operator<(const Retangulo&, const Retangulo&);
 };
 
 class Retangulo{
@@ -120,9 +121,11 @@ public:
     bool InterRetang(Ponto&, Ponto&, Ponto&, Ponto&); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
     bool Contem(Ponto&);
     bool Contem(Retangulo&);
+    double CresceParaConter(Retangulo&, bool&);
     double CalcularArea();
     double GetArea();
     const Aresta& GetDiagonal();
+    friend bool operator<(const Retangulo&, const Retangulo&);
 };
 
 class Circulo{
