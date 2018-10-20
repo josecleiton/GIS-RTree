@@ -42,10 +42,12 @@ struct Node{
     Node(unsigned, vector<Chave>&);
     Node(streampos&);
     Node(Retangulo& R, streampos& PosR);
+    Node(vector<Node*>&);
     streampos SalvarNo();
     bool Cresce(Retangulo&, unsigned);
     bool Folha();
     bool Overflow();
+    Retangulo GetRetangulo();
 };
 
 struct NodeAux{
@@ -72,6 +74,8 @@ public:
    void InserirNaFolha(Node*, stack<NodeAux>&, Retangulo&, streampos&);
    void AjustaCaminho(Node*, stack<NodeAux>&, Retangulo&);
    void DividirEAjustar(Node*, stack<NodeAux>&, Chave&);
+   Node* Divide(Node*);
+   void CriaNovaRaiz(Node*, Node*);
    bool ArquivoVazio();
 };
 

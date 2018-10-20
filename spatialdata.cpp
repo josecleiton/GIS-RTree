@@ -36,6 +36,27 @@ bool operator>(const Ponto& This, const Ponto& Other){
     bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
     return ((This.GetX() > Other.GetX()) or ((comparacao) and (This.GetY() > Other.GetY())));
 }
+
+double operator*(Ponto& P, Ponto& K){
+    return P.x*K.x+P.y*K.y;
+}
+
+bool operator==(Ponto& This, Ponto& Other){
+    double DX = abs(This.GetX()-Other.GetX());
+    double DY = abs(This.GetY()-Other.GetY());
+    return (DX==0.0 and DY==0.0)?true:false;
+}
+bool operator!=(Ponto& This, Ponto& Other){
+    return !(This==Other);
+}
+bool operator<(Ponto& This, Ponto& Other){
+    bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
+    return ((This.GetX() < Other.GetX()) or ((comparacao) and (This.GetY() < Other.GetY())));
+}
+bool operator>(Ponto& This, Ponto& Other){
+    bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
+    return ((This.GetX() > Other.GetX()) or ((comparacao) and (This.GetY() > Other.GetY())));
+}
 double Ponto::operator[](int k){
     return (k%2)?y:x;
 }
@@ -361,6 +382,14 @@ double Aresta::Inclinacao(){
     return DBL_MAX;
 }
 
+Ponto Aresta::GetOrigem() const{
+    return this->origem;
+}
+
+Ponto Aresta::GetDestino() const{
+    return this->destino;
+}
+
 Retangulo::Retangulo(){
     Ponto A, B;
     Aresta R(A, B);
@@ -427,6 +456,7 @@ double Retangulo::CresceParaConter(Retangulo& R, bool& cresceu){
         return 0.0;
     }
     cresceu = true;
+    return 0.0;
 }
 
 bool operator<(const Retangulo& This, const Retangulo& Other){

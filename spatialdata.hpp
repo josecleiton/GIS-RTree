@@ -99,6 +99,8 @@ public:
     Aresta& Rotacao(); // ROTACIONA A RETA EM 90º NO SENTIDO HORÁRIO
     Aresta& Flip(); // ROTACIONA A RETA EM 180º NO SENTIDO HORÁRIO
     Ponto GetPonto(double&);
+    Ponto GetOrigem() const;
+    Ponto GetDestino() const;
     double Dist() const; // RETORNA A DISTANCIA ENTRE ORIGEM E DESTINO
     int Interseccao(Aresta&, double&); // RETORNA O PONTO DE INTERSECÇÃO ENTRE DUAS RETAS E UM F
     int Cruza(Aresta&, double&); // RETORNA SE AS RETAS SE CRUZAM
