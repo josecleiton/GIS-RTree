@@ -96,12 +96,13 @@ streampos Node::SalvarNo(){
         cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
     return this->DiskPos;
 }
-
+/*
 bool Node::Cresce(Retangulo& EntryMBR, unsigned indexChave){
     bool cresceu = false;
-    this->Chaves[indexChave].MBR.CresceParaConter(EntryMBR, cresceu);
+    //this->Chaves[indexChave].MBR.CresceParaConter(EntryMBR, cresceu);
     return cresceu;
 }
+*/
 
 Retangulo Node::GetRetangulo(){
     Ponto A = Chaves.front().MBR.GetDiagonal().GetOrigem();
@@ -268,7 +269,7 @@ Node* RTree::EscolhaSubArvore(Node* no, stack<NodeAux>& caminho, Retangulo& MbrF
 void RTree::InserirNaFolha(Node* no, stack<NodeAux>& caminho, Retangulo& EntryMBR, streampos& EntryPOS){
     size_t limite = no->Chaves.size();
     Chave inserir(EntryMBR, EntryPOS, FOLHA);
-    if(limite+1 > MAXCHAVES)
+    if(limite >= MAXCHAVES)
         return DividirEAjustar(no, caminho, inserir);
     if(!limite) // NÓ VAZIO
         no->Chaves.push_back(inserir);
@@ -279,28 +280,62 @@ void RTree::InserirNaFolha(Node* no, stack<NodeAux>& caminho, Retangulo& EntryMB
 
     }
     no->SalvarNo();
-    AjustaCaminho(no, caminho, inserir.MBR);
+    AjustaCaminho(no, caminho);
 }
 
-void RTree::AjustaCaminho(Node* no, stack<NodeAux>& caminho, Retangulo& EntryMBR){
+void RTree::AjustaCaminho(Node* no, stack<NodeAux>& caminho){
     if(no == raiz) return;
+    Retangulo R = no->GetRetangulo();
     delete no;
     NodeAux pai = caminho.top();
     caminho.pop();
-    if(pai.ptr->Cresce(EntryMBR, pai.index)){
+    if(pai.ptr->Ajusta(R, pai.index)){
         pai.ptr->SalvarNo();
-        AjustaCaminho(pai.ptr, caminho, EntryMBR);
+        AjustaCaminho(pai.ptr, caminho);
     }
 }
 
 void RTree::DividirEAjustar(Node* no, stack<NodeAux>& caminho, Chave& Entry){
-    Node* novoNo = Divide(no);
+    Node* novoNo = Divide(no, Entry);
+    no->SalvarNo();
+    novoNo->SalvarNo();
     if(no == raiz)
         CriaNovaRaiz(no, novoNo);
+    else{
+        NodeAux pai = caminho.top();
+        caminho.pop();
+        Retangulo R = no->GetRetangulo();
+        pai.ptr->Ajusta(R, pai.index);
+        InserirNo(novoNo, pai.ptr, caminho);
+    }
 
 }
 
-Node* RTree::Divide(Node* no){
+bool Node::Ajusta(Retangulo& MBR, unsigned index){
+    bool modificado = false;
+    Chaves[index].MBR.Ajusta(MBR, modificado, true);
+    return modificado;
+}
+
+void RTree::InserirNo(Node* NoParaInserir, Node* NoInterno, stack<NodeAux>& caminho){
+    Retangulo R1 = NoParaInserir->GetRetangulo();
+    Chave ChaveParaInserir(R1, NoParaInserir->DiskPos, INTERNO);
+    delete NoParaInserir;
+    size_t limite = NoInterno->Chaves.size();
+    if(limite >= MAXCHAVES)
+        return DividirEAjustar(NoInterno, caminho, ChaveParaInserir);
+    if(!limite)
+        NoInterno->Chaves.push_back(ChaveParaInserir);
+    else{
+        auto it = NoInterno->Chaves.begin();
+        for(size_t i=0; (i<limite) and (it->MBR < R1); i++, it++)
+        NoInterno->Chaves.insert(it, ChaveParaInserir);
+    }
+    NoInterno->SalvarNo();
+    AjustaCaminho(NoInterno, caminho);
+}
+
+Node* RTree::Divide(Node* no, Chave& Entry){
 
 }
 

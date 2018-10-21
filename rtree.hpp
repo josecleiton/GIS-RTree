@@ -44,7 +44,7 @@ struct Node{
     Node(Retangulo& R, streampos& PosR);
     Node(vector<Node*>&);
     streampos SalvarNo();
-    bool Cresce(Retangulo&, unsigned);
+    bool Ajusta(Retangulo&, unsigned);
     bool Folha();
     bool Overflow();
     Retangulo GetRetangulo();
@@ -72,10 +72,11 @@ public:
    list<streampos>* Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
    Node* EscolhaSubArvore(Node*, stack<NodeAux>&, Retangulo&);
    void InserirNaFolha(Node*, stack<NodeAux>&, Retangulo&, streampos&);
-   void AjustaCaminho(Node*, stack<NodeAux>&, Retangulo&);
+   void AjustaCaminho(Node*, stack<NodeAux>&);
    void DividirEAjustar(Node*, stack<NodeAux>&, Chave&);
-   Node* Divide(Node*);
+   Node* Divide(Node*, Chave&);
    void CriaNovaRaiz(Node*, Node*);
+   void InserirNo(Node*, Node*, stack<NodeAux>&);
    bool ArquivoVazio();
 };
 

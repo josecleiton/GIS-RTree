@@ -123,7 +123,7 @@ public:
     bool InterRetang(Ponto&, Ponto&, Ponto&, Ponto&); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
     bool Contem(Ponto&);
     bool Contem(Retangulo&);
-    double CresceParaConter(Retangulo&, bool&);
+    double Ajusta(Retangulo&, bool&, bool);
     double CalcularArea();
     double GetArea();
     const Aresta& GetDiagonal();
@@ -160,5 +160,8 @@ Vertice* FindIntrudingVertex(Poligono&);
 bool PontoNoTriangulo(Ponto&, Ponto&, Ponto&, Ponto&);
 double Area(Poligono&);
 
-} // NAMESPACE SPATIALDATA
+
+bool operator==(const Aresta&, const Aresta&);
+bool operator!=(const Aresta&, const Aresta&);
+}// NAMESPACE SPATIALDATA
 #endif // SPATIALDATA_HPP

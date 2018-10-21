@@ -390,6 +390,14 @@ Ponto Aresta::GetDestino() const{
     return this->destino;
 }
 
+bool operator==(const Aresta& This, const Aresta& Other){
+    return This.GetDestino() == Other.GetDestino() and This.GetOrigem() == Other.GetOrigem();
+}
+
+bool operator!=(const Aresta& This, const Aresta& Other){
+    return !(This == Other);
+}
+
 Retangulo::Retangulo(){
     Ponto A, B;
     Aresta R(A, B);
@@ -450,13 +458,16 @@ double Retangulo::GetArea(){
     return area;
 }
 
-double Retangulo::CresceParaConter(Retangulo& R, bool& cresceu){
-    if(this->Contem(R)){
-        cresceu = false;
-        return 0.0;
+double Retangulo::Ajusta(Retangulo& R, bool& mod, bool write){
+    if(R.diagonal != this->diagonal){
+        if(write){
+            mod = true;
+            this->diagonal = R.diagonal;
+            return this->GetArea() - R.GetArea();
+        }
+        else{ //IMPLEMENTAR
+        }
     }
-    cresceu = true;
-    return 0.0;
 }
 
 bool operator<(const Retangulo& This, const Retangulo& Other){
