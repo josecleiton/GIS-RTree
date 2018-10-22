@@ -106,7 +106,7 @@ bool Node::Cresce(Retangulo& EntryMBR, unsigned indexChave){
 
 void Node::InserirChave(Chave& Key){
     auto it = Chaves.begin();
-    while(it != Chaves.end() and (it->MBR <= Key.MBR))  it++;
+    while(it != Chaves.end() and ((it->MBR.Contem(Key.MBR)) or (it->MBR <= Key.MBR)))  it++;
     Chaves.insert(it, Key);
 }
 
