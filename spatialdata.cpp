@@ -32,6 +32,10 @@ bool operator<(const Ponto& This, const Ponto& Other){
     bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
     return ((This.GetX() < Other.GetX()) or ((comparacao) and (This.GetY() < Other.GetY())));
 }
+bool operator<=(const Ponto& This, const Ponto& Other){
+    return This < Other or This == Other;
+}
+
 bool operator>(const Ponto& This, const Ponto& Other){
     bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
     return ((This.GetX() > Other.GetX()) or ((comparacao) and (This.GetY() > Other.GetY())));
@@ -470,8 +474,8 @@ double Retangulo::Ajusta(Retangulo& R, bool& mod, bool write){
     }
 }
 
-bool operator<(const Retangulo& This, const Retangulo& Other){
-    return (This.diagonal.destino < Other.diagonal.destino) and (This.diagonal.origem < Other.diagonal.origem);
+bool operator<=(const Retangulo& This, const Retangulo& Other){
+    return (This.diagonal.destino <= Other.diagonal.destino) and (This.diagonal.origem <= Other.diagonal.origem);
 }
 
 Circulo::Circulo(){
@@ -580,6 +584,12 @@ Vertice* Circulo::CirculoIntRetas(Circulo& T, Ponto& p1, Ponto& p2){
             // Retornar R1 e R2
     }
     return resultado;
+}
+
+Retangulo Circulo::Envelope(){
+    Ponto destino(centro.x+raio, centro.y+raio);
+    Ponto origem(centro.x-raio, centro.y-raio);
+    return Retangulo(origem, destino);
 }
 
 bool PontoNoPoligonoConvexo(Ponto &s, Poligono &p){

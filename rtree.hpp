@@ -47,6 +47,7 @@ struct Node{
     bool Ajusta(Retangulo&, unsigned);
     bool Folha();
     bool Overflow();
+    void InserirChave(Chave&);
     Retangulo GetRetangulo();
 };
 
