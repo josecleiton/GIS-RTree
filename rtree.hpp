@@ -73,11 +73,11 @@ public:
    list<streampos>* Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
    Node* EscolhaSubArvore(Node*, stack<NodeAux>&, Retangulo&);
    void InserirNaFolha(Node*, stack<NodeAux>&, Retangulo&, streampos&);
-   void AjustaCaminho(Node*, stack<NodeAux>&);
+   void AjustaCaminho(Node*&, stack<NodeAux>&);
    void DividirEAjustar(Node*, stack<NodeAux>&, Chave&);
    Node* Divide(Node*, Chave&);
    void CriaNovaRaiz(Node*, Node*);
-   void InserirNo(Node*, Node*, stack<NodeAux>&);
+   void InserirNo(Node*&, Node*, stack<NodeAux>&);
    bool ArquivoVazio();
 };
 

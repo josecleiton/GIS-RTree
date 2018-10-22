@@ -282,7 +282,7 @@ void RTree::InserirNaFolha(Node* no, stack<NodeAux>& caminho, Retangulo& EntryMB
     AjustaCaminho(no, caminho);
 }
 
-void RTree::AjustaCaminho(Node* no, stack<NodeAux>& caminho){
+void RTree::AjustaCaminho(Node* &no, stack<NodeAux>& caminho){
     if(no == raiz) return;
     Retangulo R = no->GetRetangulo();
     delete no;
@@ -301,7 +301,6 @@ void RTree::DividirEAjustar(Node* no, stack<NodeAux>& caminho, Chave& Entry){
         CriaNovaRaiz(no, novoNo);
     else{
         NodeAux pai = caminho.top();
-        caminho.pop();
         Retangulo R = no->GetRetangulo();
         pai.ptr->Ajusta(R, pai.index);
         InserirNo(novoNo, pai.ptr, caminho);
@@ -315,7 +314,7 @@ bool Node::Ajusta(Retangulo& MBR, unsigned index){
     return modificado;
 }
 
-void RTree::InserirNo(Node* NoParaInserir, Node* NoInterno, stack<NodeAux>& caminho){
+void RTree::InserirNo(Node* &NoParaInserir, Node* NoInterno, stack<NodeAux>& caminho){
     Retangulo R1 = NoParaInserir->GetRetangulo();
     Chave ChaveParaInserir(R1, NoParaInserir->DiskPos, INTERNO);
     delete NoParaInserir;
