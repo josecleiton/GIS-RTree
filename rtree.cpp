@@ -231,7 +231,7 @@ bool comparacaoESA(const pair<NodeAux, double>& primeiro, const pair<NodeAux, do
     return primeiro.second < segundo.second;
 }
 
-Node* RTree::EscolhaSubArvore(Node* no, stack<NodeAux>& caminho, Retangulo& MbrForma){
+Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& MbrForma){
     vector<pair<NodeAux, double>> contem;
     NodeAux temp;
     bool inseriu = false;
@@ -272,7 +272,7 @@ Node* RTree::EscolhaSubArvore(Node* no, stack<NodeAux>& caminho, Retangulo& MbrF
 }
 
 
-void RTree::InserirNaFolha(Node* no, stack<NodeAux>& caminho, Retangulo& EntryMBR, streampos& EntryPOS){
+void RTree::InserirNaFolha(Node* &no, stack<NodeAux>& caminho, Retangulo& EntryMBR, streampos& EntryPOS){
     size_t limite = no->Chaves.size();
     Chave inserir(EntryMBR, EntryPOS, FOLHA);
     if(limite == MAXCHAVES)
@@ -294,7 +294,7 @@ void RTree::AjustaCaminho(Node* &no, stack<NodeAux>& caminho){
     }
 }
 
-void RTree::DividirEAjustar(Node* no, stack<NodeAux>& caminho, Chave& Entry){
+void RTree::DividirEAjustar(Node* &no, stack<NodeAux>& caminho, Chave& Entry){
     Node* novoNo = Divide(no, Entry);
     no->SalvarNo();
     if(no == raiz)
@@ -314,7 +314,7 @@ bool Node::Ajusta(Retangulo& MBR, unsigned index){
     return modificado;
 }
 
-void RTree::InserirNo(Node* &NoParaInserir, Node* NoInterno, stack<NodeAux>& caminho){
+void RTree::InserirNo(Node* &NoParaInserir, Node* &NoInterno, stack<NodeAux>& caminho){
     Retangulo R1 = NoParaInserir->GetRetangulo();
     Chave ChaveParaInserir(R1, NoParaInserir->DiskPos, INTERNO);
     delete NoParaInserir;
@@ -326,13 +326,13 @@ void RTree::InserirNo(Node* &NoParaInserir, Node* NoInterno, stack<NodeAux>& cam
     AjustaCaminho(NoInterno, caminho);
 }
 
-Node* RTree::Divide(Node* no, Chave& Entry){
+Node* RTree::Divide(Node* &no, Chave& Entry){
     no->InserirChave(Entry);
     // NO COM OVERFLOW DE 1
 
 }
 
-void RTree::CriaNovaRaiz(Node* no, Node* novoNo){
+void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){
     vector<Node*> v;
     v.push_back(no);
     v.push_back(novoNo);
