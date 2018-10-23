@@ -104,15 +104,9 @@ bool Node::Cresce(Retangulo& EntryMBR, unsigned indexChave){
 }
 */
 
-void Node::InserirChave(Chave& Key){
-    auto it = Chaves.begin();
-    while(it != Chaves.end() and ((it->MBR.Contem(Key.MBR)) or (it->MBR <= Key.MBR)))  it++;
-    Chaves.insert(it, Key);
-}
-
 Retangulo Node::GetRetangulo(){
-    Ponto A = Chaves.front().MBR.GetDiagonal().GetOrigem();
-    Ponto B = Chaves.back().MBR.GetDiagonal().GetDestino();
+    Ponto A = (*min(Chaves.begin(), Chaves.end(), comparaMinChave)).MBR.GetDiagonal().GetOrigem();
+    Ponto B = (*max(Chaves.begin(), Chaves.end(), comparaMaxChave)).MBR.GetDiagonal().GetDestino();
     return Retangulo(A,B);
 }
 
@@ -263,6 +257,7 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
             swap(resultado, contem.front().first.ptr);
         temp.index = contem.front().first.index;
         caminho.push(temp);
+        delete no;
         return resultado;
     }
     else{ // SE NENHUMA CHAVE CONTER A FORMA, ESCOLHA O QUE PRECISA CRESCER MENOS (menor crescimento da área)
@@ -277,7 +272,7 @@ void RTree::InserirNaFolha(Node* &no, stack<NodeAux>& caminho, Retangulo& EntryM
     Chave inserir(EntryMBR, EntryPOS, FOLHA);
     if(limite == MAXCHAVES)
         return DividirEAjustar(no, caminho, inserir);
-    no->InserirChave(inserir);
+    no->Chaves.push_back(inserir);
     no->SalvarNo();
     AjustaCaminho(no, caminho);
 }
@@ -321,7 +316,7 @@ void RTree::InserirNo(Node* &NoParaInserir, Node* &NoInterno, stack<NodeAux>& ca
     size_t limite = NoInterno->Chaves.size();
     if(limite == MAXCHAVES)
         return DividirEAjustar(NoInterno, caminho, ChaveParaInserir);
-    NoInterno->InserirChave(ChaveParaInserir);
+    NoInterno->Chaves.push_back(ChaveParaInserir);
     NoInterno->SalvarNo();
     AjustaCaminho(NoInterno, caminho);
 }
@@ -347,6 +342,14 @@ bool Node::Folha(){
 
 bool Node::Overflow(){
     return (Chaves.size() > MAXCHAVES)?true:false;
+}
+
+bool comparaMinChave(const Chave& K, const Chave& W){
+    return W.MBR < K.MBR;
+}
+
+bool comparaMaxChave(const Chave& K, const Chave& W){
+    return W.MBR > K.MBR;
 }
 
 } // NAMESPACE SPATIALINDEX

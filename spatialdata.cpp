@@ -474,8 +474,12 @@ double Retangulo::Ajusta(Retangulo& R, bool& mod, bool write){
     }
 }
 
-bool operator<=(const Retangulo& This, const Retangulo& Other){
-    return (This.diagonal.destino <= Other.diagonal.destino) and (This.diagonal.origem <= Other.diagonal.origem);
+bool operator<(const Retangulo& a, const Retangulo& b){
+    return b.diagonal.origem < a.diagonal.origem;
+}
+
+bool operator>(const Retangulo& a, const Retangulo& b){
+    return b.diagonal.destino > a.diagonal.destino;
 }
 
 Circulo::Circulo(){
@@ -713,5 +717,4 @@ double Area(Poligono &P){
     }
     return abs(area/2.0);
 }
-
 }// NAMESPACE SPATIAL DATA

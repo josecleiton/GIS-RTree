@@ -82,6 +82,8 @@ public:
 };
 
 bool comparacaoESA(const pair<NodeAux, double>&, const pair<NodeAux, double>&);
+bool comparaMinChave(const Chave&, const Chave&);
+bool comparaMaxChave(const Chave&, const Chave&);
 
 }
 #endif // RTREE_HPP
