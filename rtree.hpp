@@ -74,8 +74,8 @@ public:
    Node* EscolhaSubArvore(Node*&, stack<NodeAux>&, Retangulo&);
    void InserirNaFolha(Node*&, stack<NodeAux>&, Retangulo&, streampos&);
    void AjustaCaminho(Node*&, stack<NodeAux>&);
-   void DividirEAjustar(Node*&, stack<NodeAux>&, Chave&);
-   Node* Divide(Node*&, Chave&);
+   void DividirEAjustar(Node*&, stack<NodeAux>&);
+   Node* Divide(Node*&);
    void CriaNovaRaiz(Node*&, Node*&);
    void InserirNo(Node*&, Node*&, stack<NodeAux>&);
    bool ArquivoVazio();

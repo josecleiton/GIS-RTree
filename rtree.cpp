@@ -45,13 +45,14 @@ Node::Node(streampos& no){
         file.read(reinterpret_cast<char*>(&active), sizeof(bool));
         if(active){
             vector<Chave> temp;
-            struct Chave* key = new Chave;
+            Chave* key = new Chave;
             unsigned int nivel, count;
             file.read(reinterpret_cast<char*>(&nivel), sizeof(unsigned));
             file.read(reinterpret_cast<char*>(&count), sizeof(unsigned));
+            temp.resize(count);
             for(unsigned i=0; i<count; i++){
-                file.read(reinterpret_cast<char*>(key), sizeof(struct Chave));
-                temp.push_back(*key);
+                file.read(reinterpret_cast<char*>(key), sizeof(Chave));
+                temp[i] = *key;
             }
             this->Nivel = nivel;
             this->Chaves = temp;
@@ -85,9 +86,9 @@ streampos Node::SalvarNo(){
         file.write(reinterpret_cast<char*>(&count), sizeof(unsigned));
         for(unsigned i=0; i<MAXCHAVES; i++){
             if(i<count)
-                file.write(reinterpret_cast<char*>(&(this->Chaves[i])), sizeof(struct Chave));
+                file.write(reinterpret_cast<char*>(&(this->Chaves[i])), sizeof(Chave));
             else
-                file.write(reinterpret_cast<char*>(key), sizeof(struct Chave));
+                file.write(reinterpret_cast<char*>(key), sizeof(Chave));
         }
         file.close();
         delete key;
@@ -270,9 +271,9 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
 void RTree::InserirNaFolha(Node* &no, stack<NodeAux>& caminho, Retangulo& EntryMBR, streampos& EntryPOS){
     size_t limite = no->Chaves.size();
     Chave inserir(EntryMBR, EntryPOS, FOLHA);
-    if(limite == MAXCHAVES)
-        return DividirEAjustar(no, caminho, inserir);
     no->Chaves.push_back(inserir);
+    if(limite > MAXCHAVES)
+        return DividirEAjustar(no, caminho);
     no->SalvarNo();
     AjustaCaminho(no, caminho);
 }
@@ -289,8 +290,8 @@ void RTree::AjustaCaminho(Node* &no, stack<NodeAux>& caminho){
     }
 }
 
-void RTree::DividirEAjustar(Node* &no, stack<NodeAux>& caminho, Chave& Entry){
-    Node* novoNo = Divide(no, Entry);
+void RTree::DividirEAjustar(Node* &no, stack<NodeAux>& caminho){
+    Node* novoNo = Divide(no);
     no->SalvarNo();
     if(no == raiz)
         CriaNovaRaiz(no, novoNo);
@@ -314,15 +315,16 @@ void RTree::InserirNo(Node* &NoParaInserir, Node* &NoInterno, stack<NodeAux>& ca
     Chave ChaveParaInserir(R1, NoParaInserir->DiskPos, INTERNO);
     delete NoParaInserir;
     size_t limite = NoInterno->Chaves.size();
-    if(limite == MAXCHAVES)
-        return DividirEAjustar(NoInterno, caminho, ChaveParaInserir);
     NoInterno->Chaves.push_back(ChaveParaInserir);
+    if(limite > MAXCHAVES)
+        return DividirEAjustar(NoInterno, caminho);
     NoInterno->SalvarNo();
     AjustaCaminho(NoInterno, caminho);
 }
 
-Node* RTree::Divide(Node* &no, Chave& Entry){
-    no->InserirChave(Entry);
+Node* RTree::Divide(Node* &no){
+    count++; // quantidade de nós na árvore cresce
+    return nullptr;
     // NO COM OVERFLOW DE 1
 
 }
