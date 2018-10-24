@@ -336,17 +336,55 @@ Node* RTree::Divide(Node* &no){
         }
     }
     vector<Chave> ChavesRestantes, G1(1), G2(1);
+    Node* NoG1 = new Node(no->Nivel, G1);
+    Node* NoG2 = new Node(no->Nivel, G2);
+    Node* BestGroup = nullptr;
+    unsigned BestKey;
+    Retangulo Aux1, Aux2;
     G1[0] = no->Chaves[escolhas.first];
     G2[0] = no->Chaves[escolhas.second];
     for(auto &item: no->Chaves)
         if(item != *(G1.begin()) and item != *(G2.begin()))
             ChavesRestantes.push_back(item);
     while(!ChavesRestantes.empty()){
+        unsigned i = 0;
+        for(auto &item: ChavesRestantes){
+            Aux1 = NoG1->GetRetangulo();
+            Aux2 = NoG2->GetRetangulo();
+            d1 = item.MBR.CresceParaConter(Aux1).GetArea()-item.MBR.GetArea();
+            d2 = item.MBR.CresceParaConter(Aux2).GetArea()-item.MBR.GetArea();
+            if(d2 - d1 > expansion){
+                BestGroup = NoG1;
+                BestKey = i;
+                expansion = d2 - d1;
+            }
+            if(d1 - d2 > expansion){
+                BestGroup = NoG2;
+                BestKey = i;
+                expansion = d1 - d2;
+            }
+            i++;
+        }
+        BestGroup->Chaves.push_back(ChavesRestantes[i]);
+        ChavesRestantes.erase(ChavesRestantes.begin()+i);
+        if(NoG1->Chaves.size() == MINCHAVES - ChavesRestantes.size()){
+            for(auto &item: ChavesRestantes)
+                NoG1->Chaves.push_back(item);
+            ChavesRestantes.clear();
+        }
+        else if(NoG2->Chaves.size() == MINCHAVES - ChavesRestantes.size()){
+            for(auto &item: ChavesRestantes)
+                NoG2->Chaves.push_back(item);
+            ChavesRestantes.clear();
+        }
 
     }
+    swap(no->DiskPos, NoG1->DiskPos);
+    delete no;
+    no = NoG1;
     count++; // quantidade de nós na árvore cresce
     // NO COM OVERFLOW DE 1
-
+    return NoG2;
 }
 
 void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){
