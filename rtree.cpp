@@ -305,7 +305,7 @@ void RTree::DividirEAjustar(Node* &no, stack<NodeAux>& caminho){
 
 bool Node::Ajusta(Retangulo& MBR, unsigned index){
     bool modificado = false;
-    Chaves[index].MBR.Ajusta(MBR, modificado, true);
+    Chaves[index].MBR.Ajusta(MBR, modificado);
     return modificado;
 }
 
@@ -321,8 +321,30 @@ void RTree::InserirNo(Node* &NoParaInserir, Node* &NoInterno, stack<NodeAux>& ca
 }
 
 Node* RTree::Divide(Node* &no){
+    Retangulo J;
+    pair<unsigned, unsigned> escolhas;
+    unsigned lenNo = static_cast<unsigned>(no->Chaves.size());
+    double worst = 0.0, d1, d2, expansion = 0.0;
+    for(unsigned i=0; i < lenNo; i++){
+        for(unsigned j=i+1; j < lenNo; j++){
+            J = no->Chaves[i].MBR.CresceParaConter(no->Chaves[j].MBR);
+            double k = J.GetArea() - no->Chaves[i].MBR.GetArea() - no->Chaves[j].MBR.GetArea();
+            if(k > worst){
+                worst = k;
+                escolhas = make_pair(i, j);
+            }
+        }
+    }
+    vector<Chave> ChavesRestantes, G1(1), G2(1);
+    G1[0] = no->Chaves[escolhas.first];
+    G2[0] = no->Chaves[escolhas.second];
+    for(auto &item: no->Chaves)
+        if(item != *(G1.begin()) and item != *(G2.begin()))
+            ChavesRestantes.push_back(item);
+    while(!ChavesRestantes.empty()){
+
+    }
     count++; // quantidade de nós na árvore cresce
-    return nullptr;
     // NO COM OVERFLOW DE 1
 
 }
@@ -358,6 +380,14 @@ void LiberaPilha(stack<NodeAux>& pilha){
             delete pilha.top().ptr;
         pilha.pop();
     }
+}
+
+bool operator==(const Chave& A, const Chave& B){
+    return (A.ChildPtr == B.ChildPtr or A.Dado == B.Dado) and A.MBR == B.MBR;
+}
+
+bool operator!=(const Chave& A, const Chave& B){
+    return !(A == B);
 }
 
 } // NAMESPACE SPATIALINDEX

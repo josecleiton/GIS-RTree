@@ -462,16 +462,32 @@ double Retangulo::GetArea(){
     return area;
 }
 
-double Retangulo::Ajusta(Retangulo& R, bool& mod, bool write){
+double Retangulo::Ajusta(Retangulo& R, bool& mod){
     if(R.diagonal != this->diagonal){
-        if(write){
             mod = true;
             this->diagonal = R.diagonal;
             return this->GetArea() - R.GetArea();
-        }
-        else{ //IMPLEMENTAR
-        }
     }
+}
+
+Retangulo Retangulo::CresceParaConter(Retangulo& R){
+    if(this->Contem(R))
+        return *this;
+    Ponto A;
+    Ponto B;
+    if(this->diagonal.origem > R.diagonal.origem and this->diagonal.destino < R.diagonal.destino){
+        A = R.diagonal.origem;
+        B = R.diagonal.destino;
+    }
+    else if(this->diagonal.origem > R.diagonal.origem){
+        A = R.diagonal.origem;
+        B = this->diagonal.destino;
+    }
+    else if(this->diagonal.destino < R.diagonal.destino){
+        A = this->diagonal.origem;
+        B = R.diagonal.destino;
+    }
+    return Retangulo(A,B);
 }
 
 bool operator<(const Retangulo& a, const Retangulo& b){
@@ -480,6 +496,10 @@ bool operator<(const Retangulo& a, const Retangulo& b){
 
 bool operator>(const Retangulo& a, const Retangulo& b){
     return b.diagonal.destino > a.diagonal.destino;
+}
+
+bool operator==(const Retangulo& a, const Retangulo& b){
+    return a.diagonal == b.diagonal;
 }
 
 Circulo::Circulo(){

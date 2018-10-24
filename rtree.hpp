@@ -32,6 +32,8 @@ struct Chave{
     };
     Chave(Retangulo&, streampos&, int);
     Chave();
+    friend bool operator==(const Chave&, const Chave&);
+    friend bool operator!=(const Chave&, const Chave&);
 };
 #pragma pack(pop)
 

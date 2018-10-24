@@ -124,12 +124,14 @@ public:
     bool InterRetang(Ponto&, Ponto&, Ponto&, Ponto&); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
     bool Contem(Ponto&);
     bool Contem(Retangulo&);
-    double Ajusta(Retangulo&, bool&, bool);
+    double Ajusta(Retangulo&, bool&);
     double CalcularArea();
     double GetArea();
     const Aresta& GetDiagonal();
+    Retangulo CresceParaConter(Retangulo&);
     friend bool operator<(const Retangulo&, const Retangulo&);
     friend bool operator>(const Retangulo&, const Retangulo&);
+    friend bool operator==(const Retangulo&, const Retangulo&);
 };
 
 class Circulo{
