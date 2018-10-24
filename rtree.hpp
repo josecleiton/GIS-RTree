@@ -81,9 +81,10 @@ public:
    bool ArquivoVazio();
 };
 
-bool comparacaoESA(const pair<NodeAux, double>&, const pair<NodeAux, double>&);
-bool comparaMinChave(const Chave&, const Chave&);
-bool comparaMaxChave(const Chave&, const Chave&);
+bool ComparacaoESA(const pair<NodeAux, double>&, const pair<NodeAux, double>&);
+bool ComparaMinChave(const Chave&, const Chave&);
+bool ComparaMaxChave(const Chave&, const Chave&);
+void LiberaPilha(stack<NodeAux>&);
 
 }
 #endif // RTREE_HPP

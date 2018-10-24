@@ -106,8 +106,8 @@ bool Node::Cresce(Retangulo& EntryMBR, unsigned indexChave){
 */
 
 Retangulo Node::GetRetangulo(){
-    Ponto A = (*min(Chaves.begin(), Chaves.end(), comparaMinChave)).MBR.GetDiagonal().GetOrigem();
-    Ponto B = (*max(Chaves.begin(), Chaves.end(), comparaMaxChave)).MBR.GetDiagonal().GetDestino();
+    Ponto A = (*min(Chaves.begin(), Chaves.end(), ComparaMinChave)).MBR.GetDiagonal().GetOrigem();
+    Ponto B = (*max(Chaves.begin(), Chaves.end(), ComparaMaxChave)).MBR.GetDiagonal().GetDestino();
     return Retangulo(A,B);
 }
 
@@ -220,6 +220,7 @@ void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
         no = EscolhaSubArvore(no, CaminhoNo, MbrForma);
     CaminhoNo.pop();
     InserirNaFolha(no, CaminhoNo, MbrForma, pos);
+    LiberaPilha(CaminhoNo);
 }
 
 bool comparacaoESA(const pair<NodeAux, double>& primeiro, const pair<NodeAux, double>& segundo){
@@ -248,7 +249,7 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
     if(contem.size()){
         Node* resultado = nullptr;
         if(contem.size()>1){
-            sort(contem.begin(), contem.end(), comparacaoESA);
+            sort(contem.begin(), contem.end(), ComparacaoESA);
             swap(resultado, contem.front().first.ptr);
             for(auto &candidatos: contem)
                 if(candidatos.first.ptr != nullptr)
@@ -258,7 +259,6 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
             swap(resultado, contem.front().first.ptr);
         temp.index = contem.front().first.index;
         caminho.push(temp);
-        delete no;
         return resultado;
     }
     else{ // SE NENHUMA CHAVE CONTER A FORMA, ESCOLHA O QUE PRECISA CRESCER MENOS (menor crescimento da área)
@@ -268,14 +268,13 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
 }
 
 
-void RTree::InserirNaFolha(Node* &no, stack<NodeAux>& caminho, Retangulo& EntryMBR, streampos& EntryPOS){
-    size_t limite = no->Chaves.size();
+void RTree::InserirNaFolha(Node* &No, stack<NodeAux>& Caminho, Retangulo& EntryMBR, streampos& EntryPOS){
     Chave inserir(EntryMBR, EntryPOS, FOLHA);
-    no->Chaves.push_back(inserir);
-    if(limite > MAXCHAVES)
-        return DividirEAjustar(no, caminho);
-    no->SalvarNo();
-    AjustaCaminho(no, caminho);
+    No->Chaves.push_back(inserir);
+    if(No->Overflow())
+        return DividirEAjustar(No, Caminho);
+    No->SalvarNo();
+    AjustaCaminho(No, Caminho);
 }
 
 void RTree::AjustaCaminho(Node* &no, stack<NodeAux>& caminho){
@@ -314,9 +313,8 @@ void RTree::InserirNo(Node* &NoParaInserir, Node* &NoInterno, stack<NodeAux>& ca
     Retangulo R1 = NoParaInserir->GetRetangulo();
     Chave ChaveParaInserir(R1, NoParaInserir->DiskPos, INTERNO);
     delete NoParaInserir;
-    size_t limite = NoInterno->Chaves.size();
     NoInterno->Chaves.push_back(ChaveParaInserir);
-    if(limite > MAXCHAVES)
+    if(NoInterno->Overflow())
         return DividirEAjustar(NoInterno, caminho);
     NoInterno->SalvarNo();
     AjustaCaminho(NoInterno, caminho);
@@ -352,6 +350,14 @@ bool comparaMinChave(const Chave& K, const Chave& W){
 
 bool comparaMaxChave(const Chave& K, const Chave& W){
     return W.MBR > K.MBR;
+}
+
+void LiberaPilha(stack<NodeAux>& pilha){
+    while(!pilha.empty()){
+        if(pilha.top().ptr != nullptr)
+            delete pilha.top().ptr;
+        pilha.pop();
+    }
 }
 
 } // NAMESPACE SPATIALINDEX
