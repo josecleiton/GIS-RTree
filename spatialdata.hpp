@@ -116,11 +116,11 @@ public:
 class Retangulo{
 private:
     Aresta diagonal;
-    int ID;
     double area{};
 public:
-    Retangulo(Ponto&, Ponto&, int _id = -1);
+    Retangulo(Ponto&, Ponto&);
     Retangulo();
+    Retangulo(const Retangulo&);
     bool InterRetang(Ponto&, Ponto&, Ponto&, Ponto&); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
     bool Contem(Ponto&);
     bool Contem(Retangulo&);
@@ -165,6 +165,10 @@ Vertice* FindIntrudingVertex(Poligono&);
 bool PontoNoTriangulo(Ponto&, Ponto&, Ponto&, Ponto&);
 double Area(Poligono&);
 
+bool operator<(const Ponto&, const Ponto&);
+bool operator<=(const Ponto&, const Ponto&);
+bool operator>(const Ponto&, const Ponto&);
+bool operator>=(const Ponto&, const Ponto&);
 
 bool operator==(const Aresta&, const Aresta&);
 bool operator!=(const Aresta&, const Aresta&);

@@ -16,6 +16,12 @@ Chave::Chave(){
     this->MBR = vazio;
 }
 
+Chave::Chave(const Chave& K){
+    this->ChildPtr = K.ChildPtr;
+    this->Dado = K.Dado;
+    this->MBR = K.MBR;
+}
+
 Node::Node(Retangulo& R, streampos& PosR){
     Chave k(R, PosR, FOLHA);
     Chaves.push_back(k);
@@ -106,9 +112,16 @@ bool Node::Cresce(Retangulo& EntryMBR, unsigned indexChave){
 */
 
 Retangulo Node::GetRetangulo(){
-    Ponto A = (*min(Chaves.begin(), Chaves.end(), ComparaMinChave)).MBR.GetDiagonal().GetOrigem();
-    Ponto B = (*max(Chaves.begin(), Chaves.end(), ComparaMaxChave)).MBR.GetDiagonal().GetDestino();
-    return Retangulo(A,B);
+    Ponto P1(DBL_MAX, DBL_MAX), P2(-DBL_MAX, -DBL_MAX);
+    for(auto i: Chaves){
+        Ponto aux1 = i.MBR.GetDiagonal().GetOrigem();
+        Ponto aux2 = i.MBR.GetDiagonal().GetDestino();
+        if(aux1 <= P1)
+            P1 = aux1;
+        if(aux2 >= P2)
+            P2 = aux1;
+    }
+    return Retangulo(P1,P2);
 }
 
 RTree::RTree(){
@@ -116,10 +129,12 @@ RTree::RTree(){
         fstream file(RTREE_FILE, fstream::binary|fstream::in);
         if(file.is_open()){
             streampos PosicaoDaRaiz;
-            unsigned count;
+            size_t count, nivel;
             file.read(reinterpret_cast<char*>(&PosicaoDaRaiz), sizeof(streampos));
-            file.read(reinterpret_cast<char*>(&count), sizeof(unsigned));
+            file.read(reinterpret_cast<char*>(&count), sizeof(size_t));
+            file.read(reinterpret_cast<char*>(&nivel), sizeof(size_t));
             this->count = count;
+            this->nivel = nivel;
             file.close();
             this->raiz = new Node(PosicaoDaRaiz);
         }
@@ -133,7 +148,8 @@ RTree::~RTree(){
     if(file.is_open()){
         file.seekp(0, fstream::beg);
         file.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
-        file.write(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
+        file.write(reinterpret_cast<char*>(&(this->count)), sizeof(size_t));
+        file.write(reinterpret_cast<char*>(&(this->nivel)), sizeof(size_t));
         file.close();
         delete this->raiz;
     }
@@ -193,10 +209,12 @@ void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
     if(file.is_open()){
         Node* raiz = new Node(MbrForma, pos);
         streampos posicao = 1;
-        unsigned count;
-        this->count = count = 1u;
+        size_t count, nivel;
+        this->count = count = 1ull;
+        this->nivel = nivel = 0ull;
         file.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
-        file.write(reinterpret_cast<char*>(&count), sizeof(unsigned));
+        file.write(reinterpret_cast<char*>(&count), sizeof(size_t));
+        file.write(reinterpret_cast<char*>(&nivel), sizeof(size_t));
         posicao = file.tellp();
         raiz->DiskPos = posicao;
         file.seekp(0, fstream::beg);
@@ -218,7 +236,8 @@ void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
     stack<NodeAux> CaminhoNo;
     while(!no->Folha())
         no = EscolhaSubArvore(no, CaminhoNo, MbrForma);
-    CaminhoNo.pop();
+    if(!CaminhoNo.empty())
+        CaminhoNo.pop();
     InserirNaFolha(no, CaminhoNo, MbrForma, pos);
     LiberaPilha(CaminhoNo);
 }
@@ -230,7 +249,7 @@ bool comparacaoESA(const pair<NodeAux, double>& primeiro, const pair<NodeAux, do
 Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& MbrForma){
     vector<pair<NodeAux, double>> contem;
     NodeAux temp;
-    bool inseriu = false;
+    temp.ptr = no;
     unsigned index = 0;
     for(auto chaves: no->Chaves){
         if(chaves.MBR.Contem(MbrForma)){
@@ -239,17 +258,13 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
             NodeAux aux(ptrNo, index);
             pair<NodeAux, double> candidato = make_pair(aux, area);
             contem.push_back(candidato);
-            if(!inseriu){
-                temp.ptr = no;
-                inseriu = true;
-            }
         }
         index++;
     }
     if(contem.size()){
         Node* resultado = nullptr;
         if(contem.size()>1){
-            sort(contem.begin(), contem.end(), ComparacaoESA);
+            sort(contem.begin(), contem.end(), [](const pair<NodeAux, double>& A, const pair<NodeAux, double>& B){return A.second < B.second;});
             swap(resultado, contem.front().first.ptr);
             for(auto &candidatos: contem)
                 if(candidatos.first.ptr != nullptr)
@@ -261,10 +276,17 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
         caminho.push(temp);
         return resultado;
     }
-    else{ // SE NENHUMA CHAVE CONTER A FORMA, ESCOLHA O QUE PRECISA CRESCER MENOS (menor crescimento da área)
-
+    // SE NENHUMA CHAVE CONTER A FORMA, ESCOLHA O QUE PRECISA CRESCER MENOS (menor crescimento da área)
+    pair<double, unsigned> escolha = make_pair(DBL_MAX, 0);
+    for(unsigned i=0; i < no->Chaves.size(); i++){
+        double aux = no->Chaves[i].MBR.CresceParaConter(MbrForma).GetArea();
+        if(aux < escolha.first)
+            escolha = make_pair(aux, i);
     }
-
+    temp.index = escolha.second;
+    caminho.push(temp);
+    Node* ptrNo = new Node(no->Chaves[escolha.second].ChildPtr);
+    return ptrNo;
 }
 
 
@@ -290,9 +312,10 @@ void RTree::AjustaCaminho(Node* &no, stack<NodeAux>& caminho){
 }
 
 void RTree::DividirEAjustar(Node* &no, stack<NodeAux>& caminho){
+    bool EhRaiz = (no == raiz);
     Node* novoNo = Divide(no);
-    no->SalvarNo();
-    if(no == raiz)
+    count++; // quantidade de nós na árvore cresce em 1
+    if(EhRaiz)
         CriaNovaRaiz(no, novoNo);
     else{
         NodeAux pai = caminho.top();
@@ -336,13 +359,13 @@ Node* RTree::Divide(Node* &no){
         }
     }
     vector<Chave> ChavesRestantes, G1(1), G2(1);
+    G1[0] = no->Chaves[escolhas.first];
+    G2[0] = no->Chaves[escolhas.second];
     Node* NoG1 = new Node(no->Nivel, G1);
     Node* NoG2 = new Node(no->Nivel, G2);
     Node* BestGroup = nullptr;
     unsigned BestKey;
     Retangulo Aux1, Aux2;
-    G1[0] = no->Chaves[escolhas.first];
-    G2[0] = no->Chaves[escolhas.second];
     for(auto &item: no->Chaves)
         if(item != *(G1.begin()) and item != *(G2.begin()))
             ChavesRestantes.push_back(item);
@@ -382,18 +405,19 @@ Node* RTree::Divide(Node* &no){
     swap(no->DiskPos, NoG1->DiskPos);
     delete no;
     no = NoG1;
-    count++; // quantidade de nós na árvore cresce
-    // NO COM OVERFLOW DE 1
+    no->SalvarNo();
+    NoG2->SalvarNo();
     return NoG2;
 }
 
 void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){
-    vector<Node*> v;
-    v.push_back(no);
-    v.push_back(novoNo);
+    vector<Node*> v(2);
+    v[0] = no;
+    v[1] = novoNo;
     Node* novaRaiz = new Node(v);
     raiz = novaRaiz;
     count++;
+    nivel++;
 }
 
 bool Node::Folha(){
@@ -402,14 +426,6 @@ bool Node::Folha(){
 
 bool Node::Overflow(){
     return (Chaves.size() > MAXCHAVES)?true:false;
-}
-
-bool comparaMinChave(const Chave& K, const Chave& W){
-    return W.MBR < K.MBR;
-}
-
-bool comparaMaxChave(const Chave& K, const Chave& W){
-    return W.MBR > K.MBR;
 }
 
 void LiberaPilha(stack<NodeAux>& pilha){
@@ -426,6 +442,13 @@ bool operator==(const Chave& A, const Chave& B){
 
 bool operator!=(const Chave& A, const Chave& B){
     return !(A == B);
+}
+
+bool operator<(const Chave& A, const Chave& B){
+    return A.MBR < B.MBR;
+}
+bool operator>(const Chave& A, const Chave& B){
+    return A.MBR > B.MBR;
 }
 
 } // NAMESPACE SPATIALINDEX

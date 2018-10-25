@@ -36,6 +36,10 @@ bool operator<=(const Ponto& This, const Ponto& Other){
     return This < Other or This == Other;
 }
 
+bool operator>=(const Ponto& This, const Ponto& Other){
+    return This > Other or This == Other;
+}
+
 bool operator>(const Ponto& This, const Ponto& Other){
     bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
     return ((This.GetX() > Other.GetX()) or ((comparacao) and (This.GetY() > Other.GetY())));
@@ -408,7 +412,14 @@ Retangulo::Retangulo(){
     diagonal = R;
 }
 
-Retangulo::Retangulo(Ponto& origem, Ponto& destino, int _id): diagonal(origem, destino), ID(_id){
+Retangulo::Retangulo(const Retangulo& R){
+    this->diagonal = R.diagonal;
+    this->area = R.area;
+    if(this->area == 0.0)
+        CalcularArea();
+}
+
+Retangulo::Retangulo(Ponto& origem, Ponto& destino): diagonal(origem, destino){
     CalcularArea();
 }
 
@@ -468,6 +479,7 @@ double Retangulo::Ajusta(Retangulo& R, bool& mod){
             this->diagonal = R.diagonal;
             return this->GetArea() - R.GetArea();
     }
+    return double(0);
 }
 
 Retangulo Retangulo::CresceParaConter(Retangulo& R){
@@ -488,6 +500,10 @@ Retangulo Retangulo::CresceParaConter(Retangulo& R){
         B = R.diagonal.destino;
     }
     return Retangulo(A,B);
+}
+
+const Aresta& Retangulo::GetDiagonal(){
+    return this->diagonal;
 }
 
 bool operator<(const Retangulo& a, const Retangulo& b){

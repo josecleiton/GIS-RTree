@@ -32,8 +32,11 @@ struct Chave{
     };
     Chave(Retangulo&, streampos&, int);
     Chave();
+    Chave(const Chave&);
     friend bool operator==(const Chave&, const Chave&);
     friend bool operator!=(const Chave&, const Chave&);
+    friend bool operator<(const Chave&, const Chave&);
+    friend bool operator>(const Chave&, const Chave&);
 };
 #pragma pack(pop)
 
@@ -62,8 +65,8 @@ struct NodeAux{
 class RTree{
 private:
     Node* raiz{};
-    size_t count;
-
+    size_t count{};
+    size_t nivel{};
 public:
    RTree();
    ~RTree();
@@ -84,8 +87,6 @@ public:
 };
 
 bool ComparacaoESA(const pair<NodeAux, double>&, const pair<NodeAux, double>&);
-bool ComparaMinChave(const Chave&, const Chave&);
-bool ComparaMaxChave(const Chave&, const Chave&);
 void LiberaPilha(stack<NodeAux>&);
 
 }
