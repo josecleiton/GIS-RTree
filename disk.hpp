@@ -11,7 +11,7 @@ using namespace SpatialData;
 namespace DiskAPI{
 
 
-enum TiposForma{PONTO, LINHA, POLIGONAL, POLIGONO, POLIGONO_NAO_CONVEXO, INDEFINIDO};
+enum TiposForma{PONTO, LINHA, POLIGONAL, POLIGONO, POLIGONO_NAO_CONVEXO, INDEFINIDO, CIRCULO};
 
 struct Registro{
     unsigned char tipo;
@@ -27,8 +27,9 @@ public:
     Disk(string, bool);
     Disk(string);
     ~Disk();
-    streampos SalvarForma(unsigned char&, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
+    streampos Salvar(unsigned char&, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
     Registro* Read(streampos&); // LE UM POR VEZ
+    streampos Salvar(Circulo&);
     void Verifica(); // VERIFICA SE O ARQUIVO FOI ABERTO
 };
 

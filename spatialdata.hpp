@@ -134,6 +134,8 @@ public:
     friend bool operator==(const Retangulo&, const Retangulo&);
 };
 
+
+#pragma pack(push, 1)
 class Circulo{
     public:
         Ponto centro;
@@ -152,6 +154,7 @@ class Circulo{
         Retangulo Envelope();
 
 };
+#pragma pack(pop)
 
 double ProdutodePontos(Ponto&, Ponto&);
 Vertice* MenorVertice(Poligono&, int (*cmp)(Ponto*, Ponto*));

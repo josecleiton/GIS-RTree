@@ -204,6 +204,19 @@ list<streampos>* RTree::Busca(Ponto& P){
     return resultado;
 }
 
+NodeAux RTree::Busca(Retangulo& R){
+    Node* no = root.GetPtr();
+    stack<NodeAux> Caminho;
+    unsigned i = 0;
+    while(no != nullptr and !no->Folha())
+        no = EscolhaSubArvore(no, Caminho, R, true);
+    if(!Caminho.empty()){
+        i = Caminho.top().index;
+        LiberaPilha(Caminho);
+    }
+    return NodeAux(no, i);
+}
+
 void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
     fstream file(RTREE_FILE, fstream::binary|fstream::out|fstream::in);
     if(file.is_open()){
@@ -230,23 +243,18 @@ void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
 
 void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
     Node* no = root.GetPtr();
-    if(no == nullptr){
+    if(no == nullptr)
         return CriaArvore(MbrForma, pos);
-    }
     stack<NodeAux> CaminhoNo;
     while(!no->Folha())
-        no = EscolhaSubArvore(no, CaminhoNo, MbrForma);
+        no = EscolhaSubArvore(no, CaminhoNo, MbrForma, false);
     if(!CaminhoNo.empty())
         CaminhoNo.pop();
     InserirNaFolha(no, CaminhoNo, MbrForma, pos);
     LiberaPilha(CaminhoNo);
 }
 
-bool comparacaoESA(const pair<NodeAux, double>& primeiro, const pair<NodeAux, double>& segundo){
-    return primeiro.second < segundo.second;
-}
-
-Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& MbrForma){
+Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& MbrForma, bool busca){
     vector<pair<NodeAux, double>> contem;
     NodeAux temp;
     temp.ptr = no;
@@ -276,17 +284,20 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
         caminho.push(temp);
         return resultado;
     }
-    // SE NENHUMA CHAVE CONTER A FORMA, ESCOLHA O QUE PRECISA CRESCER MENOS (menor crescimento da área)
-    pair<double, unsigned> escolha = make_pair(DBL_MAX, 0);
-    for(unsigned i=0; i < no->Chaves.size(); i++){
-        double aux = no->Chaves[i].MBR.CresceParaConter(MbrForma).GetArea();
-        if(aux < escolha.first)
-            escolha = make_pair(aux, i);
+    if(!busca){
+        // SE NENHUMA CHAVE CONTER A FORMA, ESCOLHA O QUE PRECISA CRESCER MENOS (menor crescimento da área)
+        pair<double, unsigned> escolha = make_pair(DBL_MAX, 0);
+        for(unsigned i=0; i < no->Chaves.size(); i++){
+            double aux = no->Chaves[i].MBR.CresceParaConter(MbrForma).GetArea();
+            if(aux < escolha.first)
+                escolha = make_pair(aux, i);
+        }
+        temp.index = escolha.second;
+        caminho.push(temp);
+        Node* ptrNo = new Node(no->Chaves[escolha.second].ChildPtr);
+        return ptrNo;
     }
-    temp.index = escolha.second;
-    caminho.push(temp);
-    Node* ptrNo = new Node(no->Chaves[escolha.second].ChildPtr);
-    return ptrNo;
+    return nullptr;
 }
 
 

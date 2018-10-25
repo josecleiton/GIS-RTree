@@ -5,8 +5,7 @@
 #include <QRegExpValidator>
 #include "insertwindow.hpp"
 #include "spatialdata.hpp"
-
-#define REAL_NUMBER_REGEX "^(-|\\+)?(([1-9][0-9]*)|(0))(?:\\.[0-9]+)?$"
+#include "regex.hpp"
 
 namespace Ui {
 class InsertPoint;

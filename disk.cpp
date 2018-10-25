@@ -26,7 +26,7 @@ Disk::~Disk(){
         file.close();
 }
 
-streampos Disk::SalvarForma(unsigned char& _tipo, unsigned& numeroVertices, Vertice* _vertices){
+streampos Disk::Salvar(unsigned char& _tipo, unsigned& numeroVertices, Vertice* _vertices){
     /*
      * SALVA UM REGISTRO NO SEGUINTE FORMATO:
      * struct Registro{
@@ -47,6 +47,21 @@ streampos Disk::SalvarForma(unsigned char& _tipo, unsigned& numeroVertices, Vert
             file.write(reinterpret_cast<char*>(&(_vertices->x)), sizeof(double));
             file.write(reinterpret_cast<char*>(&(_vertices->y)), sizeof(double));
         }
+        return pos;
+    }
+    else{
+        cerr << "Forma geométrica não pode ser salva no disco." << endl;
+        exit(-1);
+    }
+}
+
+streampos Disk::Salvar(Circulo& C){
+    if(file.is_open()){
+        bool active = true;
+        file.seekp(0, fstream::end);
+        streampos pos = file.tellp();
+        file.write(reinterpret_cast<char*>(&active), sizeof(bool));
+        file.write(reinterpret_cast<char*>(&C), sizeof(Circulo));
         return pos;
     }
     else{

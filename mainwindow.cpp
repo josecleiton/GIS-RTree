@@ -1,6 +1,5 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
-#include "insertwindow.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -22,7 +21,9 @@ void MainWindow::on_inserir_clicked()
 }
 
 void MainWindow::on_buscar_clicked(){
-    cout << "IEIE" << endl;
+    SearchWindow searchwindow;
+    searchwindow.setModal(true);
+    searchwindow.exec();
 }
 
 void MainWindow::on_cancel_clicked(){

@@ -30,7 +30,10 @@ SOURCES += \
     spatialdata.cpp \
     insertwindow.cpp \
     insertpointwindow.cpp \
-    circularlist.cpp
+    circularlist.cpp \
+    searchwindow.cpp \
+    rectanglesearchwindow.cpp \
+    insertcirclewindow.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -40,12 +43,19 @@ HEADERS += \
     insertwindow.hpp \
     variaveis.hpp \
     insertpointwindow.hpp \
-    circularlist.hpp
+    circularlist.hpp \
+    searchwindow.hpp \
+    rectanglesearchwindow.hpp \
+    regex.hpp \
+    insertcirclewindow.hpp
 
 FORMS += \
         mainwindow.ui \
     insertwindow.ui \
-    insertpointwindow.ui
+    insertpointwindow.ui \
+    searchwindow.ui \
+    rectanglesearchwindow.ui \
+    insertcirclewindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

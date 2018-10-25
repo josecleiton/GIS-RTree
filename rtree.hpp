@@ -76,7 +76,8 @@ public:
    void CriaArvore(Retangulo&, streampos&);
    list<Node*>* Traversal(streampos&, Ponto&); // PERCORRE A ARVORE
    list<streampos>* Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
-   Node* EscolhaSubArvore(Node*&, stack<NodeAux>&, Retangulo&);
+   NodeAux Busca(Retangulo&);
+   Node* EscolhaSubArvore(Node*&, stack<NodeAux>&, Retangulo&, bool);
    void InserirNaFolha(Node*&, stack<NodeAux>&, Retangulo&, streampos&);
    void AjustaCaminho(Node*&, stack<NodeAux>&);
    void DividirEAjustar(Node*&, stack<NodeAux>&);
@@ -86,7 +87,6 @@ public:
    bool ArquivoVazio();
 };
 
-bool ComparacaoESA(const pair<NodeAux, double>&, const pair<NodeAux, double>&);
 void LiberaPilha(stack<NodeAux>&);
 
 }
