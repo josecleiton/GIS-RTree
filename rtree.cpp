@@ -112,14 +112,14 @@ bool Node::Cresce(Retangulo& EntryMBR, unsigned indexChave){
 */
 
 Retangulo Node::GetRetangulo(){
-    Ponto P1(DBL_MAX, DBL_MAX), P2(-DBL_MAX, -DBL_MAX);
+    Ponto P1(DBL_MAX, DBL_MAX), P2(DBL_MIN, DBL_MIN);
     for(auto i: Chaves){
         Ponto aux1 = i.MBR.GetDiagonal().GetOrigem();
         Ponto aux2 = i.MBR.GetDiagonal().GetDestino();
         if(aux1 <= P1)
             P1 = aux1;
         if(aux2 >= P2)
-            P2 = aux1;
+            P2 = aux2;
     }
     return Retangulo(P1,P2);
 }
@@ -138,6 +138,8 @@ RTree::RTree(){
             file.close();
             this->raiz = new Node(PosicaoDaRaiz);
         }
+        else
+            cerr << RTREE_FILE << " não foi aberto." << endl;
     }
     else
         this->raiz = nullptr;

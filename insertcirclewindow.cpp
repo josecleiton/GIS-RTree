@@ -19,5 +19,16 @@ InsertCircleWindow::~InsertCircleWindow()
 }
 
 SpatialData::Circulo InsertCircleWindow::GetInfo(){
-    return SpatialData::Circulo(ui->raio->text().toDouble(), SpatialData::Ponto(ui->xc->text().toDouble(), ui->yc->text().toDouble()));
+    return this->A;
+}
+
+void InsertCircleWindow::on_button_clicked()
+{
+    this->A.centro = SpatialData::Ponto(ui->xc->text().toDouble(), ui->yc->text().toDouble());
+    this->A.raio = ui->raio->text().toDouble();
+}
+
+void InsertCircleWindow::on_buttonBox_clicked()
+{
+    close();
 }

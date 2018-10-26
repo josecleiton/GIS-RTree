@@ -29,7 +29,6 @@ void RectangleSearchWindow::on_button_clicked()
         //NÃO ENCONTRADO
         QMessageBox mbox;
         mbox.critical(nullptr, "Erro", "Retângulo não encontrado no banco de dados.");
-        mbox.setFixedSize(500,200);
     }
     else{
         SpatialIndex::NodeAux No = Pilha->top();

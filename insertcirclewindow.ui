@@ -13,17 +13,17 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>20</y>
+     <x>20</x>
+     <y>30</y>
      <width>351</width>
-     <height>251</height>
+     <height>241</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
-    <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+    <item alignment="Qt::AlignHCenter">
      <widget class="QLabel" name="label">
       <property name="text">
        <string>Insira o círculo</string>
@@ -74,14 +74,25 @@
      </layout>
     </item>
     <item>
-     <widget class="QDialogButtonBox" name="button">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="standardButtons">
-       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QDialogButtonBox" name="button">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

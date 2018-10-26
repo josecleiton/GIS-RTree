@@ -29,7 +29,6 @@ void MainWindow::on_buscar_clicked(){
     else{
         QMessageBox mbox;
         mbox.critical(nullptr, "Erro", "Primeiro insira elementos no banco de dados.");
-        mbox.setFixedSize(500,200);
     }
 }
 

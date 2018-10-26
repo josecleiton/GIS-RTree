@@ -18,8 +18,14 @@ public:
     ~InsertCircleWindow();
     SpatialData::Circulo GetInfo();
 
+private slots:
+    void on_button_clicked();
+
+    void on_buttonBox_clicked();
+
 private:
     Ui::InsertCircleWindow *ui;
+    SpatialData::Circulo A;
 };
 
 #endif // INSERTCIRCLEWINDOW_HPP

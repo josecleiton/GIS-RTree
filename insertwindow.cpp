@@ -27,65 +27,68 @@ InsertWindow::~InsertWindow(){
 }
 
 void InsertWindow::on_submit_clicked(){
-    unsigned int num_vertices = ui->numVert->text().toUInt(); // NUM DE VERTICES DETERMINADO PELA GUI
-    string forma = ui->tipoForma->text().toStdString();
-    unsigned char tipo; // TIPO DA FORMA (POLIGONO, POLIGONAL ETC)
-    DiskAPI::Disk io(FILENAME); // UMA API VAGABUNDA PARA AJUDAR NOS ACESSOS AO DISCO
-    Retangulo MBR;
-    streampos posicao_forma;
-
-    for(auto letra = forma.begin(); letra != forma.end(); letra++) // DEIXAR AS LETRAS MAIUSCULAS PARA A COMPARAÇÃO
-        *letra = static_cast<char>(toupper(*letra));
-
-    if(forma == "POLIGONO")
-        tipo = DiskAPI::POLIGONO;
-    else if(forma == "PONTO")
-        tipo = DiskAPI::PONTO;
-    else if(forma == "LINHA")
-        tipo = DiskAPI::LINHA;
-    else if(forma == "POLIGONAL")
-        tipo = DiskAPI::POLIGONAL;
-    else if(forma == "POLIGONO NAO CONVEXO")
-        tipo = DiskAPI::POLIGONO_NAO_CONVEXO;
-    else if(forma == "CIRCULO")
-        tipo = DiskAPI::CIRCULO;
-    else
-        tipo = DiskAPI::INDEFINIDO;
-
-    // PEGAR OS VERTICES POR UM MÉTODO USANDO GUI
-    // CRIAR A LISTA DE VERTICES
-    // RESOLUÇÃO ABAIXO:
-    if(tipo != DiskAPI::CIRCULO){
-        Vertice* pontos = nullptr;
-        InsertPoint VerticeWindow;
-        VerticeWindow.setModal(true);
-        for(unsigned i=0; i<num_vertices; i++){ // FOR PARA PEGAR TODOS OS PONTOS INSERIDOS PELO USUÁRIO VIA GUI
-            VerticeWindow.exec();
-            if(pontos == nullptr){
-                Ponto temp = VerticeWindow.GetPonto();
-                pontos = new Vertice(temp);
-            }
-            else{
-                Vertice* temp = VerticeWindow.GetVertice();
-                pontos->Push(temp);
-            }
-            VerticeWindow.close();
-        }
-        posicao_forma = io.Salvar(tipo, num_vertices, pontos); // posicao da forma
-        MBR = pontos->Envelope(); //MBR QUE ENVELOPA A FORMA
-    }
-    else{
-        InsertCircleWindow CircleWindow;
-        CircleWindow.setModal(true);
-        CircleWindow.exec();
-        Circulo C = CircleWindow.GetInfo();
-        MBR = C.Envelope();
-        posicao_forma = io.Salvar(C);
-    }
-    root.Inserir(MBR, posicao_forma);  // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
     QMessageBox MB;
-    MB.information(nullptr, "Sucesso", "Forma inserida no banco de dados.");
-    MB.exec();
+    unsigned int num_vertices = ui->numVert->text().toUInt(); // NUM DE VERTICES DETERMINADO PELA GUI
+    if(!num_vertices)
+        MB.critical(nullptr, "Entrada incorreta!", "Não é possível inserir uma forma sem pontos.");
+    else{
+        string forma = ui->tipoForma->text().toStdString();
+        unsigned char tipo; // TIPO DA FORMA (POLIGONO, POLIGONAL ETC)
+        DiskAPI::Disk io(FILENAME); // UMA API VAGABUNDA PARA AJUDAR NOS ACESSOS AO DISCO
+        Retangulo MBR;
+        streampos posicao_forma;
+
+        for(auto letra = forma.begin(); letra != forma.end(); letra++) // DEIXAR AS LETRAS MAIUSCULAS PARA A COMPARAÇÃO
+            *letra = static_cast<char>(toupper(*letra));
+
+        if(forma == "POLIGONO")
+            tipo = DiskAPI::POLIGONO;
+        else if(forma == "PONTO")
+            tipo = DiskAPI::PONTO;
+        else if(forma == "LINHA")
+            tipo = DiskAPI::LINHA;
+        else if(forma == "POLIGONAL")
+            tipo = DiskAPI::POLIGONAL;
+        else if(forma == "POLIGONO NAO CONVEXO")
+            tipo = DiskAPI::POLIGONO_NAO_CONVEXO;
+        else if(forma == "CIRCULO")
+            tipo = DiskAPI::CIRCULO;
+        else
+            tipo = DiskAPI::INDEFINIDO;
+
+        // PEGAR OS VERTICES POR UM MÉTODO USANDO GUI
+        // CRIAR A LISTA DE VERTICES
+        // RESOLUÇÃO ABAIXO:
+        if(tipo != DiskAPI::CIRCULO){
+            Vertice* pontos = nullptr;
+            InsertPoint VerticeWindow;
+            VerticeWindow.setModal(true);
+            for(unsigned i=0; i<num_vertices; i++){ // FOR PARA PEGAR TODOS OS PONTOS INSERIDOS PELO USUÁRIO VIA GUI
+                VerticeWindow.exec();
+                if(pontos == nullptr){
+                    Ponto temp = VerticeWindow.GetPonto();
+                    pontos = new Vertice(temp);
+                }
+                else{
+                    Vertice* temp = VerticeWindow.GetVertice();
+                    pontos->Push(temp);
+                }
+                VerticeWindow.close();
+            }
+            posicao_forma = io.Salvar(tipo, num_vertices, pontos); // posicao da forma
+            MBR = pontos->Envelope(); //MBR QUE ENVELOPA A FORMA
+        }
+        else{
+            InsertCircleWindow CircleWindow;
+            CircleWindow.setModal(true);
+            CircleWindow.exec();
+            Circulo C = CircleWindow.GetInfo();
+            MBR = C.Envelope();
+            posicao_forma = io.Salvar(C);
+        }
+        root.Inserir(MBR, posicao_forma);  // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
+        MB.information(nullptr, "Sucesso", "Forma inserida no banco de dados.");
+    }
     close(); // termina a janela
 }
 
