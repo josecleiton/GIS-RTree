@@ -5,5 +5,6 @@
 //ARQUIVO PARA A DEFINIÇÃO DE VARIÁVEIS GLOBAIS
 
 extern SpatialIndex::RTree root;
+extern bool i;
 
 #endif // VARIAVEIS_HPP

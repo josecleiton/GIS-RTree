@@ -24,8 +24,35 @@ void RectangleSearchWindow::on_button_clicked()
     SpatialData::Ponto A(ui->p1x->text().toDouble(), ui->p1y->text().toDouble());
     SpatialData::Ponto B(ui->p2x->text().toDouble(), ui->p2y->text().toDouble());
     SpatialData::Retangulo R(A, B);
-    SpatialIndex::NodeAux Encontrado = root.Busca(R);
-    if(Encontrado.ptr == nullptr){
-
+    stack<SpatialIndex::NodeAux>* Pilha = root.Busca(R);
+    if(Pilha->empty() or (!Pilha->empty() and Pilha->top().ptr == nullptr)){
+        //NÃO ENCONTRADO
+        QMessageBox mbox;
+        mbox.critical(nullptr, "Erro", "Retângulo não encontrado no banco de dados.");
+        mbox.setFixedSize(500,200);
     }
+    else{
+        SpatialIndex::NodeAux No = Pilha->top();
+        Pilha->pop();
+        DiskAPI::Disk io(FILENAME);
+        streampos pos = No.ptr->Chaves[No.index].Dado;
+        DiskAPI::Registro* Reg = io.Read(pos);
+        this->reg = Reg;
+        if(i){
+            FindWindow FW;
+            FW.setModal(true);
+            FW.setReg(Reg);
+            FW.exec();
+            if(FW.GetRemove()){
+                io.Remove(pos);
+                //root.Remove(pos, *Pilha);
+            }
+            delete Reg;
+        }
+    }
+    close();
+}
+
+DiskAPI::Registro* RectangleSearchWindow::GetRegistro(){
+    return this->reg;
 }

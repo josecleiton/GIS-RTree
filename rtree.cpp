@@ -204,17 +204,16 @@ list<streampos>* RTree::Busca(Ponto& P){
     return resultado;
 }
 
-NodeAux RTree::Busca(Retangulo& R){
+stack<NodeAux>* RTree::Busca(Retangulo& R){
     Node* no = root.GetPtr();
-    stack<NodeAux> Caminho;
-    unsigned i = 0;
+    stack<NodeAux>* Caminho = new stack<NodeAux>;
     while(no != nullptr and !no->Folha())
-        no = EscolhaSubArvore(no, Caminho, R, true);
-    if(!Caminho.empty()){
-        i = Caminho.top().index;
-        LiberaPilha(Caminho);
+        no = EscolhaSubArvore(no, *Caminho, R, true);
+    if(no == nullptr){
+        NodeAux aux;
+        Caminho->push(aux);
     }
-    return NodeAux(no, i);
+    return Caminho;
 }
 
 void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){

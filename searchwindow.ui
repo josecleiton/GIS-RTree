@@ -16,17 +16,24 @@
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>20</y>
-     <width>351</width>
-     <height>261</height>
+     <x>21</x>
+     <y>10</y>
+     <width>361</width>
+     <height>271</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
-    <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+    <item alignment="Qt::AlignHCenter">
      <widget class="QLabel" name="titulo">
       <property name="text">
        <string>Busca no BD</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="interseccao">
+      <property name="text">
+       <string>Buscar pela intersecção entre dois Retângulo</string>
       </property>
      </widget>
     </item>

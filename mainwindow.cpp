@@ -21,9 +21,16 @@ void MainWindow::on_inserir_clicked()
 }
 
 void MainWindow::on_buscar_clicked(){
-    SearchWindow searchwindow;
-    searchwindow.setModal(true);
-    searchwindow.exec();
+    if(root.GetPtr() != nullptr){
+        SearchWindow searchwindow;
+        searchwindow.setModal(true);
+        searchwindow.exec();
+    }
+    else{
+        QMessageBox mbox;
+        mbox.critical(nullptr, "Erro", "Primeiro insira elementos no banco de dados.");
+        mbox.setFixedSize(500,200);
+    }
 }
 
 void MainWindow::on_cancel_clicked(){

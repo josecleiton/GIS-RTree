@@ -30,6 +30,7 @@ public:
     streampos Salvar(unsigned char&, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
     Registro* Read(streampos&); // LE UM POR VEZ
     streampos Salvar(Circulo&);
+    void Remove(streampos&);
     void Verifica(); // VERIFICA SE O ARQUIVO FOI ABERTO
 };
 

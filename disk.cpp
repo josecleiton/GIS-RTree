@@ -60,7 +60,9 @@ streampos Disk::Salvar(Circulo& C){
         bool active = true;
         file.seekp(0, fstream::end);
         streampos pos = file.tellp();
+        unsigned char k = CIRCULO;
         file.write(reinterpret_cast<char*>(&active), sizeof(bool));
+        file.write(reinterpret_cast<char*>(&k), sizeof(unsigned char));
         file.write(reinterpret_cast<char*>(&C), sizeof(Circulo));
         return pos;
     }
@@ -82,14 +84,25 @@ Registro* Disk::Read(streampos& pos){
             Vertice* Lista = nullptr, *temp = nullptr;
             Registro* Reg = nullptr;
             file.read(reinterpret_cast<char*>(&tipo), sizeof(unsigned char));
-            file.read(reinterpret_cast<char*>(&numeroVertices), sizeof(unsigned));
-            for(unsigned i=0; i<numeroVertices; i++){
-                file.read(reinterpret_cast<char*>(&x), sizeof(double));
-                file.read(reinterpret_cast<char*>(&y), sizeof(double));
-                if(Lista == nullptr)
-                    Lista = new Vertice(x,y);
-                else{
-                    temp = new Vertice(x,y);
+            if(tipo != CIRCULO){
+                file.read(reinterpret_cast<char*>(&numeroVertices), sizeof(unsigned));
+                for(unsigned i=0; i<numeroVertices; i++){
+                    file.read(reinterpret_cast<char*>(&x), sizeof(double));
+                    file.read(reinterpret_cast<char*>(&y), sizeof(double));
+                    if(Lista == nullptr)
+                        Lista = new Vertice(x,y);
+                    else{
+                        temp = new Vertice(x,y);
+                        Lista->Push(temp);
+                    }
+                }
+            }
+            else{
+                Circulo aux;
+                file.read(reinterpret_cast<char*>(&aux), sizeof(Circulo));
+                if(Lista == nullptr){
+                    Lista = new Vertice(aux.centro);
+                    Vertice* temp = new Vertice(aux.raio, aux.raio);
                     Lista->Push(temp);
                 }
             }
@@ -120,8 +133,25 @@ void* Registro::Conversao(){ // SE A CONVERSÃO FOR PARA PONTO OU ARESTA, PRECIS
         Ponto* P = new Ponto(lista->GetPonto());
         return P;
     }
+    else if(tipo == CIRCULO){
+        Circulo* c = new Circulo(lista->Horario()->GetX(), lista->GetPonto());
+        return c;
+    }
     cerr << "Retornando a própria lista de vértices, tipo não suportado para conversão" << endl;
     return lista;
+}
+
+void Disk::Remove(streampos& pos){
+    if(file.is_open()){
+        bool active = false;
+        file.seekp(pos);
+        file.write(reinterpret_cast<char*>(&active), sizeof(bool));
+    }
+    else{
+        cerr << "Arquivo não abriu. " << endl;
+        exit(-40);
+    }
+
 }
 
 } // DISK API NAMESPACE

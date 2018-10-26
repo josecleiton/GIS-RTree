@@ -33,7 +33,8 @@ SOURCES += \
     circularlist.cpp \
     searchwindow.cpp \
     rectanglesearchwindow.cpp \
-    insertcirclewindow.cpp
+    insertcirclewindow.cpp \
+    findwindow.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -47,7 +48,8 @@ HEADERS += \
     searchwindow.hpp \
     rectanglesearchwindow.hpp \
     regex.hpp \
-    insertcirclewindow.hpp
+    insertcirclewindow.hpp \
+    findwindow.hpp
 
 FORMS += \
         mainwindow.ui \
@@ -55,7 +57,8 @@ FORMS += \
     insertpointwindow.ui \
     searchwindow.ui \
     rectanglesearchwindow.ui \
-    insertcirclewindow.ui
+    insertcirclewindow.ui \
+    findwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

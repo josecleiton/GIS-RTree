@@ -19,6 +19,8 @@ public:
 private slots:
     void on_retangulo_clicked();
 
+    void on_interseccao_clicked();
+
 private:
     Ui::SearchWindow *ui;
 };

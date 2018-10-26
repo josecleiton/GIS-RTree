@@ -14,12 +14,23 @@ SearchWindow::~SearchWindow()
 }
 
 void SearchWindow::on_retangulo_clicked(){
-    /*
-     *     InsertWindow insertwindow;
-        insertwindow.setModal(true);
-        insertwindow.exec();
-        */
+    i = true;
     RectangleSearchWindow recwindow;
     recwindow.setModal(true);
     recwindow.exec();
+}
+
+void SearchWindow::on_interseccao_clicked(){
+    i = false;
+    RectangleSearchWindow RSW;
+    DiskAPI::Registro* R[2];
+    for(unsigned j=0; j<2; j++){
+        RSW.setModal(true);
+        RSW.exec();
+        R[j] = RSW.GetRegistro();
+        RSW.close();
+    }
+
+    for(unsigned j=0; j<2; j++)
+        delete R[j];
 }
