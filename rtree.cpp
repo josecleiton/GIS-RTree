@@ -145,14 +145,18 @@ RTree::RTree(){
 
 RTree::~RTree(){
     fstream file(RTREE_FILE, fstream::binary|fstream::in|fstream::out);
-    if(raiz != nullptr and file.is_open()){
-        file.seekp(0, fstream::beg);
-        file.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
-        file.write(reinterpret_cast<char*>(&(this->count)), sizeof(size_t));
-        file.write(reinterpret_cast<char*>(&(this->nivel)), sizeof(size_t));
+    if(file.is_open()){
+        if(raiz != nullptr){
+            file.seekp(0, fstream::beg);
+            file.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
+            file.write(reinterpret_cast<char*>(&(this->count)), sizeof(size_t));
+            file.write(reinterpret_cast<char*>(&(this->nivel)), sizeof(size_t));
+            delete this->raiz;
+        }
         file.close();
-        delete this->raiz;
     }
+    else
+        cerr << RTREE_FILE << " não foi aberto." << endl;
 }
 
 bool RTree::ArquivoVazio(){
