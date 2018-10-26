@@ -38,7 +38,7 @@ void RectangleSearchWindow::on_button_clicked()
         streampos pos = No.ptr->Chaves[No.index].Dado;
         DiskAPI::Registro* Reg = io.Read(pos);
         this->reg = Reg;
-        if(i){
+        if(interseccaoBool){
             FindWindow FW;
             FW.setModal(true);
             FW.setReg(Reg);

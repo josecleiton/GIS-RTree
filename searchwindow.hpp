@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "rectanglesearchwindow.hpp"
+#include "variaveis.hpp"
 
 namespace Ui {
 class SearchWindow;
