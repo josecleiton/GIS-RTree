@@ -33,7 +33,6 @@ void RectangleSearchWindow::on_button_clicked()
     }
     else{
         SpatialIndex::NodeAux No = Pilha->top();
-        Pilha->pop();
         DiskAPI::Disk io(FILENAME);
         streampos pos = No.ptr->Chaves[No.index].Dado;
         DiskAPI::Registro* Reg = io.Read(pos);
@@ -45,7 +44,7 @@ void RectangleSearchWindow::on_button_clicked()
             FW.exec();
             if(FW.GetRemove()){
                 io.Remove(pos);
-                //root.Remove(pos, *Pilha);
+                root.Remove(*Pilha);
             }
             delete Reg;
         }

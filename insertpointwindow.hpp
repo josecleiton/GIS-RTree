@@ -2,7 +2,6 @@
 #define POINTINSERT_HPP
 
 #include <QDialog>
-#include <QRegExpValidator>
 #include "insertwindow.hpp"
 #include "spatialdata.hpp"
 #include "regex.hpp"

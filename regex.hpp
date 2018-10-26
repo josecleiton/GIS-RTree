@@ -1,5 +1,6 @@
 #ifndef REGEX_HPP
 #define REGEX_HPP
+#include <QRegExpValidator>
 
 #define INTEGER_REGEX "([0-9])\\w+"
 #define WORD_REGEX "([A-Z]|[a-z])\\w+"

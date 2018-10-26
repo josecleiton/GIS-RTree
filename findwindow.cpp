@@ -17,7 +17,7 @@ void FindWindow::on_remove_clicked()
 {
     this->remove = true;
     QMessageBox QMB;
-    QMB.setText("Forma removida do BD.");
+    QMB.information(nullptr, "Sucesso", "Forma removida do banco de dados.");
     QMB.exec();
 }
 

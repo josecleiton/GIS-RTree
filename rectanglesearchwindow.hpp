@@ -2,8 +2,6 @@
 #define RECTANGLESEARCHWINDOW_HPP
 
 #include <QDialog>
-#include <QRegExp>
-#include <QRegExpValidator>
 #include <QMessageBox>
 #include "variaveis.hpp"
 #include "rtree.hpp"

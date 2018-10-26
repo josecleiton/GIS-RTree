@@ -83,6 +83,9 @@ void InsertWindow::on_submit_clicked(){
         posicao_forma = io.Salvar(C);
     }
     root.Inserir(MBR, posicao_forma);  // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
+    QMessageBox MB;
+    MB.information(nullptr, "Sucesso", "Forma inserida no banco de dados.");
+    MB.exec();
     close(); // termina a janela
 }
 

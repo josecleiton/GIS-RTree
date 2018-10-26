@@ -2,8 +2,6 @@
 #define INSERTCIRCLEWINDOW_HPP
 
 #include <QDialog>
-#include <QRegExp>
-#include <QRegExpValidator>
 #include "regex.hpp"
 #include "spatialdata.hpp"
 

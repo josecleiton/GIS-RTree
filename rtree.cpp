@@ -145,7 +145,7 @@ RTree::RTree(){
 
 RTree::~RTree(){
     fstream file(RTREE_FILE, fstream::binary|fstream::in|fstream::out);
-    if(file.is_open()){
+    if(raiz != nullptr and file.is_open()){
         file.seekp(0, fstream::beg);
         file.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
         file.write(reinterpret_cast<char*>(&(this->count)), sizeof(size_t));
@@ -428,6 +428,12 @@ void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){
     raiz = novaRaiz;
     count++;
     nivel++;
+}
+
+void RTree::Remove(stack<NodeAux>& Caminho){
+    Node* no = Caminho.top().ptr;
+    Caminho.pop();
+    unsigned index = Caminho.top().index;
 }
 
 bool Node::Folha(){

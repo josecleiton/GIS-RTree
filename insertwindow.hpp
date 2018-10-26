@@ -2,7 +2,7 @@
 #define INSERTWINDOW_HPP
 
 #include <QDialog>
-#include <QRegExpValidator>
+#include <QMessageBox>
 #include <iostream>
 #include <fstream>
 #include <vector>

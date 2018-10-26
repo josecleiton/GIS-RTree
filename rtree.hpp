@@ -84,6 +84,7 @@ public:
    Node* Divide(Node*&);
    void CriaNovaRaiz(Node*&, Node*&);
    void InserirNo(Node*&, Node*&, stack<NodeAux>&);
+   void Remove(stack<NodeAux>&);
    bool ArquivoVazio();
 };
 
