@@ -103,6 +103,19 @@ streampos Node::SalvarNo(){
         cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
     return this->DiskPos;
 }
+
+streampos Node::Delete(){
+    fstream file(RTREE_FILE, fstream::binary|fstream::in|fstream::out);
+    if(file.is_open()){
+        bool active = false;
+        file.seekp(this->DiskPos);
+        file.write(reinterpret_cast<char*>(&active), sizeof(bool));
+        file.close();
+    }
+    else
+        cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
+    return this->DiskPos;
+}
 /*
 bool Node::Cresce(Retangulo& EntryMBR, unsigned indexChave){
     bool cresceu = false;
@@ -468,8 +481,7 @@ void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){
 }
 
 void RTree::Remove(stack<NodeAux>& Caminho){
-    list<Chave*> ChavesExcedentes;
-    ChavesExcedentes.splice(ChavesExcedentes.begin(), Reorganizar(Caminho));
+    list<Chave*> ChavesExcedentes = Reorganizar(Caminho);
     Reinserir(ChavesExcedentes);
     LiberaPilha(Caminho);
 }
@@ -479,19 +491,15 @@ list<Chave*> RTree::Reorganizar(stack<NodeAux>& Caminho){
     if(Caminho.empty()) return Q;
     NodeAux No = Caminho.top();
     No.ptr->Chaves.erase(No.ptr->Chaves.begin()+No.index);
-    if(No.ptr != root.GetPtr() and No.ptr->Chaves.size() < MINCHAVES){
-        if(No.ptr->Nivel == INTERNO){
+    if(No.ptr != root.GetPtr()){
+        if(No.ptr->Chaves.size() < MINCHAVES){
             Q.splice(Q.end(), EncontreAsFolhas(No.ptr));
+            Caminho.pop();
+            Q.splice(Q.end(), Reorganizar(Caminho));
         }
-        else{
-            for(auto &item: No.ptr->Chaves)
-                Q.push_back(&item);
-        }
-        Caminho.pop();
-        Q.splice(Q.end(), Reorganizar(Caminho));
+        else
+            AjustaCaminho(Caminho);
     }
-    else
-        AjustaCaminho(Caminho);
     return Q;
 }
 
@@ -514,9 +522,11 @@ list<Chave*> RTree::EncontreAsFolhas(Node*& no){ // CUIDADO COM ESSE METODO
         for(auto item: no->Chaves){
             aux = new Node(item.ChildPtr);
             LC.splice(LC.end(), EncontreAsFolhas(aux));
-            delete aux;
         }
+
     }
+    no->Delete();
+    delete no;
     return LC;
 }
 

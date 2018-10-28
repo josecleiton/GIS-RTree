@@ -49,6 +49,7 @@ struct Node{
     Node(Retangulo& R, streampos& PosR);
     Node(vector<Node*>&);
     streampos SalvarNo();
+    streampos Delete();
     bool Ajusta(Retangulo&, unsigned);
     bool Folha();
     bool Overflow();
