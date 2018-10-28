@@ -3,7 +3,7 @@
 #include "variaveis.hpp"
 namespace SpatialIndex{
 
-Chave::Chave(Retangulo& _mbr, streampos& _dado, int id): MBR(_mbr){
+Chave::Chave(Retangulo& _mbr, streampos& _dado, unsigned id): MBR(_mbr){
     if(id == FOLHA)
         this->Dado = _dado;
     else
@@ -16,10 +16,10 @@ Chave::Chave(){
     this->MBR = vazio;
 }
 
-Chave::Chave(const Chave& K){
-    this->ChildPtr = K.ChildPtr;
-    this->Dado = K.Dado;
-    this->MBR = K.MBR;
+Chave::Chave(Node*& No){
+    Retangulo R1 = No->GetRetangulo();
+    Chave k(R1, No->DiskPos, No->Nivel);
+    *this = k;
 }
 
 Node::Node(Retangulo& R, streampos& PosR){
@@ -112,18 +112,23 @@ bool Node::Cresce(Retangulo& EntryMBR, unsigned indexChave){
 */
 
 Retangulo Node::GetRetangulo(){
-    Ponto P1(DBL_MAX, DBL_MAX), P2(DBL_MIN, DBL_MIN);
-    for(auto i: Chaves){
-        Ponto aux1 = i.MBR.GetDiagonal().GetOrigem();
-        Ponto aux2 = i.MBR.GetDiagonal().GetDestino();
-        if(aux1 <= P1)
-            P1 = aux1;
-        if(aux2 >= P2)
-            P2 = aux2;
+    vector<double> a(2, DBL_MAX), b(2, DBL_MIN);
+    vector<pair<double, double>> k(2);
+    for(auto item: Chaves){
+        k[0] = make_pair(item.MBR.GetDiagonal().GetOrigem().GetX(), item.MBR.GetDiagonal().GetOrigem().GetY());
+        k[1] = make_pair(item.MBR.GetDiagonal().GetDestino().GetX(), item.MBR.GetDiagonal().GetDestino().GetY());
+        if(k[0].first < a[0])
+            a[0] = k[0].first;
+        if(k[0].second < a[1])
+            a[1] = k[0].second;
+        if(k[1].first > b[0])
+            b[0] = k[1].first;
+        if(k[1].second > b[1])
+            b[1] = k[1].second;
     }
-    return Retangulo(P1,P2);
+    Ponto A(a[0], a[1]), B(b[0], b[1]);
+    return Retangulo(A,B);
 }
-
 RTree::RTree(){
     if(!ArquivoVazio()){
         fstream file(RTREE_FILE, fstream::binary|fstream::in);
@@ -219,6 +224,8 @@ stack<NodeAux>* RTree::Busca(Retangulo& R){
         NodeAux aux;
         Caminho->push(aux);
     }
+    else if(no->Folha())
+        Caminho->top().index = BuscaNaFolha(no, R);
     return Caminho;
 }
 
@@ -253,9 +260,24 @@ void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
     stack<NodeAux> CaminhoNo;
     while(!no->Folha())
         no = EscolhaSubArvore(no, CaminhoNo, MbrForma, false);
-    if(!CaminhoNo.empty())
-        CaminhoNo.pop();
-    InserirNaFolha(no, CaminhoNo, MbrForma, pos);
+//    if(!CaminhoNo.empty())
+//        CaminhoNo.pop();
+    Chave Key(MbrForma, pos, FOLHA);
+    InserirNaFolha(no, CaminhoNo, Key);
+    LiberaPilha(CaminhoNo);
+}
+
+void RTree::Inserir(Chave& K){
+    Chave A = K;
+    Node* no = root.GetPtr();
+    if(no == nullptr)
+        return CriaArvore(A.MBR, A.Dado);
+    stack<NodeAux> CaminhoNo;
+    while(!no->Folha())
+        no = EscolhaSubArvore(no, CaminhoNo, A.MBR, false);
+//    if(!CaminhoNo.empty())
+//        CaminhoNo.pop();
+    InserirNaFolha(no, CaminhoNo, A);
     LiberaPilha(CaminhoNo);
 }
 
@@ -305,25 +327,34 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
     return nullptr;
 }
 
+unsigned RTree::BuscaNaFolha(Node* &no, Retangulo& R){
+    size_t limite = no->Chaves.size();
+    unsigned i=0;
+    while((no->Chaves[i].MBR != R) and (i < limite)) i++;
+    return i;
+}
 
-void RTree::InserirNaFolha(Node* &No, stack<NodeAux>& Caminho, Retangulo& EntryMBR, streampos& EntryPOS){
-    Chave inserir(EntryMBR, EntryPOS, FOLHA);
+
+void RTree::InserirNaFolha(Node*& No, stack<NodeAux>& Caminho, Chave& inserir){
     No->Chaves.push_back(inserir);
     if(No->Overflow())
         return DividirEAjustar(No, Caminho);
     No->SalvarNo();
-    AjustaCaminho(No, Caminho);
+    NodeAux K(No);
+    Caminho.push(K);
+    AjustaCaminho(Caminho);
 }
 
-void RTree::AjustaCaminho(Node* &no, stack<NodeAux>& caminho){
+void RTree::AjustaCaminho(stack<NodeAux>& caminho){
+    Node* no = caminho.top().ptr;
+    caminho.pop();
     if(no == raiz) return;
     Retangulo R = no->GetRetangulo();
     delete no;
     NodeAux pai = caminho.top();
-    caminho.pop();
     if(pai.ptr->Ajusta(R, pai.index)){
         pai.ptr->SalvarNo();
-        AjustaCaminho(pai.ptr, caminho);
+        AjustaCaminho(caminho);
     }
 }
 
@@ -334,10 +365,11 @@ void RTree::DividirEAjustar(Node* &no, stack<NodeAux>& caminho){
     if(EhRaiz)
         CriaNovaRaiz(no, novoNo);
     else{
+        Chave k(novoNo);
         NodeAux pai = caminho.top();
         Retangulo R = no->GetRetangulo();
         pai.ptr->Ajusta(R, pai.index);
-        InserirNo(novoNo, pai.ptr, caminho);
+        InserirNo(pai.ptr, caminho, k);
     }
 
 }
@@ -348,15 +380,14 @@ bool Node::Ajusta(Retangulo& MBR, unsigned index){
     return modificado;
 }
 
-void RTree::InserirNo(Node* &NoParaInserir, Node* &NoInterno, stack<NodeAux>& caminho){
-    Retangulo R1 = NoParaInserir->GetRetangulo();
-    Chave ChaveParaInserir(R1, NoParaInserir->DiskPos, INTERNO);
-    delete NoParaInserir;
-    NoInterno->Chaves.push_back(ChaveParaInserir);
+void RTree::InserirNo(Node* &NoInterno, stack<NodeAux>& caminho, Chave& inserir){
+    NoInterno->Chaves.push_back(inserir);
     if(NoInterno->Overflow())
         return DividirEAjustar(NoInterno, caminho);
     NoInterno->SalvarNo();
-    AjustaCaminho(NoInterno, caminho);
+    NodeAux K(NoInterno);
+    caminho.push(K);
+    AjustaCaminho(caminho);
 }
 
 Node* RTree::Divide(Node* &no){
@@ -437,22 +468,72 @@ void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){
 }
 
 void RTree::Remove(stack<NodeAux>& Caminho){
-    Node* no = Caminho.top().ptr;
-    Caminho.pop();
-    unsigned index = Caminho.top().index;
+    list<Chave*> ChavesExcedentes;
+    ChavesExcedentes.splice(ChavesExcedentes.begin(), Reorganizar(Caminho));
+    Reinserir(ChavesExcedentes);
+    LiberaPilha(Caminho);
+}
+
+list<Chave*> RTree::Reorganizar(stack<NodeAux>& Caminho){
+    list<Chave*> Q;
+    if(Caminho.empty()) return Q;
+    NodeAux No = Caminho.top();
+    No.ptr->Chaves.erase(No.ptr->Chaves.begin()+No.index);
+    if(No.ptr != root.GetPtr() and No.ptr->Chaves.size() < MINCHAVES){
+        if(No.ptr->Nivel == INTERNO){
+            Q.splice(Q.end(), EncontreAsFolhas(No.ptr));
+        }
+        else{
+            for(auto &item: No.ptr->Chaves)
+                Q.push_back(&item);
+        }
+        Caminho.pop();
+        Q.splice(Q.end(), Reorganizar(Caminho));
+    }
+    else
+        AjustaCaminho(Caminho);
+    return Q;
+}
+
+void RTree::Reinserir(list<Chave*>& ChavesExcedentes){
+    for(auto &item: ChavesExcedentes){
+        Inserir(item->MBR, item->Dado);
+        delete item;
+    }
+    ChavesExcedentes.clear();
+}
+
+list<Chave*> RTree::EncontreAsFolhas(Node*& no){ // CUIDADO COM ESSE METODO
+    list<Chave*> LC;
+    if(no->Folha()){
+        for(auto &item: no->Chaves)
+            LC.push_back(&item);
+    }
+    else{
+        Node* aux = nullptr;
+        for(auto item: no->Chaves){
+            aux = new Node(item.ChildPtr);
+            LC.splice(LC.end(), EncontreAsFolhas(aux));
+            delete aux;
+        }
+    }
+    return LC;
 }
 
 bool Node::Folha(){
-    return Nivel == FOLHA;
+    return (Nivel == FOLHA);
 }
 
 bool Node::Overflow(){
-    return (Chaves.size() > MAXCHAVES)?true:false;
+    return (Chaves.size() > MAXCHAVES);
 }
 
 void LiberaPilha(stack<NodeAux>& pilha){
+    Node* raiz = root.GetPtr();
+    Node* aux = nullptr;
     while(!pilha.empty()){
-        if(pilha.top().ptr != nullptr)
+        aux = pilha.top().ptr;
+        if(aux != nullptr and aux != raiz)
             delete pilha.top().ptr;
         pilha.pop();
     }

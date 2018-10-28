@@ -21,15 +21,15 @@ double operator*(const Ponto& P, const Ponto& K){
 }
 
 bool operator==(const Ponto& This, const Ponto& Other){
-    double DX = abs(This.GetX()-Other.GetX());
-    double DY = abs(This.GetY()-Other.GetY());
+    double DX = This.GetX()-Other.GetX();
+    double DY = This.GetY()-Other.GetY();
     return (DX==0.0 and DY==0.0)?true:false;
 }
 bool operator!=(const Ponto& This, const Ponto& Other){
     return !(This==Other);
 }
 bool operator<(const Ponto& This, const Ponto& Other){
-    bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
+    bool comparacao = (This.GetX()-Other.GetX() == 0.0)?true:false;
     return ((This.GetX() < Other.GetX()) or ((comparacao) and (This.GetY() < Other.GetY())));
 }
 bool operator<=(const Ponto& This, const Ponto& Other){
@@ -41,30 +41,10 @@ bool operator>=(const Ponto& This, const Ponto& Other){
 }
 
 bool operator>(const Ponto& This, const Ponto& Other){
-    bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
+    bool comparacao = (This.GetX()-This.GetY() == 0.0)?true:false;
     return ((This.GetX() > Other.GetX()) or ((comparacao) and (This.GetY() > Other.GetY())));
 }
 
-double operator*(Ponto& P, Ponto& K){
-    return P.x*K.x+P.y*K.y;
-}
-
-bool operator==(Ponto& This, Ponto& Other){
-    double DX = abs(This.GetX()-Other.GetX());
-    double DY = abs(This.GetY()-Other.GetY());
-    return (DX==0.0 and DY==0.0)?true:false;
-}
-bool operator!=(Ponto& This, Ponto& Other){
-    return !(This==Other);
-}
-bool operator<(Ponto& This, Ponto& Other){
-    bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
-    return ((This.GetX() < Other.GetX()) or ((comparacao) and (This.GetY() < Other.GetY())));
-}
-bool operator>(Ponto& This, Ponto& Other){
-    bool comparacao = (abs(This.GetX()-This.GetY()) == 0.0)?true:false;
-    return ((This.GetX() > Other.GetX()) or ((comparacao) and (This.GetY() > Other.GetY())));
-}
 double Ponto::operator[](int k){
     return (k%2)?y:x;
 }
@@ -477,6 +457,7 @@ double Retangulo::Ajusta(Retangulo& R, bool& mod){
     if(R.diagonal != this->diagonal){
             mod = true;
             this->diagonal = R.diagonal;
+            this->area = R.GetArea();
             return this->GetArea() - R.GetArea();
     }
     return double(0);
@@ -516,6 +497,10 @@ bool operator>(const Retangulo& a, const Retangulo& b){
 
 bool operator==(const Retangulo& a, const Retangulo& b){
     return a.diagonal == b.diagonal;
+}
+
+bool operator!=(const Retangulo& a, const Retangulo& b){
+    return !(a==b);
 }
 
 Circulo::Circulo(){

@@ -36,21 +36,27 @@ void RectangleSearchWindow::on_button_clicked()
         streampos pos = No.ptr->Chaves[No.index].Dado;
         DiskAPI::Registro* Reg = io.Read(pos);
         this->reg = Reg;
-        if(interseccaoBool){
+        if(!interseccaoBool){
             FindWindow FW;
             FW.setModal(true);
             FW.setReg(Reg);
             FW.exec();
             if(FW.GetRemove()){
-                io.Remove(pos);
                 root.Remove(*Pilha);
+                io.Remove(pos);
             }
+            SpatialIndex::LiberaPilha(*Pilha);
+            delete Pilha;
             delete Reg;
         }
     }
-    close();
 }
 
 DiskAPI::Registro* RectangleSearchWindow::GetRegistro(){
     return this->reg;
+}
+
+void RectangleSearchWindow::on_cancel_clicked()
+{
+    close();
 }

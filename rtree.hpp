@@ -30,9 +30,9 @@ struct Chave{
         streampos ChildPtr; // Ponteiro para o proximo nó em disco
         streampos Dado; // Guarda o indice da forma em disco
     };
-    Chave(Retangulo&, streampos&, int);
+    Chave(Retangulo&, streampos&, unsigned);
     Chave();
-    Chave(const Chave&);
+    Chave(Node*&);
     friend bool operator==(const Chave&, const Chave&);
     friend bool operator!=(const Chave&, const Chave&);
     friend bool operator<(const Chave&, const Chave&);
@@ -71,6 +71,7 @@ public:
    RTree();
    ~RTree();
    void Inserir(Retangulo&, streampos&);
+   void Inserir(Chave&);
    bool IsEmpty();
    Node* GetPtr();
    void CriaArvore(Retangulo&, streampos&);
@@ -78,13 +79,17 @@ public:
    list<streampos>* Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
    stack<NodeAux>* Busca(Retangulo&);
    Node* EscolhaSubArvore(Node*&, stack<NodeAux>&, Retangulo&, bool);
-   void InserirNaFolha(Node*&, stack<NodeAux>&, Retangulo&, streampos&);
-   void AjustaCaminho(Node*&, stack<NodeAux>&);
+   unsigned BuscaNaFolha(Node*&, Retangulo&);
+   void InserirNaFolha(Node*&, stack<NodeAux>&, Chave&);
+   void AjustaCaminho(stack<NodeAux>&);
    void DividirEAjustar(Node*&, stack<NodeAux>&);
    Node* Divide(Node*&);
    void CriaNovaRaiz(Node*&, Node*&);
-   void InserirNo(Node*&, Node*&, stack<NodeAux>&);
+   void InserirNo(Node*&, stack<NodeAux>&, Chave&);
    void Remove(stack<NodeAux>&);
+   list<Chave*> Reorganizar(stack<NodeAux>&);
+   void Reinserir(list<Chave*>&);
+   list<Chave*> EncontreAsFolhas(Node*&);
    bool ArquivoVazio();
 };
 

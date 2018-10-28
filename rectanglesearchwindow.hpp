@@ -26,6 +26,8 @@ public:
 private slots:
     void on_button_clicked();
 
+    void on_cancel_clicked();
+
 private:
     Ui::RectangleSearchWindow *ui;
     DiskAPI::Registro* reg;

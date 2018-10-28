@@ -45,6 +45,17 @@ public:
     friend ostream& operator<<(ostream&, const Ponto&);
 };
 
+Ponto operator+(const Ponto&, const Ponto&);
+Ponto operator-(const Ponto&, const Ponto&);
+Ponto operator*(double , const Ponto&);
+double operator*(const Ponto&, const Ponto&);
+bool operator==(const Ponto&, const Ponto&);
+bool operator!=(const Ponto&, const Ponto&);
+bool operator<(const Ponto&, const Ponto&);
+bool operator<=(const Ponto&, const Ponto&);
+bool operator>=(const Ponto&, const Ponto&);
+bool operator>(const Ponto&, const Ponto&);
+
 class Vertice: public CircularList::Node, public Ponto{
 public:
     Vertice(double x, double y);
@@ -132,6 +143,7 @@ public:
     friend bool operator<(const Retangulo&, const Retangulo&);
     friend bool operator>(const Retangulo&, const Retangulo&);
     friend bool operator==(const Retangulo&, const Retangulo&);
+    friend bool operator!=(const Retangulo&, const Retangulo&);
 };
 
 
@@ -167,11 +179,6 @@ void FindVerticeConvexo(Poligono&);
 Vertice* FindIntrudingVertex(Poligono&);
 bool PontoNoTriangulo(Ponto&, Ponto&, Ponto&, Ponto&);
 double Area(Poligono&);
-
-bool operator<(const Ponto&, const Ponto&);
-bool operator<=(const Ponto&, const Ponto&);
-bool operator>(const Ponto&, const Ponto&);
-bool operator>=(const Ponto&, const Ponto&);
 
 bool operator==(const Aresta&, const Aresta&);
 bool operator!=(const Aresta&, const Aresta&);
