@@ -42,7 +42,7 @@
     <set>QDialogButtonBox::Cancel</set>
    </property>
   </widget>
-  <widget class="RenderArea" name="RenderArea" native="true">
+  <widget class="RenderArea" name="ra" native="true">
    <property name="geometry">
     <rect>
      <x>20</x>
