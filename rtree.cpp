@@ -229,15 +229,14 @@ list<streampos>* RTree::Busca(Ponto& P){
 }
 
 stack<NodeAux>* RTree::Busca(Retangulo& R){
+    NodeAux aux;
     Node* no = root.GetPtr();
     stack<NodeAux>* Caminho = new stack<NodeAux>;
     while(no != nullptr and !no->Folha())
         no = EscolhaSubArvore(no, *Caminho, R, true);
-    if(no == nullptr){
-        NodeAux aux;
-        Caminho->push(aux);
-    }
-    else if(no->Folha())
+    aux.ptr = no;
+    Caminho->push(aux);
+    if(no->Folha())
         Caminho->top().index = BuscaNaFolha(no, R);
     return Caminho;
 }
