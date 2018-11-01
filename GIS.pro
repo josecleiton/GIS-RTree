@@ -35,7 +35,8 @@ SOURCES += \
     rectanglesearchwindow.cpp \
     insertcirclewindow.cpp \
     findwindow.cpp \
-    variaveis.cpp
+    variaveis.cpp \
+    renderarea.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -51,7 +52,8 @@ HEADERS += \
     regex.hpp \
     insertcirclewindow.hpp \
     findwindow.hpp \
-    variaveis.hpp
+    variaveis.hpp \
+    renderarea.hpp
 
 FORMS += \
         mainwindow.ui \

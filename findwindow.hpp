@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <iostream>
 #include "disk.hpp"
+#include "renderarea.hpp"
 
 namespace Ui {
 class FindWindow;
@@ -27,6 +28,7 @@ private:
     Ui::FindWindow *ui;
     DiskAPI::Registro* REG;
     bool remove;
+    friend class RenderArea;
 };
 
 #endif // FINDWINDOW_HPP
