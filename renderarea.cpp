@@ -25,7 +25,7 @@ void RenderArea::paintEvent(QPaintEvent *event){
         auto tipo = Reg->tipo;
         if(tipo == POLIGONO){
             pair<QPointF*, int> vertices = Reg->lista->toQPoint();
-            p.drawPolygon(vertices.first, vertices.second);
+            p.drawConvexPolygon(vertices.first, vertices.second);
             delete vertices.first;
         }
         else if(tipo == CIRCULO){

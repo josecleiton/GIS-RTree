@@ -176,10 +176,10 @@ Vertice* Vertice::Split(Vertice* b){ // TENHO QUE EXPLICAR PARA OS MENINOS
 
 pair<QPointF*, int> Vertice::toQPoint(){
     int tam = 1, j = 0;
-    Vertice* fim = this->Antihorario();
-    for(Vertice* i = this; i != fim; i = i->Horario(), tam++);
+    Vertice* fim = this->Horario();
+    for(Vertice* i = this; i != fim; i = i->Antihorario(), tam++);
     QPointF* array = new QPointF[tam];
-    for(Vertice* i = this; j < tam; i = i->Horario(), j++)
+    for(Vertice* i = this; j < tam; i = i->Antihorario(), j++)
         array[j] = i->GetPonto().toQPoint();
     return make_pair(array, tam);
 }
