@@ -21,7 +21,7 @@ void FindWindow::on_remove_clicked()
 }
 
 void FindWindow::setReg(DiskAPI::Registro* R){
-    this->REG = R;
+    this->ui->ra->setReg(R);
 }
 
 bool FindWindow::GetRemove(){

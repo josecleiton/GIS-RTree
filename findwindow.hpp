@@ -26,9 +26,7 @@ private slots:
 
 private:
     Ui::FindWindow *ui;
-    DiskAPI::Registro* REG;
     bool remove;
-    friend class RenderArea;
 };
 
 #endif // FINDWINDOW_HPP

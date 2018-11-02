@@ -11,6 +11,7 @@
 #include <cfloat>
 #include <cmath>
 #include <algorithm>
+#include <QPointF>
 #include "circularlist.hpp"
 using namespace std;
 namespace SpatialData{
@@ -41,6 +42,7 @@ public:
     double Distancia(Ponto&); // DISTANCIA EM RELAÇÃO A OUTRO PONTO
     double GetX() const{ return x; }
     double GetY() const{ return y; }
+    QPointF toQPoint();
     double operator[](int);
     friend ostream& operator<<(ostream&, const Ponto&);
 };
@@ -70,6 +72,7 @@ public:
     void Splice(Vertice*); // JUNTA DUAS LISTAS
     Retangulo Envelope(); // MINIMUM BOUNDING RECTANGLE PARA A R-TREE
     Vertice* Split(Vertice*); // DIVIDE A LISTA
+    pair<QPointF*, int> toQPoint();
     friend class Poligono;
 };
 

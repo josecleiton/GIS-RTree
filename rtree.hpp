@@ -77,15 +77,17 @@ public:
    Node* GetPtr();
    void CriaArvore(Retangulo&, streampos&);
    list<Chave> Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
-   stack<NodeAux>* Busca(Retangulo&);
+   Chave Busca(Retangulo&);
    Node* EscolhaSubArvore(Node*&, stack<NodeAux>&, Retangulo&, bool);
    list<Chave> Traversal(streampos&, Ponto&);
+   list<Chave> Traversal(streampos&, Retangulo&);
    void InserirNo(Node*&, stack<NodeAux>&, Chave&);
    unsigned BuscaNaFolha(Node*&, Retangulo&);
    void AjustaCaminho(stack<NodeAux>&);
    void DividirEAjustar(Node*&, stack<NodeAux>&);
    Node* Divide(Node*&);
    void CriaNovaRaiz(Node*&, Node*&);
+   void Remove(Chave& K);
    void Remove(stack<NodeAux>&);
    list<Chave*> Reorganizar(stack<NodeAux>&);
    void Reinserir(list<Chave*>&);

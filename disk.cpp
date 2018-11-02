@@ -79,7 +79,7 @@ Registro* Disk::Read(streampos& pos){
         file.read(reinterpret_cast<char*>(&active), sizeof(bool));
         if(active){ // REGISTRO ATIVO
             unsigned char tipo;
-            unsigned numeroVertices;
+            unsigned numeroVertices = 0;
             double x,y;
             Vertice* Lista = nullptr, *temp = nullptr;
             Registro* Reg = nullptr;
@@ -106,7 +106,7 @@ Registro* Disk::Read(streampos& pos){
                     Lista->Push(temp);
                 }
             }
-            Reg = new Registro(tipo, Lista);
+            Reg = new Registro(tipo, Lista, numeroVertices);
             return Reg;
         }
         clog << "Registro na posição: " << pos << " está inativo." << endl;
@@ -114,7 +114,7 @@ Registro* Disk::Read(streampos& pos){
     return nullptr;
 }
 
-Registro::Registro(unsigned char type, Vertice* v): tipo(type), lista(v){
+Registro::Registro(unsigned char type, Vertice* v, unsigned t): tipo(type), lista(v), tam(t){
 }
 
 void* Registro::Conversao(){ // SE A CONVERSÃO FOR PARA PONTO OU ARESTA, PRECISO DO delete

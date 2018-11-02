@@ -117,6 +117,10 @@ double Ponto::Distancia(Ponto& p1){
     return sqrt(pow(x-p1.x, 2)+pow(y-p1.y, 2));
 }
 
+QPointF Ponto::toQPoint(){
+    return QPointF(this->x, this->y);
+}
+
 ostream& operator<<(ostream& out, const Ponto& P){
     out << "(" << P.GetX() << ", " << P.GetY() << ")";
     return out;
@@ -168,6 +172,16 @@ Vertice* Vertice::Split(Vertice* b){ // TENHO QUE EXPLICAR PARA OS MENINOS
     Push(new Vertice(GetPonto()));
     Splice(bp);
     return bp;
+}
+
+pair<QPointF*, int> Vertice::toQPoint(){
+    int tam = 1, j = 0;
+    Vertice* fim = this->Antihorario();
+    for(Vertice* i = this; i != fim; i = i->Horario(), tam++);
+    QPointF* array = new QPointF[tam];
+    for(Vertice* i = this; j < tam; i = i->Horario(), j++)
+        array[j] = i->GetPonto().toQPoint();
+    return make_pair(array, tam);
 }
 
 // CLASS POLIGONO
@@ -275,7 +289,6 @@ Poligono* Poligono::Split(Vertice* b){
     return new Poligono(bp);
 }
 
-
 Aresta Poligono::GetAresta(){
     return Aresta(GetPonto(), list->Horario()->GetPonto());
 }
@@ -379,7 +392,8 @@ Ponto Aresta::GetDestino() const{
 }
 
 bool operator==(const Aresta& This, const Aresta& Other){
-    return This.GetDestino() == Other.GetDestino() and This.GetOrigem() == Other.GetOrigem();
+    return (This.GetDestino() == Other.GetDestino() and This.GetOrigem() == Other.GetOrigem()) or
+            (This.GetDestino() == Other.GetOrigem() and This.GetOrigem() == Other.GetDestino());
 }
 
 bool operator!=(const Aresta& This, const Aresta& Other){

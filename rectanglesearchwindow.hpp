@@ -22,6 +22,8 @@ public:
     explicit RectangleSearchWindow(QWidget *parent = nullptr);
     ~RectangleSearchWindow();
     DiskAPI::Registro* GetRegistro();
+    void SetInterseccao(bool);
+    bool Interseccao();
 
 private slots:
     void on_button_clicked();
@@ -31,6 +33,7 @@ private slots:
 private:
     Ui::RectangleSearchWindow *ui;
     DiskAPI::Registro* reg;
+    bool interseccao;
 };
 
 #endif // RECTANGLESEARCHWINDOW_HPP

@@ -205,6 +205,15 @@ list<Chave> RTree::Busca(Ponto& P){
     return resultado;
 }
 
+Chave RTree::Busca(Retangulo& R){
+    streampos RaizPos = root.GetPtr()->DiskPos;
+    list<Chave> candidatos = Traversal(RaizPos, R);
+    for(auto item: candidatos)
+        if(item.MBR == R)
+            return item;
+    return Chave();
+}
+
 list<Chave> RTree::Traversal(streampos& no, Ponto& P){
     list<Chave> LC;
     Node* aux = new Node(no);
@@ -216,20 +225,22 @@ list<Chave> RTree::Traversal(streampos& no, Ponto& P){
     else
         for(auto item: aux->Chaves)
             LC.push_back(item);
+    delete aux;
     return LC;
 }
 
-stack<NodeAux>* RTree::Busca(Retangulo& R){
-    NodeAux aux;
-    Node* no = root.GetPtr();
-    stack<NodeAux>* Caminho = new stack<NodeAux>;
-    while(no != nullptr and !no->Folha())
-        no = EscolhaSubArvore(no, *Caminho, R, true);
-    aux.ptr = no;
-    Caminho->push(aux);
-    if(no->Folha())
-        Caminho->top().index = BuscaNaFolha(no, R);
-    return Caminho;
+list<Chave> RTree::Traversal(streampos& no, Retangulo& R){
+    list<Chave> LC;
+    Node* aux = new Node(no);
+    if(!aux->Folha()){
+        for(auto item: aux->Chaves)
+            if(item.MBR.Contem(R))
+                LC.splice(LC.end(), Traversal(item.ChildPtr, R));
+    }
+    else
+        for(auto item: aux->Chaves)
+            LC.push_back(item);
+    return LC;
 }
 
 void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
@@ -410,6 +421,8 @@ Node* RTree::Divide(Node* &no){
             ChavesRestantes.push_back(item);
     while(!ChavesRestantes.empty()){
         unsigned i = 0;
+        BestKey = i;
+        expansion = 0.0;
         for(auto &item: ChavesRestantes){
             Aux1 = NoG1->GetRetangulo();
             Aux2 = NoG2->GetRetangulo();
@@ -459,6 +472,10 @@ void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){
     nivel++;
 }
 
+void RTree::Remove(Chave& K){
+
+}
+
 void RTree::Remove(stack<NodeAux>& Caminho){
     list<Chave*> ChavesExcedentes = Reorganizar(Caminho);
     Reinserir(ChavesExcedentes);
@@ -504,8 +521,10 @@ list<Chave*> RTree::EncontreAsFolhas(Node*& no){ // CUIDADO COM ESSE METODO
         }
 
     }
-    no->Delete();
-    delete no;
+    if(no != raiz){
+        no->Delete();
+        delete no;
+    }
     return LC;
 }
 

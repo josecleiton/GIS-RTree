@@ -25,29 +25,26 @@ void RectangleSearchWindow::on_button_clicked()
     SpatialData::Ponto A(ui->p1x->text().toDouble(), ui->p1y->text().toDouble());
     SpatialData::Ponto B(ui->p2x->text().toDouble(), ui->p2y->text().toDouble());
     SpatialData::Retangulo R(A, B);
-    stack<SpatialIndex::NodeAux>* Pilha = root.Busca(R);
-    if(Pilha->empty() or (!Pilha->empty() and Pilha->top().ptr == nullptr)){
+    SpatialIndex::Chave ChaveEncontrada = root.Busca(R);
+    if(ChaveEncontrada.Dado == 0){
         //NÃO ENCONTRADO
         QMessageBox mbox;
         mbox.critical(nullptr, "Erro", "Retângulo não encontrado no banco de dados.");
     }
     else{
-        SpatialIndex::NodeAux No = Pilha->top();
         DiskAPI::Disk io(FILENAME);
-        streampos pos = No.ptr->Chaves[No.index].Dado;
+        streampos pos = ChaveEncontrada.Dado;
         DiskAPI::Registro* Reg = io.Read(pos);
         this->reg = Reg;
-        if(!interseccaoBool){
+        if(!Interseccao()){
             FindWindow FW;
             FW.setModal(true);
             FW.setReg(Reg);
             FW.exec();
             if(FW.GetRemove()){
-                root.Remove(*Pilha);
+                root.Remove(ChaveEncontrada);
                 io.Remove(pos);
             }
-            SpatialIndex::LiberaPilha(*Pilha);
-            delete Pilha;
             delete Reg;
         }
     }
@@ -55,6 +52,14 @@ void RectangleSearchWindow::on_button_clicked()
 
 DiskAPI::Registro* RectangleSearchWindow::GetRegistro(){
     return this->reg;
+}
+
+bool RectangleSearchWindow::Interseccao(){
+    return this->interseccao;
+}
+
+void RectangleSearchWindow::SetInterseccao(bool k){
+    this->interseccao = k;
 }
 
 void RectangleSearchWindow::on_cancel_clicked()

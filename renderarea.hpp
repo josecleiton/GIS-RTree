@@ -5,6 +5,9 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QColor>
+#include "disk.hpp"
+#include "spatialdata.hpp"
+using namespace DiskAPI;
 
 class RenderArea : public QWidget
 {
@@ -13,6 +16,7 @@ public:
     explicit RenderArea(QWidget *parent = nullptr);
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
     QSize sizeHint() const Q_DECL_OVERRIDE;
+    void setReg(DiskAPI::Registro*);
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 signals:
@@ -20,8 +24,7 @@ signals:
 public slots:
 
 private:
-    QColor BackgroundColor;
-    QColor ShapeColor;
+    Registro* Reg;
 };
 
 #endif // RENDERAREA_HPP

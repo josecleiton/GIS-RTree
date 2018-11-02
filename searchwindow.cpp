@@ -14,19 +14,18 @@ SearchWindow::~SearchWindow()
 }
 
 void SearchWindow::on_retangulo_clicked(){
-    interseccaoBool = false;
     RectangleSearchWindow recwindow;
     recwindow.setModal(true);
+    recwindow.SetInterseccao(false);
     recwindow.exec();
-    recwindow.close();
 }
 
 void SearchWindow::on_interseccao_clicked(){
-    interseccaoBool = true;
     RectangleSearchWindow RSW;
     DiskAPI::Registro* R[2];
     for(unsigned j=0; j<2; j++){
         RSW.setModal(true);
+        RSW.SetInterseccao(true);
         RSW.exec();
         R[j] = RSW.GetRegistro();
     }
@@ -46,7 +45,7 @@ void SearchWindow::on_ponto_clicked()
     stringstream aux;
     aux << P;
     if(!Lista.empty())
-        QMB.information(nullptr, "Sucesso!", QString::number(Lista.size())+" caixas contêm o ponto "+QString::fromStdString(aux.str()));
+        QMB.information(nullptr, "Sucesso!", QString::number(Lista.size())+" caixa(s) contêm o ponto "+QString::fromStdString(aux.str()));
     else
         QMB.critical(nullptr, "Erro", "Ponto não encontrado no BD.");
 }
