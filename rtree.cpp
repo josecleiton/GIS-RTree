@@ -209,10 +209,9 @@ list<Chave> RTree::Traversal(streampos& no, Ponto& P){
     list<Chave> LC;
     Node* aux = new Node(no);
     if(!aux->Folha()){
-        unsigned i = 0;
         for(auto item: aux->Chaves)
-            if(aux->Chaves[i].MBR.Contem(P))
-                LC.splice(LC.end(), Traversal(aux->Chaves[i].ChildPtr, P));
+            if(item.MBR.Contem(P))
+                LC.splice(LC.end(), Traversal(item.ChildPtr, P));
     }
     else
         for(auto item: aux->Chaves)
@@ -404,7 +403,7 @@ Node* RTree::Divide(Node* &no){
     Node* NoG1 = new Node(no->Nivel, G1);
     Node* NoG2 = new Node(no->Nivel, G2);
     Node* BestGroup = nullptr;
-    unsigned BestKey;
+    unsigned BestKey = 0u;
     Retangulo Aux1, Aux2;
     for(auto &item: no->Chaves)
         if(item != *(G1.begin()) and item != *(G2.begin()))
@@ -428,8 +427,8 @@ Node* RTree::Divide(Node* &no){
             }
             i++;
         }
-        BestGroup->Chaves.push_back(ChavesRestantes[i]);
-        ChavesRestantes.erase(ChavesRestantes.begin()+i);
+        BestGroup->Chaves.push_back(ChavesRestantes[BestKey]);
+        ChavesRestantes.erase(ChavesRestantes.begin()+BestKey);
         if(NoG1->Chaves.size() == MINCHAVES - ChavesRestantes.size()){
             for(auto &item: ChavesRestantes)
                 NoG1->Chaves.push_back(item);
