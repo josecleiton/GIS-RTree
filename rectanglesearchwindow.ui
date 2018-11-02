@@ -13,87 +13,81 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>361</width>
-     <height>261</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item alignment="Qt::AlignHCenter|Qt::AlignBottom">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Busca por Retângulo</string>
-      </property>
-     </widget>
-    </item>
-    <item alignment="Qt::AlignHCenter|Qt::AlignTop">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Insira a diagonal principal</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Origem: </string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="p1x"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="p1y"/>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Destino: </string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="p2x"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="p2y"/>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QDialogButtonBox" name="button">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Ok</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDialogButtonBox" name="cancel">
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel</set>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item alignment="Qt::AlignHCenter|Qt::AlignBottom">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Busca por Retângulo</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignHCenter|Qt::AlignTop">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Insira a diagonal principal</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Origem: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="p1x"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="p1y"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Destino: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="p2x"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="p2y"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QDialogButtonBox" name="button">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Ok</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="cancel">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>
