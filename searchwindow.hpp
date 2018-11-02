@@ -1,8 +1,10 @@
 #ifndef SEARCHWINDOW_HPP
 #define SEARCHWINDOW_HPP
 
+#include <sstream>
 #include <QDialog>
 #include "rectanglesearchwindow.hpp"
+#include "insertpointwindow.hpp"
 #include "variaveis.hpp"
 
 namespace Ui {
@@ -21,6 +23,8 @@ private slots:
     void on_retangulo_clicked();
 
     void on_interseccao_clicked();
+
+    void on_ponto_clicked();
 
 private:
     Ui::SearchWindow *ui;

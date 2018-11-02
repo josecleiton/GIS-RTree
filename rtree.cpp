@@ -63,12 +63,10 @@ Node::Node(streampos& no){
             this->Nivel = nivel;
             this->Chaves = temp;
             this->DiskPos = no;
-            file.close();
         }
-        else{
+        else
             cerr << "Página inválida! Reorganize antes de fazer outra requisição." << endl;
-            file.close();
-        }
+        file.close();
     }
     else cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
 }
@@ -151,9 +149,9 @@ RTree::RTree(){
             file.read(reinterpret_cast<char*>(&PosicaoDaRaiz), sizeof(streampos));
             file.read(reinterpret_cast<char*>(&count), sizeof(size_t));
             file.read(reinterpret_cast<char*>(&nivel), sizeof(size_t));
+            file.close();
             this->count = count;
             this->nivel = nivel;
-            file.close();
             this->raiz = new Node(PosicaoDaRaiz);
         }
         else
@@ -197,35 +195,29 @@ Node* RTree::GetPtr(){
     return raiz;
 }
 
-list<Node*>* RTree::Traversal(streampos& raizPos, Ponto& P){
-    list<Node*>* resultado = new list<Node*>;
-    Node* no = new Node(raizPos);
-    if(no->Folha())
-        resultado->push_back(no);
-    else{
-        for(auto chave: no->Chaves){
-            if(chave.MBR.Contem(P)){
-                resultado->splice(resultado->end(), *(Traversal(chave.ChildPtr, P)));
-            }
-        }
-        delete no;
+list<Chave> RTree::Busca(Ponto& P){
+    streampos RaizPos = root.GetPtr()->DiskPos;
+    list<Chave> ListadeNo = Traversal(RaizPos, P), resultado;
+    for(auto item: ListadeNo){
+        if(item.MBR.Contem(P))
+            resultado.push_back(item);
     }
     return resultado;
 }
 
-list<streampos>* RTree::Busca(Ponto& P){
-    list<streampos>* resultado = new list<streampos>;
-    list<Node*>* SL = Traversal(root.GetPtr()->DiskPos, P);
-    for(auto no: *SL){
-        if(no->Folha()){
-            for(auto chave: no->Chaves){
-                if(chave.MBR.Contem(P))
-                    resultado->push_back(chave.Dado);
-            }
-        }
+list<Chave> RTree::Traversal(streampos& no, Ponto& P){
+    list<Chave> LC;
+    Node* aux = new Node(no);
+    if(!aux->Folha()){
+        unsigned i = 0;
+        for(auto item: aux->Chaves)
+            if(aux->Chaves[i].MBR.Contem(P))
+                LC.splice(LC.end(), Traversal(aux->Chaves[i].ChildPtr, P));
     }
-    delete SL;
-    return resultado;
+    else
+        for(auto item: aux->Chaves)
+            LC.push_back(item);
+    return LC;
 }
 
 stack<NodeAux>* RTree::Busca(Retangulo& R){
@@ -275,7 +267,7 @@ void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
 //    if(!CaminhoNo.empty())
 //        CaminhoNo.pop();
     Chave Key(MbrForma, pos, FOLHA);
-    InserirNaFolha(no, CaminhoNo, Key);
+    InserirNo(no, CaminhoNo, Key);
     LiberaPilha(CaminhoNo);
 }
 
@@ -289,7 +281,7 @@ void RTree::Inserir(Chave& K){
         no = EscolhaSubArvore(no, CaminhoNo, A.MBR, false);
 //    if(!CaminhoNo.empty())
 //        CaminhoNo.pop();
-    InserirNaFolha(no, CaminhoNo, A);
+    InserirNo(no, CaminhoNo, A);
     LiberaPilha(CaminhoNo);
 }
 
@@ -346,17 +338,6 @@ unsigned RTree::BuscaNaFolha(Node* &no, Retangulo& R){
     return i;
 }
 
-
-void RTree::InserirNaFolha(Node*& No, stack<NodeAux>& Caminho, Chave& inserir){
-    No->Chaves.push_back(inserir);
-    if(No->Overflow())
-        return DividirEAjustar(No, Caminho);
-    No->SalvarNo();
-    NodeAux K(No);
-    Caminho.push(K);
-    AjustaCaminho(Caminho);
-}
-
 void RTree::AjustaCaminho(stack<NodeAux>& caminho){
     Node* no = caminho.top().ptr;
     caminho.pop();
@@ -392,12 +373,12 @@ bool Node::Ajusta(Retangulo& MBR, unsigned index){
     return modificado;
 }
 
-void RTree::InserirNo(Node* &NoInterno, stack<NodeAux>& caminho, Chave& inserir){
-    NoInterno->Chaves.push_back(inserir);
-    if(NoInterno->Overflow())
-        return DividirEAjustar(NoInterno, caminho);
-    NoInterno->SalvarNo();
-    NodeAux K(NoInterno);
+void RTree::InserirNo(Node* &No, stack<NodeAux>& caminho, Chave& inserir){
+    No->Chaves.push_back(inserir);
+    if(No->Overflow())
+        return DividirEAjustar(No, caminho);
+    No->SalvarNo();
+    NodeAux K(No);
     caminho.push(K);
     AjustaCaminho(caminho);
 }

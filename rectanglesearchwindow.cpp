@@ -12,6 +12,7 @@ RectangleSearchWindow::RectangleSearchWindow(QWidget *parent) :
     ui->p1y->setValidator(validator);
     ui->p2x->setValidator(validator);
     ui->p2y->setValidator(validator);
+    this->reg = nullptr;
 }
 
 RectangleSearchWindow::~RectangleSearchWindow()
