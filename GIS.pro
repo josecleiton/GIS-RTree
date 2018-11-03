@@ -74,4 +74,5 @@ DISTFILES += \
     LICENSE \
     .gitignore \
     formas.bin \
-    rtree.bin
+    rtree.bin \
+    jorge.png
