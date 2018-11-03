@@ -18,8 +18,11 @@ void RenderArea::setReg(DiskAPI::Registro* R){
 
 void RenderArea::paintEvent(QPaintEvent *event){
     QPainter p(this);
-    p.setPen(Qt::green);
+    QPen pen(Qt::green, 0.3);
+    p.setPen(pen);
     p.setRenderHint(QPainter::Antialiasing, true);
+    p.translate(200, 30);
+    p.rotate(90);
     p.scale(7, 7);
     if(Reg != nullptr){
         auto tipo = Reg->tipo;
