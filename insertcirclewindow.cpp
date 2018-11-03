@@ -11,6 +11,7 @@ InsertCircleWindow::InsertCircleWindow(QWidget *parent) :
     ui->raio->setValidator(validator);
     ui->xc->setValidator(validator);
     ui->yc->setValidator(validator);
+    this->setWindowTitle("Insira uma circunferência");
 }
 
 InsertCircleWindow::~InsertCircleWindow()

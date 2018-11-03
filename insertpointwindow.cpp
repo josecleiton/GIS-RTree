@@ -10,6 +10,7 @@ InsertPoint::InsertPoint(QWidget *parent) :
     QRegExpValidator *validator = new QRegExpValidator(regx, this);
     ui->campoX->setValidator(validator);
     ui->campoY->setValidator(validator);
+    this->setWindowTitle("Insira um ponto");
 }
 
 InsertPoint::~InsertPoint()

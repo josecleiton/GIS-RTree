@@ -20,6 +20,7 @@ InsertWindow::InsertWindow(QWidget *parent) :
     ui->numVert->setValidator(ValidaInt);
     ui->tipoForma->setValidator(ValidaPalavra);
     ui->ID->setValidator(ValidaNome);
+    this->setWindowTitle("Insira uma forma geométrica");
 }
 
 InsertWindow::~InsertWindow(){

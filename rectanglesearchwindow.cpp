@@ -6,6 +6,7 @@ RectangleSearchWindow::RectangleSearchWindow(QWidget *parent) :
     ui(new Ui::RectangleSearchWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Busca por retângulo");
     QRegExp regx(REAL_NUMBER_REGEX);
     QRegExpValidator *validator = new QRegExpValidator(regx, this);
     ui->p1x->setValidator(validator);
