@@ -22,6 +22,8 @@ namespace SpatialData{
  */
 
 #define PI acos(-1)
+#define EPSILON2 1E-10
+
 enum Classificadores {ESQUERDA, DIREITA, FRENTE, ATRAS, ENTRE, ORIGEM, DESTINO}; // USADO NA CLASSIFICAÇÃO
 enum Rotacao {HORARIO, ANTIHORARIO}; // SENTIDO DAS ROTAÇÕES NA LISTA DUPLAMENTE ENCADEADA DE VERTICES
 enum Posicao_Relativa_Retas {COLINEAR, PARALELA, CONSECUTIVO, CONSECUTIVO_CRUZADO, CONSECUTIVO_NAO_CRUZADO}; // USADA PELA POSIÇÃO RELATIVA ENTRE SEGMENTOS DE RETA (ARESTAS)
@@ -76,6 +78,8 @@ public:
     friend class Poligono;
 };
 
+enum { DESCONHECIDO, P_DENTRO, Q_DENTRO };
+
 class Poligono{
 private:
     Vertice* list;
@@ -96,11 +100,12 @@ public:
     Vertice* Vizinho(int); // RETORNA O VIZINHO (ANTERIOR OU PROXIMO)
     Vertice* SetV(Vertice*); // MOVE A LISTA PARA UM DADO VERTICE
     Vertice* Push(Ponto); // COLOCA UM PONTO NA LISTA DE VERTICE POR VALOR
-    Vertice* Push(Ponto&); // COLOCA UM PONTO NA LISTA DE VERTICE POR REFERENCIA
+    //Vertice* Push(Ponto&); // COLOCA UM PONTO NA LISTA DE VERTICE POR REFERENCIA
     void Pop(); // RETIRA O VERTICE ATUAL DA LISTA
     void Resize(); // RECALCULA O TAMANHO DA LISTA (NECESSÁRIO EM TODO PUSH OU POP)
     Poligono* Split(Vertice*); // DIVIDE O POLIGONO EM RELAÇÃO A UM VERTICE
     double AreaTriangulacao(vector<Poligono*>&) const; // RETORNA A AREA A PARTIR DE TRIANGULAÇÃO (NÃO USE)
+    Poligono* Interseccao(Poligono&);
 };
 
 class Aresta{
@@ -143,6 +148,7 @@ public:
     double GetArea();
     const Aresta& GetDiagonal();
     Retangulo CresceParaConter(Retangulo&);
+    bool Interseccao(Retangulo&);
     friend bool operator<(const Retangulo&, const Retangulo&);
     friend bool operator>(const Retangulo&, const Retangulo&);
     friend bool operator==(const Retangulo&, const Retangulo&);
@@ -182,6 +188,9 @@ void FindVerticeConvexo(Poligono&);
 Vertice* FindIntrudingVertex(Poligono&);
 bool PontoNoTriangulo(Ponto&, Ponto&, Ponto&, Ponto&);
 double Area(Poligono&);
+bool aimsAt(Aresta&, Aresta&, int, int);
+int crossingPoint(Aresta&, Aresta&, Ponto&);
+void advance(Poligono&, Poligono&, bool);
 
 bool operator==(const Aresta&, const Aresta&);
 bool operator!=(const Aresta&, const Aresta&);

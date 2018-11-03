@@ -269,14 +269,6 @@ Vertice* Poligono::Push(Ponto p){
     return list;
 }
 
-Vertice* Poligono::Push(Ponto& p){
-    if(m_size++ == 0)
-        list = new Vertice(p);
-    else
-        list = list->Push(new Vertice(p));
-    return list;
-}
-
 void Poligono::Pop(){
     Vertice* aux = list;
     list = (--m_size == 0) ? nullptr : list->Antihorario();
@@ -287,6 +279,112 @@ Poligono* Poligono::Split(Vertice* b){
     Vertice* bp = list->Split(b);
     Resize();
     return new Poligono(bp);
+}
+
+Poligono* Poligono::Interseccao(Poligono& P){
+    Poligono* R;
+    Ponto iPnt, startPnt;
+    int inflag = DESCONHECIDO;
+    int fase = 1;
+    unsigned maxItns = 2 * (this->GetSize() + P.GetSize());
+    Aresta p, q;
+    int pclass, qclass, crosstype;
+    bool pAIMSq, qAIMSp;
+    for(unsigned i=1; (i <= maxItns) or (fase == 2); i++){
+        p = this->GetAresta();
+        q = P.GetAresta();
+        pclass = p.GetDestino().Classificacao(q);
+        qclass = q.GetDestino().Classificacao(p);
+        crosstype = crossingPoint(p, q, iPnt);
+        if(crosstype == CONSECUTIVO_CRUZADO){
+            if(fase == 1){
+                fase = 2;
+                R = new Poligono;
+                R->Push(iPnt);
+                startPnt = iPnt;
+            }
+            else if(iPnt != R->GetPonto()){
+                if(iPnt != startPnt)
+                    R->Push(iPnt);
+                else
+                    return R;
+            }
+            if(pclass == DIREITA)
+                inflag = P_DENTRO;
+            else if(qclass == DIREITA)
+                inflag = Q_DENTRO;
+            else
+                inflag = DESCONHECIDO;
+        }
+        else if((crosstype == COLINEAR) and (pclass != ATRAS) and (qclass != ATRAS))
+            inflag = DESCONHECIDO;
+        pAIMSq = aimsAt(p, q, pclass, crosstype);
+        qAIMSp = aimsAt(q, p, qclass, crosstype);
+        if(pAIMSq and qAIMSp){
+            if((inflag == Q_DENTRO) or ((inflag == DESCONHECIDO) and (pclass == ESQUERDA)))
+                advance(*this, *R, false);
+            else
+                advance(P, *R, false);
+        }
+        else if(pAIMSq)
+            advance(*this, *R, inflag == P_DENTRO);
+        else if(qAIMSp)
+            advance(P, *R, inflag == Q_DENTRO);
+        else{
+            if((inflag == Q_DENTRO) or ((inflag == DESCONHECIDO) and (pclass == ESQUERDA)))
+                advance(*this, *R, false);
+            else
+                advance(P, *R, false);
+
+        }
+    }// for
+    if(PontoNoPoligonoConvexo(this->GetPonto(), P))
+        return this;
+    else if(PontoNoPoligonoConvexo(P.GetPonto(), *this))
+        return new Poligono(P);
+    return new Poligono;
+}
+
+bool aimsAt(Aresta& a, Aresta& b, int aclass, int crossType){
+    Ponto va = a.GetDestino() - a.GetOrigem();
+    Ponto vb = b.GetDestino() - b.GetOrigem();
+    if(crossType != COLINEAR){
+        if((va.x * vb.y) >= (vb.x * va.y))
+            return (aclass != DIREITA);
+        else
+            return (aclass != ESQUERDA);
+    }
+    else
+        return (aclass != FRENTE);
+}
+
+int crossingPoint(Aresta& e, Aresta& f, Ponto& p){
+    double s,t;
+    int classe = e.Interseccao(f, s);
+    if((classe == COLINEAR) or (classe == PARALELA))
+        return classe;
+    double lene = (e.GetDestino()-e.GetOrigem()).Tamanho();
+    if((s < -EPSILON2*lene) or (s > 1.0+EPSILON2*lene))
+        return CONSECUTIVO_NAO_CRUZADO;
+    f.Interseccao(e, t);
+    double lenf = (f.GetDestino()-f.GetOrigem()).Tamanho();
+    if((-EPSILON2*lenf <= t) and (t <= 1.0+EPSILON2*lenf)){
+        if(t<=EPSILON2*lenf) p = f.GetOrigem();
+        else if(t >= 1.0+EPSILON2*lenf) p = f.GetDestino();
+        else if(s <= EPSILON2*lene) p = e.GetOrigem();
+        else if(s >= 1.0-EPSILON2*lene) p = e.GetDestino();
+        else p = f.GetPonto(t);
+        return CONSECUTIVO_CRUZADO;
+    }
+    else
+        return CONSECUTIVO_NAO_CRUZADO;
+}
+
+void advance(Poligono& A, Poligono& B, bool inside){
+    A.Avancar(HORARIO);
+    if(inside and (B.GetPonto() != A.GetPonto()))
+        B.Push(A.GetPonto());
+
 }
 
 Aresta Poligono::GetAresta(){
@@ -495,6 +593,16 @@ Retangulo Retangulo::CresceParaConter(Retangulo& R){
         B = R.diagonal.destino;
     }
     return Retangulo(A,B);
+}
+
+bool Retangulo::Interseccao(Retangulo& R){
+    //implementar
+    Aresta DP = this->GetDiagonal();
+    Aresta DR = R.GetDiagonal();
+    if((DP.GetDestino().x >= DR.GetOrigem().x) and (DR.GetDestino().x >= DP.GetOrigem().x) and
+            (DP.GetDestino().y >= DR.GetOrigem().y) and (DP.GetDestino().y >= DR.GetOrigem().y)) // (Pmax2.y >= Pmin.y))
+        return true;
+    return false;
 }
 
 const Aresta& Retangulo::GetDiagonal(){
