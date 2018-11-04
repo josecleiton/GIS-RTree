@@ -8,7 +8,6 @@ protected:
     Node* m_prev{};
 public:
     Node();
-    virtual ~Node();
     Node* Next();
     Node* Prev();
     Node* Push(Node*);

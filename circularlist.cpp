@@ -4,9 +4,6 @@ namespace CircularList{
 Node::Node(): m_next(this), m_prev(this){
 }
 
-Node::~Node(){
-}
-
 Node* Node::Prev(){
     return m_prev;
 }
