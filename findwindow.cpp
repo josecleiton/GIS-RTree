@@ -16,10 +16,14 @@ FindWindow::~FindWindow()
 
 void FindWindow::on_remove_clicked()
 {
-    this->remove = true;
-    QMessageBox QMB;
-    QMB.information(nullptr, "Sucesso", "Forma removida do banco de dados.");
-    this->close();
+    QMessageBox ask;
+    int escolha = ask.warning(nullptr, "Tem certeza?", "Sua decisão afetará significativamente o banco de dados.", QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+    if(escolha == QMessageBox::Ok){
+        this->remove = true;
+        QMessageBox QMB;
+        QMB.information(nullptr, "Sucesso", "Forma removida do banco de dados.");
+        this->close();
+    }
 }
 
 void FindWindow::setReg(DiskAPI::Registro* R){
