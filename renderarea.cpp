@@ -18,17 +18,27 @@ void RenderArea::setReg(DiskAPI::Registro* R){
 
 void RenderArea::paintEvent(QPaintEvent *event){
     QPainter p(this);
-    QPen pen(Qt::green, 0.3);
-    p.setPen(pen);
+    /*
+    p.setPen(QPen(Qt::black, 1, Qt::SolidLine));
+    p.drawLine(0 ,0, 400, 0);
+    */
+    p.setPen(QPen(Qt::green, 0.3, Qt::SolidLine));
     p.setRenderHint(QPainter::Antialiasing, true);
     p.translate(200, 30);
     p.rotate(90);
     p.scale(7, 7);
     if(Reg != nullptr){
         auto tipo = Reg->tipo;
-        if(tipo == POLIGONO){
+        if(tipo != CIRCULO){
             pair<QPointF*, int> vertices = Reg->lista->toQPoint();
-            p.drawConvexPolygon(vertices.first, vertices.second);
+            if(tipo == POLIGONO)
+                p.drawConvexPolygon(vertices.first, vertices.second);
+            else if(tipo == LINHA)
+                p.drawLine(vertices.first[0], vertices.first[1]);
+            else if(tipo == POLIGONAL)
+                p.drawPolyline(vertices.first, vertices.second);
+            else if(tipo == PONTO)
+                p.drawPoint(vertices.first[0]);
             delete vertices.first;
         }
         else if(tipo == CIRCULO){
@@ -36,9 +46,7 @@ void RenderArea::paintEvent(QPaintEvent *event){
             qreal raio = this->Reg->lista->Horario()->GetX();
             p.drawEllipse(centro, raio, raio);
         }
-        else if(tipo == LINHA){
-
-        }
+        else
+            p.drawText(10, 10, "Forma indefinida, impossível mostrá-la.");
     }
-
 }
