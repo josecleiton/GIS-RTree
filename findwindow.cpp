@@ -19,6 +19,7 @@ void FindWindow::on_remove_clicked()
     this->remove = true;
     QMessageBox QMB;
     QMB.information(nullptr, "Sucesso", "Forma removida do banco de dados.");
+    this->close();
 }
 
 void FindWindow::setReg(DiskAPI::Registro* R){

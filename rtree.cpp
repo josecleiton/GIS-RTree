@@ -195,6 +195,38 @@ Node* RTree::GetPtr(){
     return raiz;
 }
 
+bool RTree::Busca(Node* no, Retangulo& K, vector<NodeAux>& q){
+    unsigned i = 0;
+    NodeAux temp;
+    if(!no->Folha()){
+        Node* aux = nullptr;
+        for(auto item: no->Chaves){
+            if(item.MBR.Contem(K)){
+                aux = new Node(item.ChildPtr);
+                if(Busca(aux, K, q)){
+                    temp.ptr = no;
+                    temp.index = i;
+                    q.push_back(temp);
+                    return true;
+                }
+                delete aux;
+            }
+            i++;
+        }
+        return false;
+    }
+    for(auto item: no->Chaves){
+        if(item.MBR == K){
+            temp.ptr = no;
+            temp.index = i;
+            q.push_back(temp);
+            return true;
+        }
+        i++;
+    }
+    return false;
+}
+
 list<Chave> RTree::Busca(Ponto& P){
     streampos RaizPos = root.GetPtr()->DiskPos;
     list<Chave> ListadeNo = Traversal(RaizPos, P), resultado;
@@ -203,15 +235,6 @@ list<Chave> RTree::Busca(Ponto& P){
             resultado.push_back(item);
     }
     return resultado;
-}
-
-Chave RTree::Busca(Retangulo& R){
-    streampos RaizPos = root.GetPtr()->DiskPos;
-    list<Chave> candidatos = Traversal(RaizPos, R);
-    for(auto item: candidatos)
-        if(item.MBR == R)
-            return item;
-    return Chave();
 }
 
 list<Chave> RTree::Traversal(streampos& no, Ponto& P){
@@ -226,20 +249,6 @@ list<Chave> RTree::Traversal(streampos& no, Ponto& P){
         for(auto item: aux->Chaves)
             LC.push_back(item);
     delete aux;
-    return LC;
-}
-
-list<Chave> RTree::Traversal(streampos& no, Retangulo& R){
-    list<Chave> LC;
-    Node* aux = new Node(no);
-    if(!aux->Folha()){
-        for(auto item: aux->Chaves)
-            if(item.MBR.Contem(R))
-                LC.splice(LC.end(), Traversal(item.ChildPtr, R));
-    }
-    else
-        for(auto item: aux->Chaves)
-            LC.push_back(item);
     return LC;
 }
 
@@ -339,13 +348,6 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
         return ptrNo;
     }
     return nullptr;
-}
-
-unsigned RTree::BuscaNaFolha(Node* &no, Retangulo& R){
-    size_t limite = no->Chaves.size();
-    unsigned i=0;
-    while((no->Chaves[i].MBR != R) and (i < limite)) i++;
-    return i;
 }
 
 void RTree::AjustaCaminho(stack<NodeAux>& caminho){
@@ -472,8 +474,13 @@ void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){
     nivel++;
 }
 
-void RTree::Remove(Chave& K){
-
+void RTree::Remove(vector<NodeAux>& toStack){
+    stack<NodeAux> caminho;
+    while(!toStack.empty()){
+        caminho.push(toStack.back());
+        toStack.pop_back();
+    }
+    Remove(caminho);
 }
 
 void RTree::Remove(stack<NodeAux>& Caminho){
@@ -493,8 +500,10 @@ list<Chave*> RTree::Reorganizar(stack<NodeAux>& Caminho){
             Caminho.pop();
             Q.splice(Q.end(), Reorganizar(Caminho));
         }
-        else
+        else{
+            No.ptr->SalvarNo();
             AjustaCaminho(Caminho);
+        }
     }
     return Q;
 }

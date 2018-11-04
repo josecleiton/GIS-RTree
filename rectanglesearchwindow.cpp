@@ -1,6 +1,7 @@
 #include "rectanglesearchwindow.hpp"
 #include "ui_rectanglesearchwindow.h"
 
+
 RectangleSearchWindow::RectangleSearchWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RectangleSearchWindow)
@@ -26,15 +27,11 @@ void RectangleSearchWindow::on_button_clicked()
     SpatialData::Ponto A(ui->p1x->text().toDouble(), ui->p1y->text().toDouble());
     SpatialData::Ponto B(ui->p2x->text().toDouble(), ui->p2y->text().toDouble());
     SpatialData::Retangulo R(A, B);
-    SpatialIndex::Chave ChaveEncontrada = root.Busca(R);
-    if(ChaveEncontrada.Dado == 0){
-        //NÃO ENCONTRADO
-        QMessageBox mbox;
-        mbox.critical(nullptr, "Erro", "Retângulo não encontrado no banco de dados.");
-    }
-    else{
+    vector<SpatialIndex::NodeAux> caminho;
+    bool ChaveEncontrada = root.Busca(root.GetPtr(), R, caminho);
+    if(ChaveEncontrada){
         DiskAPI::Disk io(FILENAME);
-        streampos pos = ChaveEncontrada.Dado;
+        streampos pos = caminho.front().ptr->Chaves[caminho.front().index].Dado;
         DiskAPI::Registro* Reg = io.Read(pos);
         this->reg = Reg;
         if(!Interseccao()){
@@ -43,11 +40,16 @@ void RectangleSearchWindow::on_button_clicked()
             FW.setReg(Reg);
             FW.exec();
             if(FW.GetRemove()){
-                root.Remove(ChaveEncontrada);
+                root.Remove(caminho);
                 io.Remove(pos);
             }
             delete Reg;
         }
+    }
+    else{
+        //NÃO ENCONTRADO
+        QMessageBox mbox;
+        mbox.critical(nullptr, "Erro", "Retângulo não encontrado no banco de dados.");
     }
 }
 

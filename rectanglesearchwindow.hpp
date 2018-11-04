@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QMessageBox>
+#include <vector>
 #include "variaveis.hpp"
 #include "rtree.hpp"
 #include "spatialdata.hpp"

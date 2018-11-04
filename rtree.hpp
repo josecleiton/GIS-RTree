@@ -2,6 +2,7 @@
 #define RTREE_HPP
 #include <iostream>
 #include <stack>
+#include <queue>
 #include <vector>
 #include <list>
 #include "spatialdata.hpp"
@@ -77,17 +78,16 @@ public:
    Node* GetPtr();
    void CriaArvore(Retangulo&, streampos&);
    list<Chave> Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
-   Chave Busca(Retangulo&);
+   bool Busca(Node*, Retangulo&, vector<NodeAux>&);
    Node* EscolhaSubArvore(Node*&, stack<NodeAux>&, Retangulo&, bool);
    list<Chave> Traversal(streampos&, Ponto&);
-   list<Chave> Traversal(streampos&, Retangulo&);
    void InserirNo(Node*&, stack<NodeAux>&, Chave&);
-   unsigned BuscaNaFolha(Node*&, Retangulo&);
    void AjustaCaminho(stack<NodeAux>&);
    void DividirEAjustar(Node*&, stack<NodeAux>&);
    Node* Divide(Node*&);
    void CriaNovaRaiz(Node*&, Node*&);
    void Remove(Chave& K);
+   void Remove(vector<NodeAux>&);
    void Remove(stack<NodeAux>&);
    list<Chave*> Reorganizar(stack<NodeAux>&);
    void Reinserir(list<Chave*>&);
