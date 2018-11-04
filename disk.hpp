@@ -18,6 +18,7 @@ struct Registro{
     Vertice* lista{};
     unsigned tam{};
     Registro(unsigned char type = INDEFINIDO, Vertice* v = nullptr, unsigned t = 0);
+    ~Registro();
     void* Conversao();
 };
 

@@ -78,6 +78,7 @@ void InsertWindow::on_submit_clicked(){
             }
             posicao_forma = io.Salvar(tipo, num_vertices, pontos); // posicao da forma
             MBR = pontos->Envelope(); //MBR QUE ENVELOPA A FORMA
+            pontos->Kai();
         }
         else{
             InsertCircleWindow CircleWindow;

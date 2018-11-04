@@ -75,6 +75,7 @@ public:
     Retangulo Envelope(); // MINIMUM BOUNDING RECTANGLE PARA A R-TREE
     Vertice* Split(Vertice*); // DIVIDE A LISTA
     pair<QPointF*, int> toQPoint();
+    void Kai();
     friend class Poligono;
 };
 

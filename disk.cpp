@@ -117,6 +117,10 @@ Registro* Disk::Read(streampos& pos){
 Registro::Registro(unsigned char type, Vertice* v, unsigned t): tipo(type), lista(v), tam(t){
 }
 
+Registro::~Registro(){
+    if(this->tam) this->lista->Kai();
+}
+
 void* Registro::Conversao(){ // SE A CONVERSÃO FOR PARA PONTO OU ARESTA, PRECISO DO delete
     if(tipo == POLIGONO or tipo == POLIGONO_NAO_CONVEXO){
         Poligono* P = new Poligono(lista);

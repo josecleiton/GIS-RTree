@@ -33,17 +33,26 @@ void RectangleSearchWindow::on_button_clicked()
         DiskAPI::Disk io(FILENAME);
         streampos pos = caminho.front().ptr->Chaves[caminho.front().index].Dado;
         DiskAPI::Registro* Reg = io.Read(pos);
-        this->reg = Reg;
-        if(!Interseccao()){
-            FindWindow FW;
-            FW.setModal(true);
-            FW.setReg(Reg);
-            FW.exec();
-            if(FW.GetRemove()){
-                root.Remove(caminho);
-                io.Remove(pos);
+        if(Reg != nullptr){
+            this->reg = Reg;
+            if(!Interseccao()){
+                FindWindow FW;
+                FW.setModal(true);
+                FW.setReg(Reg);
+                FW.exec();
+                if(FW.GetRemove()){
+                    root.Remove(caminho);
+                    io.Remove(pos);
+                }
+                else
+                    SpatialIndex::Kai(caminho);
+                delete Reg;
             }
-            delete Reg;
+        }
+        else{
+            QMessageBox erro;
+            erro.critical(nullptr, "ERRO CRITICO DE ORGANIZAÇÃO", "Fatal error: banco de dados necessita reorganização.");
+            this->close();
         }
     }
     else{

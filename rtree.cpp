@@ -63,6 +63,7 @@ Node::Node(streampos& no){
             this->Nivel = nivel;
             this->Chaves = temp;
             this->DiskPos = no;
+            delete key;
         }
         else
             cerr << "Página inválida! Reorganize antes de fazer outra requisição." << endl;
@@ -287,7 +288,7 @@ void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
 //        CaminhoNo.pop();
     Chave Key(MbrForma, pos, FOLHA);
     InserirNo(no, CaminhoNo, Key);
-    LiberaPilha(CaminhoNo);
+    Kai(CaminhoNo);
 }
 
 void RTree::Inserir(Chave& K){
@@ -301,7 +302,7 @@ void RTree::Inserir(Chave& K){
 //    if(!CaminhoNo.empty())
 //        CaminhoNo.pop();
     InserirNo(no, CaminhoNo, A);
-    LiberaPilha(CaminhoNo);
+    Kai(CaminhoNo);
 }
 
 Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& MbrForma, bool busca){
@@ -486,7 +487,7 @@ void RTree::Remove(vector<NodeAux>& toStack){
 void RTree::Remove(stack<NodeAux>& Caminho){
     list<Chave*> ChavesExcedentes = Reorganizar(Caminho);
     Reinserir(ChavesExcedentes);
-    LiberaPilha(Caminho);
+    Kai(Caminho);
 }
 
 list<Chave*> RTree::Reorganizar(stack<NodeAux>& Caminho){
@@ -545,14 +546,24 @@ bool Node::Overflow(){
     return (Chaves.size() > MAXCHAVES);
 }
 
-void LiberaPilha(stack<NodeAux>& pilha){
+void Kai(stack<NodeAux>& pilha){
     Node* raiz = root.GetPtr();
     Node* aux = nullptr;
     while(!pilha.empty()){
         aux = pilha.top().ptr;
         if(aux != nullptr and aux != raiz)
-            delete pilha.top().ptr;
+            delete aux;
         pilha.pop();
+    }
+}
+
+void Kai(vector<NodeAux>& DS){
+    Node* raiz = root.GetPtr(), *aux = nullptr;
+    while(!DS.empty()){
+        aux = DS.back().ptr;
+        if(aux != nullptr and aux != raiz)
+            delete aux;
+        DS.pop_back();
     }
 }
 

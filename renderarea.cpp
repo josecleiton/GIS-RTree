@@ -39,7 +39,7 @@ void RenderArea::paintEvent(QPaintEvent *event){
                 p.drawPolyline(vertices.first, vertices.second);
             else if(tipo == PONTO)
                 p.drawPoint(vertices.first[0]);
-            delete vertices.first;
+            delete[] vertices.first;
         }
         else if(tipo == CIRCULO){
             QPointF centro(10, 10);

@@ -95,7 +95,8 @@ public:
    bool ArquivoVazio();
 };
 
-void LiberaPilha(stack<NodeAux>&);
+void Kai(stack<NodeAux>&);
+void Kai(vector<NodeAux>&);
 
 }
 #endif // RTREE_HPP

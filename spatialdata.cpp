@@ -174,6 +174,18 @@ Vertice* Vertice::Split(Vertice* b){ // TENHO QUE EXPLICAR PARA OS MENINOS
     return bp;
 }
 
+void Vertice::Kai(){
+    Vertice* list = this;
+    if(list != nullptr){
+        Vertice* aux = list->Horario();
+        while(list != aux){
+            delete aux->Pop();
+            aux = list->Horario();
+        }
+        delete list;
+    }
+}
+
 pair<QPointF*, int> Vertice::toQPoint(){
     int tam = 1, j = 0;
     Vertice* fim = this->Horario();
