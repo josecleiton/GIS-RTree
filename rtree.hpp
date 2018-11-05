@@ -68,10 +68,12 @@ class RTree{
 private:
     Node* raiz{};
     size_t count{};
-    size_t nivel{};
+    size_t folhas{};
 public:
    RTree();
    ~RTree();
+   size_t GetCount();
+   size_t GetFolhas();
    void Inserir(Retangulo&, streampos&);
    void Inserir(Chave&);
    bool IsEmpty();
@@ -93,6 +95,7 @@ public:
    void Reinserir(list<Chave*>&);
    list<Chave*> EncontreAsFolhas(Node*&);
    bool ArquivoVazio();
+   unsigned GetNivel();
 };
 
 void Kai(stack<NodeAux>&);

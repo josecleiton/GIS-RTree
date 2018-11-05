@@ -38,3 +38,12 @@ void MainWindow::on_buscar_clicked(){
 void MainWindow::on_cancel_clicked(){
     close();
 }
+
+void MainWindow::on_info_clicked()
+{
+    QMessageBox w;
+    string nos = to_string(root.GetCount());
+    string nivel = to_string(root.GetNivel());
+    string folhas = to_string(root.GetFolhas());
+    w.information(nullptr, "ED", "Estrutura utilizada: Original R-Tree\nAltura: "+QString::fromStdString(nivel)+"\nNúmero de nós: "+QString::fromStdString(nos)+"\nNúmero de registros: "+QString::fromStdString(folhas)+"\n");
+}
