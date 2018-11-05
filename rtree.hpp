@@ -68,12 +68,12 @@ class RTree{
 private:
     Node* raiz{};
     size_t count{};
-    size_t folhas{};
+    size_t registros{};
 public:
    RTree();
    ~RTree();
    size_t GetCount();
-   size_t GetFolhas();
+   size_t GetRegistros();
    void Inserir(Retangulo&, streampos&);
    void Inserir(Chave&);
    bool IsEmpty();
