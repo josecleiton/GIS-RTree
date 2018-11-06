@@ -26,6 +26,7 @@ public:
     void SetInterseccao(bool);
     bool Interseccao();
     void ClearForm();
+    void ClearReg();
 
 private slots:
     void on_button_clicked();

@@ -29,6 +29,10 @@ void RectangleSearchWindow::ClearForm(){
     ui->p2y->clear();
 }
 
+void RectangleSearchWindow::ClearReg(){
+    this->reg = nullptr;
+}
+
 void RectangleSearchWindow::on_button_clicked()
 {
     SpatialData::Ponto A(ui->p1x->text().toDouble(), ui->p1y->text().toDouble());
@@ -65,6 +69,7 @@ void RectangleSearchWindow::on_button_clicked()
         //NÃO ENCONTRADO
         QMessageBox mbox;
         mbox.critical(nullptr, "Erro", "Retângulo não encontrado no banco de dados.");
+        this->reg = nullptr;
     }
 }
 

@@ -27,6 +27,7 @@ void SearchWindow::on_interseccao_clicked(){
     for(unsigned j=0; j<2; j++){
         RSW.setModal(true);
         RSW.SetInterseccao(true);
+        RSW.ClearReg();
         RSW.exec();
         R[j] = RSW.GetRegistro();
         RSW.ClearForm();
@@ -35,10 +36,11 @@ void SearchWindow::on_interseccao_clicked(){
     FindWindow FW;
     bool active = true;
     if(R[0] == nullptr or R[1] == nullptr){
-        QMB.critical(nullptr, "Erro na busca!", "Uma das formas geométricas não foram encontradas na estrutura, faça outra busca por intersecção.");
+        if(R[0] != R[1])
+            QMB.critical(nullptr, "Erro na busca!", "Uma das formas geométricas não foram encontradas na estrutura, faça outra busca por intersecção.");
         active = false;
     }
-    if(R[0]->tipo == R[1]->tipo and active){
+    if(active and R[0]->tipo == R[1]->tipo){
         unsigned char type = R[0]->tipo;
         Registro* FakeRegister = nullptr;
         if(type == POLIGONO){
