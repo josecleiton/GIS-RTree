@@ -5,7 +5,7 @@ RenderArea::RenderArea(QWidget *parent) : QWidget(parent)
 }
 
 QSize RenderArea::minimumSizeHint() const{
-    return QSize(100, 100);
+    return QSize(400, 200);
 }
 
 QSize RenderArea::sizeHint() const {
@@ -28,9 +28,11 @@ void RenderArea::paintEvent(QPaintEvent *event){
     */
     p.setPen(QPen(Qt::green, 0.3, Qt::SolidLine));
     p.setRenderHint(QPainter::Antialiasing, true);
-    p.translate(200, 30);
-    p.rotate(90);
-    p.scale(7, 7);
+    //p.translate(width()/2, height()/2);
+    p.translate(this->rect().bottomLeft());
+    p.scale(7, -7);
+    //p.rotate(-45);
+    //p.scale(7, 7);
     if(Reg != nullptr){
         auto tipo = Reg->tipo;
         if(tipo != CIRCULO){

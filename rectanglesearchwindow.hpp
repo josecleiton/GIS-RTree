@@ -25,6 +25,7 @@ public:
     DiskAPI::Registro* GetRegistro();
     void SetInterseccao(bool);
     bool Interseccao();
+    void ClearForm();
 
 private slots:
     void on_button_clicked();

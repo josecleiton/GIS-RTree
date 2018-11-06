@@ -22,6 +22,13 @@ RectangleSearchWindow::~RectangleSearchWindow()
     delete ui;
 }
 
+void RectangleSearchWindow::ClearForm(){
+    ui->p1x->clear();
+    ui->p1y->clear();
+    ui->p2x->clear();
+    ui->p2y->clear();
+}
+
 void RectangleSearchWindow::on_button_clicked()
 {
     SpatialData::Ponto A(ui->p1x->text().toDouble(), ui->p1y->text().toDouble());

@@ -29,6 +29,7 @@ void SearchWindow::on_interseccao_clicked(){
         RSW.SetInterseccao(true);
         RSW.exec();
         R[j] = RSW.GetRegistro();
+        RSW.ClearForm();
     }
     QMessageBox QMB;
     FindWindow FW;
