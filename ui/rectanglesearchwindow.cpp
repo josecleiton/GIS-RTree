@@ -14,7 +14,6 @@ RectangleSearchWindow::RectangleSearchWindow(QWidget *parent) :
     ui->p1y->setValidator(validator);
     ui->p2x->setValidator(validator);
     ui->p2y->setValidator(validator);
-    this->reg = nullptr;
 }
 
 RectangleSearchWindow::~RectangleSearchWindow()
@@ -41,6 +40,8 @@ void RectangleSearchWindow::on_button_clicked()
     vector<SpatialIndex::NodeAux> caminho;
     bool ChaveEncontrada = root.Busca(root.GetPtr(), R, caminho);
     if(ChaveEncontrada){
+        SpatialData::Retangulo MBR = caminho.front().ptr->Chaves[caminho.front().index].MBR;
+        this->SetMBR(MBR);
         DiskAPI::Disk io(FILENAME);
         streampos pos = caminho.front().ptr->Chaves[caminho.front().index].Dado;
         DiskAPI::Registro* Reg = io.Read(pos);
@@ -83,6 +84,14 @@ bool RectangleSearchWindow::Interseccao(){
 
 void RectangleSearchWindow::SetInterseccao(bool k){
     this->interseccao = k;
+}
+
+void RectangleSearchWindow::SetMBR(SpatialData::Retangulo R){
+    this->MBR = R;
+}
+
+SpatialData::Retangulo RectangleSearchWindow::GetMBR(){
+    return this->MBR;
 }
 
 void RectangleSearchWindow::on_cancel_clicked()

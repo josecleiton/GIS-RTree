@@ -24,6 +24,8 @@ public:
     ~RectangleSearchWindow();
     DiskAPI::Registro* GetRegistro();
     void SetInterseccao(bool);
+    void SetMBR(SpatialData::Retangulo);
+    SpatialData::Retangulo GetMBR();
     bool Interseccao();
     void ClearForm();
     void ClearReg();
@@ -34,8 +36,9 @@ private slots:
     void on_cancel_clicked();
 
 private:
-    Ui::RectangleSearchWindow *ui;
-    DiskAPI::Registro* reg;
+    Ui::RectangleSearchWindow *ui{};
+    DiskAPI::Registro* reg{};
+    SpatialData::Retangulo MBR{};
     bool interseccao;
 };
 
