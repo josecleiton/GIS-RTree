@@ -42,7 +42,7 @@ void SearchWindow::on_interseccao_clicked(){
             QMB.critical(nullptr, "Erro na busca!", "Uma das formas geométricas não foram encontradas na estrutura, faça outra busca por intersecção.");
         active = false;
     }
-    if(MBR[0].Interseccao(MBR[1])){
+    if(MBR[0].Interseccao(MBR[1])){ // TESTA SE HÁ INTERSECÇÃO ENTRE OS RETANGULOS
         if(active and R[0]->tipo == R[1]->tipo){
             unsigned char type = R[0]->tipo;
             Registro* FakeRegister = nullptr;
