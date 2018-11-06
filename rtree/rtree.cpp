@@ -1,5 +1,4 @@
 #include "rtree.hpp"
-#include "insertwindow.hpp"
 #include "variaveis.hpp"
 namespace SpatialIndex{
 

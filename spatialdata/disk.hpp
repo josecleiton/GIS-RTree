@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include "spatialdata.hpp"
-#define FILENAME "../GIS/formas.bin"
+#define FILENAME "../GIS/spatialdata/formas.bin"
 
 using namespace std;
 using namespace SpatialData;

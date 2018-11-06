@@ -24,45 +24,45 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
-    disk.cpp \
-    rtree.cpp \
-    spatialdata.cpp \
-    insertwindow.cpp \
-    insertpointwindow.cpp \
-    circularlist.cpp \
-    searchwindow.cpp \
-    rectanglesearchwindow.cpp \
-    insertcirclewindow.cpp \
-    findwindow.cpp \
     variaveis.cpp \
-    renderarea.cpp
+    rtree/rtree.cpp \
+    spatialdata/circularlist.cpp \
+    spatialdata/disk.cpp \
+    spatialdata/spatialdata.cpp \
+    ui/findwindow.cpp \
+    ui/insertcirclewindow.cpp \
+    ui/insertpointwindow.cpp \
+    ui/insertwindow.cpp \
+    ui/mainwindow.cpp \
+    ui/rectanglesearchwindow.cpp \
+    ui/renderarea.cpp \
+    ui/searchwindow.cpp \
 
 HEADERS += \
-    mainwindow.hpp \
-    disk.hpp \
-    rtree.hpp \
-    spatialdata.hpp \
-    insertwindow.hpp \
     variaveis.hpp \
-    insertpointwindow.hpp \
-    circularlist.hpp \
-    searchwindow.hpp \
-    rectanglesearchwindow.hpp \
-    regex.hpp \
-    insertcirclewindow.hpp \
-    findwindow.hpp \
     variaveis.hpp \
-    renderarea.hpp
+    rtree/rtree.hpp \
+    spatialdata/circularlist.hpp \
+    spatialdata/disk.hpp \
+    spatialdata/spatialdata.hpp \
+    ui/findwindow.hpp \
+    ui/insertcirclewindow.hpp \
+    ui/insertpointwindow.hpp \
+    ui/insertwindow.hpp \
+    ui/mainwindow.hpp \
+    ui/rectanglesearchwindow.hpp \
+    ui/regex.hpp \
+    ui/renderarea.hpp \
+    ui/searchwindow.hpp \
 
 FORMS += \
-        mainwindow.ui \
-    insertwindow.ui \
-    insertpointwindow.ui \
-    searchwindow.ui \
-    rectanglesearchwindow.ui \
-    insertcirclewindow.ui \
-    findwindow.ui
+    ui/findwindow.ui \
+    ui/insertcirclewindow.ui \
+    ui/insertpointwindow.ui \
+    ui/insertwindow.ui \
+    ui/mainwindow.ui \
+    ui/rectanglesearchwindow.ui \
+    ui/searchwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -73,6 +73,11 @@ DISTFILES += \
     README.md \
     LICENSE \
     .gitignore \
-    formas.bin \
-    rtree.bin \
-    jorge.png
+    rtree/rtree.bin \
+    spatialdata/formas.bin \
+    ui/jorge.png \
+    ui/ui.pri
+
+INCLUDEPATH += $$PWD/ui \
+        $$PWD/rtree \
+        $$PWD/spatialdata

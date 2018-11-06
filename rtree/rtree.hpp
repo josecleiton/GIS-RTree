@@ -5,8 +5,9 @@
 #include <queue>
 #include <vector>
 #include <list>
+#include <fstream>
 #include "spatialdata.hpp"
-#define RTREE_FILE "../GIS/rtree.bin"
+#define RTREE_FILE "../GIS/rtree/rtree.bin"
 using namespace std;
 using namespace SpatialData;
 namespace SpatialIndex{
