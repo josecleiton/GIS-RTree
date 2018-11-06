@@ -76,7 +76,6 @@ DISTFILES += \
     rtree/rtree.bin \
     spatialdata/formas.bin \
     ui/jorge.png \
-    ui/ui.pri
 
 INCLUDEPATH += $$PWD/ui \
         $$PWD/rtree \
