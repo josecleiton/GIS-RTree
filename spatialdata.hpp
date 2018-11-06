@@ -27,6 +27,8 @@ namespace SpatialData{
 enum Classificadores {ESQUERDA, DIREITA, FRENTE, ATRAS, ENTRE, ORIGEM, DESTINO}; // USADO NA CLASSIFICAÇÃO
 enum Rotacao {HORARIO, ANTIHORARIO}; // SENTIDO DAS ROTAÇÕES NA LISTA DUPLAMENTE ENCADEADA DE VERTICES
 enum Posicao_Relativa_Retas {COLINEAR, PARALELA, CONSECUTIVO, CONSECUTIVO_CRUZADO, CONSECUTIVO_NAO_CRUZADO}; // USADA PELA POSIÇÃO RELATIVA ENTRE SEGMENTOS DE RETA (ARESTAS)
+enum Posicao_Ponto_Poligono {DENTRO, FORA, FRONTEIRA};
+enum Classificadores_Aresta {TOCANDO, CRUZANDO, INESSENTIAL};
 
 class Retangulo;
 class Aresta;
@@ -107,6 +109,8 @@ public:
     Poligono* Split(Vertice*); // DIVIDE O POLIGONO EM RELAÇÃO A UM VERTICE
     double AreaTriangulacao(vector<Poligono*>&) const; // RETORNA A AREA A PARTIR DE TRIANGULAÇÃO (NÃO USE)
     Poligono* Interseccao(Poligono&);
+    int PontoNoPoligono(Ponto&);
+    void Apagar();
 };
 
 class Aresta{
@@ -127,6 +131,8 @@ public:
     bool isVertical();
     double Inclinacao(); // RETORNA A INCLINAÇÃO DA RETA
     double y(double); // DADO UM X, RETORNA O Y (VISTO QUE A RETA É SEMPRE INFINITA)
+    int Tipo(Ponto&);
+    double Angulo(Ponto&);
     friend class Ponto;
     friend class Retangulo;
     friend bool operator<(const Retangulo&, const Retangulo&);
@@ -159,21 +165,20 @@ public:
 
 #pragma pack(push, 1)
 class Circulo{
-    public:
-        Ponto centro;
-        double raio;
-
-        Circulo();
-        Circulo(double,Ponto);
-        ~Circulo(); //DESTRUTOR
-        double Diametro();
-        double Comprimento();
-        double Area();
-        int CirculoPoint(Ponto& ); //INTERSEÇÃO PONTO ESTA OU NÃO NO CIRCULO
-        int InterCirculo( Circulo&, Circulo& );// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
-        Vertice* PontinterCirculo( Circulo& , Circulo& ); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
-        Vertice* CirculoIntRetas( Circulo& ,  Ponto& , Ponto& ); // INTERSEÇÃO CIRCULO E RETAS;
-        Retangulo Envelope();
+public:
+    Ponto centro;
+    double raio;
+    Circulo();
+    Circulo(double,Ponto);
+    ~Circulo(); //DESTRUTOR
+    double Diametro();
+    double Comprimento();
+    double Area();
+    int CirculoPoint(Ponto& ); //INTERSEÇÃO PONTO ESTA OU NÃO NO CIRCULO
+    int InterCirculo( Circulo&, Circulo& );// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
+    Vertice* PontinterCirculo( Circulo& , Circulo& ); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
+    Vertice* CirculoIntRetas( Circulo& ,  Ponto& , Ponto& ); // INTERSEÇÃO CIRCULO E RETAS;
+    Retangulo Envelope();
 
 };
 #pragma pack(pop)

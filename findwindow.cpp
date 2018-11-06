@@ -27,8 +27,19 @@ void FindWindow::on_remove_clicked()
     }
 }
 
-void FindWindow::setReg(DiskAPI::Registro* R){
-    this->ui->ra->setReg(R);
+bool FindWindow::setReg(DiskAPI::Registro* R){
+    if(R == nullptr or R->tam == 0){
+        QMessageBox A;
+        A.critical(nullptr, "Registro vazio.", "Um registro vazio não pode ser mostrado.");
+        this->close();
+        return false;
+    }
+    if(!count)
+        this->ui->ra->setReg(R);
+    else
+        this->ui->ra->setReg2(R);
+    count++;
+    return true;
 }
 
 bool FindWindow::GetRemove(){

@@ -18,7 +18,7 @@ class FindWindow : public QDialog
 public:
     explicit FindWindow(QWidget *parent = nullptr);
     ~FindWindow();
-    void setReg(DiskAPI::Registro* R);
+    bool setReg(DiskAPI::Registro* R);
     bool GetRemove();
 
 private slots:
@@ -27,6 +27,7 @@ private slots:
 private:
     Ui::FindWindow *ui;
     bool remove;
+    unsigned count{};
 };
 
 #endif // FINDWINDOW_HPP

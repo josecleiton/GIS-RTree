@@ -309,7 +309,6 @@ void RTree::Inserir(Chave& K){
 //    if(!CaminhoNo.empty())
 //        CaminhoNo.pop();
     InserirNo(no, CaminhoNo, A);
-    this->registros++;
     Kai(CaminhoNo);
 }
 
@@ -395,6 +394,7 @@ bool Node::Ajusta(Retangulo& MBR, unsigned index){
 }
 
 void RTree::InserirNo(Node* &No, stack<NodeAux>& caminho, Chave& inserir){
+    if(No->Nivel == FOLHA) this->count++;
     No->Chaves.push_back(inserir);
     if(No->Overflow())
         return DividirEAjustar(No, caminho);

@@ -44,10 +44,9 @@ void RectangleSearchWindow::on_button_clicked()
                     root.Remove(caminho);
                     io.Remove(pos);
                 }
-                else
-                    SpatialIndex::Kai(caminho);
                 delete Reg;
             }
+            SpatialIndex::Kai(caminho);
         }
         else{
             QMessageBox erro;

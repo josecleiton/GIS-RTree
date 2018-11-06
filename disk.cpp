@@ -118,7 +118,7 @@ Registro::Registro(unsigned char type, Vertice* v, unsigned t): tipo(type), list
 }
 
 Registro::~Registro(){
-    if(this->tam) this->lista->Kai();
+    if(this->tam and this->lista != nullptr) this->lista->Kai();
 }
 
 void* Registro::Conversao(){ // SE A CONVERSÃO FOR PARA PONTO OU ARESTA, PRECISO DO delete

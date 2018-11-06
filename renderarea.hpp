@@ -17,6 +17,7 @@ public:
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
     QSize sizeHint() const Q_DECL_OVERRIDE;
     void setReg(DiskAPI::Registro*);
+    void setReg2(DiskAPI::Registro*);
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 signals:
@@ -24,7 +25,7 @@ signals:
 public slots:
 
 private:
-    Registro* Reg;
+    Registro *Reg{}, *Reg2{};
 };
 
 #endif // RENDERAREA_HPP

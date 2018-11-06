@@ -183,6 +183,7 @@ void Vertice::Kai(){
             aux = list->Horario();
         }
         delete list;
+        list = nullptr;
     }
 }
 
@@ -229,14 +230,8 @@ void Poligono::Resize(){ // DEVE SER CHAMADO SEMPRE QUE UMA CADEIA DE VERTICES D
 }
 
 Poligono::~Poligono(){
-    if(list != nullptr){
-        Vertice* aux = list->Horario();
-        while(list != aux){
-            delete aux->Pop();
-            aux = list->Horario();
-        }
-        delete list;
-    }
+    this->GetVertice()->Kai();
+    this->list = nullptr;
 }
 
 /*
@@ -294,7 +289,7 @@ Poligono* Poligono::Split(Vertice* b){
 }
 
 Poligono* Poligono::Interseccao(Poligono& P){
-    Poligono* R;
+    Poligono* R = nullptr;
     Ponto iPnt, startPnt;
     int inflag = DESCONHECIDO;
     int fase = 1;
@@ -355,6 +350,23 @@ Poligono* Poligono::Interseccao(Poligono& P){
     else if(PontoNoPoligonoConvexo(P.GetPonto(), *this))
         return new Poligono(P);
     return new Poligono;
+}
+
+void Poligono::Apagar(){
+    this->list = nullptr;
+}
+
+int Poligono::PontoNoPoligono(Ponto& P){
+    double total = 0.0, x;
+    Aresta aux;
+    for(unsigned i=0; i<this->GetSize(); i++, this->Avancar(HORARIO)){
+        aux = this->GetAresta();
+        x = aux.Angulo(P);
+        if(x == 180.0)
+            return FRONTEIRA;
+        total += x;
+    }
+    return ((total < -180.0) ? DENTRO: FORA);
 }
 
 bool aimsAt(Aresta& a, Aresta& b, int aclass, int crossType){
@@ -491,6 +503,40 @@ double Aresta::Inclinacao(){
     if(!isVertical())
         return (destino.y - origem.y)/(destino.x - origem.y);
     return DBL_MAX;
+}
+
+int Aresta::Tipo(Ponto& P){
+    Ponto v = this->origem, w = this->destino;
+    switch(P.Classificacao(*this)){
+        case ESQUERDA:
+            return ((v.y < P.y) and (P.y <= w.x)) ? CRUZANDO : INESSENTIAL;
+        case DIREITA:
+            return ((w.y < P.y) and (P.y <= v.y)) ? CRUZANDO : INESSENTIAL;
+        case ENTRE:
+        case ORIGEM:
+        case DESTINO:
+            return TOCANDO;
+        default:
+            return INESSENTIAL;
+    }
+}
+
+double Aresta::Angulo(Ponto& P){
+    Ponto v = this->origem - P;
+    Ponto w = this->destino - P;
+    double va = v.AnguloPolar();
+    double wa = w.AnguloPolar();
+    if((va == -1.0) or (wa == -1.0))
+        return 180.0;
+    double x = wa - va;
+    if((x == 180.0) or (x == -180.0))
+        return 180.0;
+    else if(x < -180.0)
+        return (x + 360.0);
+    else if(x > 180.0)
+        return (x - 360.0);
+    else
+        return x;
 }
 
 Ponto Aresta::GetOrigem() const{
