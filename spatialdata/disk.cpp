@@ -26,7 +26,7 @@ Disk::~Disk(){
         file.close();
 }
 
-streampos Disk::Salvar(unsigned char& _tipo, unsigned& numeroVertices, Vertice* _vertices){
+streampos Disk::Salvar(unsigned char _tipo, unsigned& numeroVertices, Vertice* _vertices){
     /*
      * SALVA UM REGISTRO NO SEGUINTE FORMATO:
      * struct Registro{

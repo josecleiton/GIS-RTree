@@ -30,6 +30,7 @@ InsertWindow::~InsertWindow(){
 void InsertWindow::on_submit_clicked(){
     QMessageBox MB;
     unsigned int num_vertices = ui->numVert->text().toUInt(); // NUM DE VERTICES DETERMINADO PELA GUI
+    //QString identificador = ui->ID->text();
     if(!num_vertices)
         MB.critical(nullptr, "Entrada incorreta!", "Não é possível inserir uma forma sem pontos.");
     else{
@@ -96,5 +97,38 @@ void InsertWindow::on_submit_clicked(){
 
 void InsertWindow::on_cancel_clicked()
 {
+    QString identificador = ui->ID->text();
+    if(identificador.size()){
+        fstream file(identificador.toStdString()+".csv", fstream::in);
+        if(file.is_open()){
+            unsigned numvert = 0;
+            char del = ',';
+            Vertice* pontos = nullptr;
+            double x, y;
+            streampos pos;
+            DiskAPI::Disk io(FILENAME);
+            Retangulo MBR;
+            string handle;
+            Ponto P;
+            while(!file.eof()){
+                file >> numvert;
+                for(unsigned i=0; i<numvert; i++){
+                    file >> del >> x >> del >> y;
+                    P.x = x;
+                    P.y = y;
+                    if(pontos != nullptr)
+                        pontos->Push(P);
+                    else
+                        pontos = new Vertice(x, y);
+                }
+                getline(file, handle);
+                pos = io.Salvar(DiskAPI::POLIGONO_NAO_CONVEXO, numvert, pontos);
+                MBR = pontos->Envelope();
+                pontos->Kai();
+                root.Inserir(MBR, pos);
+            }
+            file.close();
+        }
+    }
     close();
 }

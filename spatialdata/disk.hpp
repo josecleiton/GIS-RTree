@@ -29,7 +29,7 @@ public:
     Disk(string, bool);
     Disk(string);
     ~Disk();
-    streampos Salvar(unsigned char&, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
+    streampos Salvar(unsigned char, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
     Registro* Read(streampos&); // LE UM POR VEZ
     streampos Salvar(Circulo&);
     void Remove(streampos&);
