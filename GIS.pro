@@ -24,7 +24,6 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-    variaveis.cpp \
     rtree/rtree.cpp \
     spatialdata/circularlist.cpp \
     spatialdata/disk.cpp \
@@ -37,10 +36,9 @@ SOURCES += \
     ui/rectanglesearchwindow.cpp \
     ui/renderarea.cpp \
     ui/searchwindow.cpp \
+    global/variaveis.cpp \
 
 HEADERS += \
-    variaveis.hpp \
-    variaveis.hpp \
     rtree/rtree.hpp \
     spatialdata/circularlist.hpp \
     spatialdata/disk.hpp \
@@ -54,6 +52,7 @@ HEADERS += \
     ui/regex.hpp \
     ui/renderarea.hpp \
     ui/searchwindow.hpp \
+    global/variaveis.hpp \
 
 FORMS += \
     ui/findwindow.ui \
@@ -79,4 +78,5 @@ DISTFILES += \
 
 INCLUDEPATH += $$PWD/ui \
         $$PWD/rtree \
-        $$PWD/spatialdata
+        $$PWD/spatialdata \
+        $$PWD/global \
