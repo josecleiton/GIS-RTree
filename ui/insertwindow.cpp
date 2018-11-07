@@ -112,7 +112,7 @@ void InsertWindow::on_cancel_clicked()
             Ponto P;
             while(!file.eof()){
                 file >> numvert;
-                for(unsigned i=0; i<numvert; i++){
+                for(unsigned i=0; i<numvert+1; i++){
                     file >> del >> x >> del >> y;
                     P.x = x;
                     P.y = y;
@@ -125,6 +125,7 @@ void InsertWindow::on_cancel_clicked()
                 pos = io.Salvar(DiskAPI::POLIGONO_NAO_CONVEXO, numvert, pontos);
                 MBR = pontos->Envelope();
                 pontos->Kai();
+                pontos = nullptr;
                 root.Inserir(MBR, pos);
             }
             file.close();

@@ -46,10 +46,13 @@ struct Node{
     streampos DiskPos;
     unsigned Nivel;
     vector<Chave> Chaves;
+
+    //MÉTODOS
     Node(unsigned, vector<Chave>&);
     Node(streampos&);
     Node(Retangulo& R, streampos& PosR);
     Node(vector<Node*>&);
+    ~Node();
     streampos SalvarNo();
     streampos Delete();
     bool Ajusta(Retangulo&, unsigned);
@@ -82,10 +85,10 @@ public:
    void CriaArvore(Retangulo&, streampos&);
    list<Chave> Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
    bool Busca(Node*, Retangulo&, vector<NodeAux>&);
-   Node* EscolhaSubArvore(Node*&, stack<NodeAux>&, Retangulo&, bool);
+   Node* EscolhaSubArvore(Node*&, stack<NodeAux>&, Retangulo&);
    list<Chave> Traversal(streampos&, Ponto&);
    void InserirNo(Node*&, stack<NodeAux>&, Chave&);
-   void AjustaCaminho(stack<NodeAux>&);
+   void AjustaCaminho(stack<NodeAux>&, Retangulo);
    void DividirEAjustar(Node*&, stack<NodeAux>&);
    Node* Divide(Node*&);
    void CriaNovaRaiz(Node*&, Node*&);
