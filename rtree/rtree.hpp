@@ -7,6 +7,7 @@
 #include <list>
 #include <fstream>
 #include "spatialdata.hpp"
+
 #define RTREE_FILE "../GIS/rtree/rtree.bin"
 using namespace std;
 using namespace SpatialData;
@@ -25,6 +26,7 @@ enum{
 enum ChaveID{FOLHA, INTERNO};
 
 struct Node;
+
 #pragma pack(push, 1)
 struct Chave{
     Retangulo MBR;
@@ -95,9 +97,9 @@ public:
    void Remove(Chave& K);
    void Remove(vector<NodeAux>&);
    void Remove(stack<NodeAux>&);
-   list<Chave*> Reorganizar(stack<NodeAux>&);
-   void Reinserir(list<Chave*>&);
-   list<Chave*> EncontreAsFolhas(Node*&);
+   list<Chave> Reorganizar(stack<NodeAux>&);
+   void Reinserir(list<Chave>&);
+   list<Chave> EncontreAsFolhas(Node*&);
    bool ArquivoVazio();
    unsigned GetNivel();
 };

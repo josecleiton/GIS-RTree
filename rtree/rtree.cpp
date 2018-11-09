@@ -1,6 +1,10 @@
 #include "rtree.hpp"
 #include "variaveis.hpp"
+
 namespace SpatialIndex{
+
+static fstream RTreeFile; // BUFFER QUE CARREGA O ARQUIVO RTREE_FILE USADO
+//                           COMO HANDLE DOS NÓS DA ÁRVORE R
 
 Chave::Chave(Retangulo& _mbr, streampos& _dado, unsigned id): MBR(_mbr){
     if(id == FOLHA)
@@ -43,76 +47,53 @@ Node::Node(vector<Node*>& K){
 }
 
 Node::Node(streampos& no){
-    fstream file(RTREE_FILE, fstream::binary|fstream::in);
-    if(file.is_open()){
-        bool active = false;
-        file.seekg(no);
-        file.read(reinterpret_cast<char*>(&active), sizeof(bool));
-        if(active){
-            vector<Chave> temp;
-            Chave key;
-            unsigned int nivel, count;
-            file.read(reinterpret_cast<char*>(&nivel), sizeof(unsigned));
-            file.read(reinterpret_cast<char*>(&count), sizeof(unsigned));
-            temp.resize(count);
-            for(unsigned i=0; i<count; i++){
-                file.read(reinterpret_cast<char*>(&key), sizeof(Chave));
-                temp[i] = key;
-            }
-            this->Nivel = nivel;
-            this->Chaves = temp;
-            this->DiskPos = no;
-        }
-        else
-            cerr << "Página inválida! Reorganize antes de fazer outra requisição." << endl;
-        file.close();
+    bool active = false;
+    RTreeFile.seekg(no, fstream::beg);
+    RTreeFile.read(reinterpret_cast<char*>(&active), sizeof(bool));
+    if(active){
+        unsigned count;
+        RTreeFile.read(reinterpret_cast<char*>(&Nivel), sizeof(unsigned));
+        RTreeFile.read(reinterpret_cast<char*>(&count), sizeof(unsigned));
+        this->Chaves.resize(count);
+        for(unsigned i=0; i<count; i++)
+            RTreeFile.read(reinterpret_cast<char*>(&(Chaves[i])), sizeof(Chave));
+        this->DiskPos = no;
     }
-    else cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
+    else
+        cerr << "Página inválida! Reorganize antes de fazer outra requisição." << endl;
 }
 
 Node::~Node(){
 }
 
 streampos Node::SalvarNo(){
-    fstream file(RTREE_FILE, fstream::binary|fstream::in|fstream::out);
-    if(file.is_open()){
-        unsigned count = static_cast<unsigned>(this->Chaves.size());
-        Retangulo V;
-        streampos x = 0;
-        bool active = true;
-        Chave key(V, x, FOLHA);
-        if(DiskPos)
-            file.seekp(this->DiskPos);
-        else{
-            file.seekp(0, fstream::end);
-            this->DiskPos = file.tellp();
-        }
-        file.write(reinterpret_cast<char*>(&active), sizeof(bool));
-        file.write(reinterpret_cast<char*>(&(this->Nivel)), sizeof(unsigned));
-        file.write(reinterpret_cast<char*>(&count), sizeof(unsigned));
-        for(unsigned i=0; i<MAXCHAVES; i++){
-            if(i<count)
-                file.write(reinterpret_cast<char*>(&(this->Chaves[i])), sizeof(Chave));
-            else
-                file.write(reinterpret_cast<char*>(&key), sizeof(Chave));
-        }
-        file.close();
+    unsigned count = static_cast<unsigned>(this->Chaves.size());
+    Retangulo V;
+    streampos x = 0;
+    bool active = true;
+    Chave key(V, x, FOLHA);
+    if(DiskPos)
+        RTreeFile.seekp(this->DiskPos, fstream::beg);
+    else{
+        RTreeFile.seekp(0, fstream::end);
+        this->DiskPos = RTreeFile.tellp();
     }
-    else
-        cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
+    RTreeFile.write(reinterpret_cast<char*>(&active), sizeof(bool));
+    RTreeFile.write(reinterpret_cast<char*>(&(this->Nivel)), sizeof(unsigned));
+    RTreeFile.write(reinterpret_cast<char*>(&count), sizeof(unsigned));
+    for(unsigned i=0; i<MAXCHAVES; i++){
+        if(i<count)
+            RTreeFile.write(reinterpret_cast<char*>(&(this->Chaves[i])), sizeof(Chave));
+        else
+            RTreeFile.write(reinterpret_cast<char*>(&key), sizeof(Chave));
+    }
     return this->DiskPos;
 }
 
 streampos Node::Delete(){
-    fstream file(RTREE_FILE, fstream::binary|fstream::in|fstream::out);
-    if(file.is_open()){
-        bool active = false;
-        file.seekp(this->DiskPos);
-        file.write(reinterpret_cast<char*>(&active), sizeof(bool));
-        file.close();
-    }
-    else
-        cerr << "Arquivo: " << RTREE_FILE << " não foi aberto." << endl;
+    bool active = false;
+    RTreeFile.seekp(this->DiskPos, fstream::beg);
+    RTreeFile.write(reinterpret_cast<char*>(&active), sizeof(bool));
     return this->DiskPos;
 }
 /*
@@ -143,74 +124,62 @@ Retangulo Node::GetRetangulo(){
 }
 
 RTree::RTree(){
+    RTreeFile.open(RTREE_FILE, fstream::binary|fstream::in|fstream::out);
     if(!ArquivoVazio()){
-        fstream file(RTREE_FILE, fstream::binary|fstream::in);
-        if(file.is_open()){
+        if(RTreeFile.is_open()){
             streampos PosicaoDaRaiz;
-            size_t count, registros;
-            file.read(reinterpret_cast<char*>(&PosicaoDaRaiz), sizeof(streampos));
-            file.read(reinterpret_cast<char*>(&count), sizeof(size_t));
-            file.read(reinterpret_cast<char*>(&registros), sizeof(size_t));
-            file.close();
-            this->count = count;
-            this->registros = registros;
+            RTreeFile.read(reinterpret_cast<char*>(&PosicaoDaRaiz), sizeof(streampos));
+            RTreeFile.read(reinterpret_cast<char*>(&(this->count)), sizeof(size_t));
+            RTreeFile.read(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
             this->raiz = new Node(PosicaoDaRaiz);
         }
-        else
-            cerr << RTREE_FILE << " não foi aberto." << endl;
+        else{
+            cerr << "Exceção ao ler/abrir o arquivo: " << RTREE_FILE << endl;
+            exit(-40);
+        }
     }
     else
         this->raiz = nullptr;
 }
 
 bool RTree::ArquivoVazio(){
-    fstream file(RTREE_FILE, fstream::binary|fstream::in);
-    streampos inicio, fim;
-    inicio = file.tellg();
-    file.seekg(0, fstream::end);
-    fim = file.tellg();
-    file.close();
-    return inicio == fim;
+    if(RTreeFile.is_open()){
+        streampos inicio, fim;
+        inicio = RTreeFile.tellg();
+        RTreeFile.seekg(0, fstream::end);
+        fim = RTreeFile.tellg();
+        RTreeFile.seekg(0, fstream::beg);
+        return inicio == fim;
+    }
+    return true;
 }
 
 RTree::~RTree(){
-    fstream file(RTREE_FILE, fstream::binary|fstream::in|fstream::out);
-    if(file.is_open()){
-        if(raiz != nullptr){
-            file.seekp(0, fstream::beg);
-            file.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
-            file.write(reinterpret_cast<char*>(&(this->count)), sizeof(size_t));
-            file.write(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
-            delete this->raiz;
-        }
-        file.close();
+    if(raiz != nullptr){
+        RTreeFile.seekp(0, fstream::beg);
+        RTreeFile.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
+        RTreeFile.write(reinterpret_cast<char*>(&(this->count)), sizeof(size_t));
+        RTreeFile.write(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
+        delete this->raiz;
     }
-    else
-        cerr << RTREE_FILE << " não foi aberto." << endl;
+    RTreeFile.close();
 }
 
 void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
-    fstream file(RTREE_FILE, fstream::binary|fstream::out|fstream::in);
-    if(file.is_open()){
-        Node* raiz = new Node(MbrForma, pos);
-        streampos posicao = 1;
-        size_t count, registros;
-        this->count = count = 1ull;
-        this->registros = registros = 0ull;
-        file.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
-        file.write(reinterpret_cast<char*>(&count), sizeof(size_t));
-        file.write(reinterpret_cast<char*>(&registros), sizeof(size_t));
-        posicao = file.tellp();
-        raiz->DiskPos = posicao;
-        file.seekp(0, fstream::beg);
-        file.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
-        this->raiz = raiz;
-        raiz->SalvarNo();
-    }
-    else{
-        cerr << "Arquivo não foi aberto, finalizando o programa." << endl;
-        exit(-40);
-    }
+    Node* raiz = new Node(MbrForma, pos);
+    streampos posicao = 1;
+    size_t count, registros;
+    this->count = count = 1ull;
+    this->registros = registros = 0ull;
+    RTreeFile.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
+    RTreeFile.write(reinterpret_cast<char*>(&count), sizeof(size_t));
+    RTreeFile.write(reinterpret_cast<char*>(&registros), sizeof(size_t));
+    posicao = RTreeFile.tellp();
+    raiz->DiskPos = posicao;
+    RTreeFile.seekp(0, fstream::beg);
+    RTreeFile.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
+    this->raiz = raiz;
+    raiz->SalvarNo();
 }
 
 size_t RTree::GetCount(){
@@ -514,13 +483,13 @@ void RTree::Remove(vector<NodeAux>& toStack){
 }
 
 void RTree::Remove(stack<NodeAux>& Caminho){
-    list<Chave*> ChavesExcedentes = Reorganizar(Caminho);
+    list<Chave> ChavesExcedentes = Reorganizar(Caminho);
     Reinserir(ChavesExcedentes);
     Kai(Caminho);
 }
 
-list<Chave*> RTree::Reorganizar(stack<NodeAux>& Caminho){
-    list<Chave*> Q;
+list<Chave> RTree::Reorganizar(stack<NodeAux>& Caminho){
+    list<Chave> Q;
     if(Caminho.empty()) return Q;
     NodeAux No = Caminho.top();
     No.ptr->Chaves.erase(No.ptr->Chaves.begin()+No.index);
@@ -539,17 +508,17 @@ list<Chave*> RTree::Reorganizar(stack<NodeAux>& Caminho){
     return Q;
 }
 
-void RTree::Reinserir(list<Chave*>& ChavesExcedentes){
+void RTree::Reinserir(list<Chave>& ChavesExcedentes){
     for(auto &item: ChavesExcedentes)
-        Inserir(item->MBR, item->Dado);
+        Inserir(item.MBR, item.Dado);
     ChavesExcedentes.clear();
 }
 
-list<Chave*> RTree::EncontreAsFolhas(Node*& no){ // CUIDADO COM ESSE METODO
-    list<Chave*> LC;
+list<Chave> RTree::EncontreAsFolhas(Node*& no){ // CUIDADO COM ESSE METODO
+    list<Chave> LC;
     if(no->Folha()){
-        for(auto &item: no->Chaves)
-            LC.push_back(&item);
+        for(auto item: no->Chaves)
+            LC.push_back(item);
     }
     else{
         Node* aux = nullptr;

@@ -38,7 +38,6 @@ streampos Disk::Salvar(unsigned char _tipo, unsigned& numeroVertices, Vertice* _
      */
     if(file.is_open()){
         bool active = true; // BYTE UTILIZADO PARA A REMOÇÃO LÓGICA DE UM REGISTRO
-        file.seekp(0, file.end);
         streampos pos = file.tellp();
         file.write(reinterpret_cast<char*>(&active), sizeof(bool));
         file.write(reinterpret_cast<char*>(&_tipo), sizeof(unsigned char));
@@ -58,7 +57,6 @@ streampos Disk::Salvar(unsigned char _tipo, unsigned& numeroVertices, Vertice* _
 streampos Disk::Salvar(Circulo& C){
     if(file.is_open()){
         bool active = true;
-        file.seekp(0, fstream::end);
         streampos pos = file.tellp();
         unsigned char k = CIRCULO;
         file.write(reinterpret_cast<char*>(&active), sizeof(bool));
@@ -74,7 +72,7 @@ streampos Disk::Salvar(Circulo& C){
 
 Registro* Disk::Read(streampos& pos){
     if(file.is_open()){
-        file.seekg(pos, file.beg);
+        file.seekg(pos, fstream::beg);
         bool active = false;
         file.read(reinterpret_cast<char*>(&active), sizeof(bool));
         if(active){ // REGISTRO ATIVO
