@@ -526,10 +526,10 @@ double Aresta::Angulo(Ponto& P){
     Ponto w = this->destino - P;
     double va = v.AnguloPolar();
     double wa = w.AnguloPolar();
-    if((va == -1.0) or (wa == -1.0))
+    if((va+1.0 == 0.0) or (wa+1.0 == 0.0))
         return 180.0;
     double x = wa - va;
-    if((x == 180.0) or (x == -180.0))
+    if((x == 180.0) or (x+180.0 == 0.0))
         return 180.0;
     else if(x < -180.0)
         return (x + 360.0);
@@ -538,6 +538,13 @@ double Aresta::Angulo(Ponto& P){
     else
         return x;
 }
+
+double Aresta::GetCoeficienteAngular(){
+    if(destino != origem)
+        return (destino.y-origem.y)/(destino.x-origem.x);
+    return 0.0;
+}
+
 
 Ponto Aresta::GetOrigem() const{
     return this->origem;

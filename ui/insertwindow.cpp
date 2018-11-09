@@ -7,6 +7,7 @@
 #include "insertpointwindow.hpp"
 #include "insertcirclewindow.hpp"
 
+
 InsertWindow::InsertWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::InsertWindow){
@@ -16,10 +17,10 @@ InsertWindow::InsertWindow(QWidget *parent) :
     QRegExp nome(NAME_REGEX);
     QRegExpValidator *ValidaInt = new QRegExpValidator(inteiro, this);
     QRegExpValidator *ValidaPalavra = new QRegExpValidator(palavra, this);
-    QRegExpValidator *ValidaNome = new QRegExpValidator(nome, this);
+    //QRegExpValidator *ValidaNome = new QRegExpValidator(nome, this);
     ui->numVert->setValidator(ValidaInt);
     ui->tipoForma->setValidator(ValidaPalavra);
-    ui->ID->setValidator(ValidaNome);
+    //ui->ID->setValidator(ValidaNome);
     this->setWindowTitle("Insira uma forma geométrica");
 }
 
@@ -36,7 +37,6 @@ void InsertWindow::on_submit_clicked(){
     else{
         string forma = ui->tipoForma->text().toStdString();
         unsigned char tipo; // TIPO DA FORMA (POLIGONO, POLIGONAL ETC)
-        DiskAPI::Disk io(FILENAME); // UMA API VAGABUNDA PARA AJUDAR NOS ACESSOS AO DISCO
         Retangulo MBR;
         streampos posicao_forma;
 
@@ -99,18 +99,20 @@ void InsertWindow::on_cancel_clicked()
 {
     QString identificador = ui->ID->text();
     if(identificador.size()){
-        fstream file(identificador.toStdString()+".csv", fstream::in);
+        fstream file(identificador.toStdString(), fstream::in);
         if(file.is_open()){
             unsigned numvert = 0;
             char del = ',';
             Vertice* pontos = nullptr;
             double x, y;
             streampos pos;
-            DiskAPI::Disk io(FILENAME);
             Retangulo MBR;
             string handle;
             Ponto P;
+            unsigned inseridos = 0;
             while(!file.eof()){
+                if(inseridos++ == 1000)
+                    break;
                 file >> numvert;
                 for(unsigned i=0; i<numvert+1; i++){
                     file >> del >> x >> del >> y;

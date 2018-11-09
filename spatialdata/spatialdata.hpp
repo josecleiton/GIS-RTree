@@ -133,6 +133,7 @@ public:
     double y(double); // DADO UM X, RETORNA O Y (VISTO QUE A RETA É SEMPRE INFINITA)
     int Tipo(Ponto&);
     double Angulo(Ponto&);
+    double GetCoeficienteAngular();
     friend class Ponto;
     friend class Retangulo;
     friend bool operator<(const Retangulo&, const Retangulo&);
