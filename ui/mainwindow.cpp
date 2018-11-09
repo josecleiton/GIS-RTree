@@ -42,7 +42,7 @@ void MainWindow::on_info_clicked()
 {
     QMessageBox w;
     string nos = to_string(root.GetCount());
-    string nivel = to_string(root.GetNivel());
+    string nivel = root.GetNivel();
     string folhas = to_string(root.GetRegistros());
     w.information(nullptr, "ED", "Estrutura utilizada: Original R-Tree\nAltura: "+QString::fromStdString(nivel)+"\nNúmero de nós: "+QString::fromStdString(nos)+"\nNúmero de registros: "+QString::fromStdString(folhas)+"\n");
 }

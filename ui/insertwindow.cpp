@@ -109,10 +109,7 @@ void InsertWindow::on_cancel_clicked()
             Retangulo MBR;
             string handle;
             Ponto P;
-            unsigned inseridos = 0;
             while(!file.eof()){
-                if(inseridos++ == 1000)
-                    break;
                 file >> numvert;
                 for(unsigned i=0; i<numvert+1; i++){
                     file >> del >> x >> del >> y;

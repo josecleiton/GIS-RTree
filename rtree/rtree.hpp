@@ -8,7 +8,7 @@
 #include <fstream>
 #include "spatialdata.hpp"
 
-#define RTREE_FILE "../GIS/rtree/rtree.bin"
+#define RTREE_FILENAME "../GIS/rtree/rtree.bin"
 using namespace std;
 using namespace SpatialData;
 namespace SpatialIndex{
@@ -101,7 +101,7 @@ public:
    void Reinserir(list<Chave>&);
    list<Chave> EncontreAsFolhas(Node*&);
    bool ArquivoVazio();
-   unsigned GetNivel();
+   string GetNivel();
 };
 
 void Kai(stack<NodeAux>&);

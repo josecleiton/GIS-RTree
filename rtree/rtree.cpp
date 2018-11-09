@@ -124,7 +124,7 @@ Retangulo Node::GetRetangulo(){
 }
 
 RTree::RTree(){
-    RTreeFile.open(RTREE_FILE, fstream::binary|fstream::in|fstream::out);
+    RTreeFile.open(RTREE_FILENAME, fstream::binary|fstream::in|fstream::out);
     if(!ArquivoVazio()){
         if(RTreeFile.is_open()){
             streampos PosicaoDaRaiz;
@@ -134,7 +134,7 @@ RTree::RTree(){
             this->raiz = new Node(PosicaoDaRaiz);
         }
         else{
-            cerr << "Exceção ao ler/abrir o arquivo: " << RTREE_FILE << endl;
+            cerr << "Exceção ao ler/abrir o arquivo: " << RTREE_FILENAME << endl;
             exit(-40);
         }
     }
@@ -535,9 +535,16 @@ list<Chave> RTree::EncontreAsFolhas(Node*& no){ // CUIDADO COM ESSE METODO
     return LC;
 }
 
-unsigned RTree::GetNivel(){
-    double min = MINCHAVES, h = ceil(log(GetRegistros())/log(min));
-    return static_cast<unsigned>(h-1);
+string RTree::GetNivel(){
+    string saida;
+    size_t N = GetRegistros();
+    double m = MINCHAVES, h = ceil(log(N)/log(m));
+    unsigned alturaMaxima = static_cast<unsigned>(h-1);
+    m = MAXCHAVES;
+    h = ceil(log(N)/log(m));
+    unsigned alturaMinima = static_cast<unsigned>(h-1);
+    saida = "[" + to_string(alturaMinima) +", "+ to_string(alturaMaxima) + "]";
+    return saida;
 }
 
 bool Node::Folha(){
