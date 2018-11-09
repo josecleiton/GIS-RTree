@@ -28,6 +28,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    void EmptyDS();
 };
 
 #endif // MAINWINDOW_H
