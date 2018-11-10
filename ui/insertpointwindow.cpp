@@ -18,15 +18,21 @@ InsertPoint::~InsertPoint()
     delete ui;
 }
 
-SpatialData::Ponto InsertPoint::GetPonto(){
-    SpatialData::Ponto P = SpatialData::Ponto(ui->campoX->text().toDouble(), ui->campoY->text().toDouble());
+SpatialData::Ponto* InsertPoint::GetPonto(){
+    SpatialData::Ponto* P = nullptr;
+    if(ui->campoX->text().size() and ui->campoY->text().size())
+        P = new SpatialData::Ponto(ui->campoX->text().toDouble(), ui->campoY->text().toDouble());
     Clear();
     return P;
 }
 
 SpatialData::Vertice* InsertPoint::GetVertice(){
-    SpatialData::Ponto p = GetPonto();
-    SpatialData::Vertice* v = new SpatialData::Vertice(p);
+    SpatialData::Ponto *p = GetPonto();
+    SpatialData::Vertice* v = nullptr;
+    if(p != nullptr){
+        v = new SpatialData::Vertice(*p);
+        delete p;
+    }
     return v;
 }
 

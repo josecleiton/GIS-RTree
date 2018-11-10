@@ -4,7 +4,7 @@
 namespace SpatialIndex{
 
 static fstream RTreeFile; // BUFFER QUE CARREGA O ARQUIVO RTREE_FILE USADO
-//                           COMO HANDLE DOS NÓS DA ÁRVORE R
+//                           COMO STREAM DOS NÓS DA ÁRVORE R
 
 Chave::Chave(Retangulo& _mbr, streampos& _dado, unsigned id): MBR(_mbr){
     if(id == FOLHA)
@@ -129,7 +129,8 @@ RTree::RTree(){
         if(RTreeFile.is_open()){
             streampos PosicaoDaRaiz;
             RTreeFile.read(reinterpret_cast<char*>(&PosicaoDaRaiz), sizeof(streampos));
-            RTreeFile.read(reinterpret_cast<char*>(&(this->count)), sizeof(size_t));
+            RTreeFile.read(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
+            RTreeFile.read(reinterpret_cast<char*>(&(this->altura)), sizeof(unsigned));
             RTreeFile.read(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
             this->raiz = new Node(PosicaoDaRaiz);
         }
@@ -158,7 +159,8 @@ RTree::~RTree(){
     if(raiz != nullptr){
         RTreeFile.seekp(0, fstream::beg);
         RTreeFile.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
-        RTreeFile.write(reinterpret_cast<char*>(&(this->count)), sizeof(size_t));
+        RTreeFile.write(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
+        RTreeFile.write(reinterpret_cast<char*>(&(this->altura)), sizeof(unsigned));
         RTreeFile.write(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
         delete this->raiz;
     }
@@ -166,20 +168,20 @@ RTree::~RTree(){
 }
 
 void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
-    Node* raiz = new Node(MbrForma, pos);
+    Node* root = new Node(MbrForma, pos);
     streampos posicao = 1;
-    size_t count, registros;
-    this->count = count = 1ull;
-    this->registros = registros = 0ull;
+    this->count = 1u;
+    this->altura = 0u;
+    this->registros = 0ull;
     RTreeFile.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
-    RTreeFile.write(reinterpret_cast<char*>(&count), sizeof(size_t));
-    RTreeFile.write(reinterpret_cast<char*>(&registros), sizeof(size_t));
-    posicao = RTreeFile.tellp();
-    raiz->DiskPos = posicao;
+    RTreeFile.write(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
+    RTreeFile.write(reinterpret_cast<char*>(&(this->altura)), sizeof (unsigned));
+    RTreeFile.write(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
+    root->DiskPos = RTreeFile.tellp();
     RTreeFile.seekp(0, fstream::beg);
-    RTreeFile.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
-    this->raiz = raiz;
-    raiz->SalvarNo();
+    RTreeFile.write(reinterpret_cast<char*>(&(root->DiskPos)), sizeof(streampos));
+    this->raiz = root;
+    root->SalvarNo();
 }
 
 size_t RTree::GetCount(){
@@ -256,6 +258,7 @@ list<Chave> RTree::Traversal(streampos& no, Ponto& P){
 
 void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
     Node* no = root.GetPtr();
+    registros++;
     if(no == nullptr)
         return CriaArvore(MbrForma, pos);
     stack<NodeAux> CaminhoNo;
@@ -283,7 +286,6 @@ void RTree::Inserir(Chave& K){
 }
 
 void RTree::InserirNo(Node* &No, stack<NodeAux>& caminho, Chave& inserir){
-    if(No->Nivel == FOLHA) this->registros++;
     No->Chaves.push_back(inserir);
     if(No->Overflow())
         return DividirEAjustar(No, caminho);
@@ -400,6 +402,7 @@ void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){
     Node* novaRaiz = new Node(v);
     raiz = novaRaiz;
     count++;
+    altura++;
 }
 
 Node* RTree::Divide(Node* &no){

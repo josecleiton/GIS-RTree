@@ -29,6 +29,11 @@ InsertWindow::~InsertWindow(){
 }
 
 void InsertWindow::on_submit_clicked(){
+    Inserir();
+    close(); // termina a janela
+}
+
+void InsertWindow::Inserir(){
     QMessageBox MB;
     unsigned int num_vertices = ui->numVert->text().toUInt(); // NUM DE VERTICES DETERMINADO PELA GUI
     //QString identificador = ui->ID->text();
@@ -39,6 +44,7 @@ void InsertWindow::on_submit_clicked(){
         unsigned char tipo; // TIPO DA FORMA (POLIGONO, POLIGONAL ETC)
         Retangulo MBR;
         streampos posicao_forma;
+        bool excep = false;
 
         for(auto letra = forma.begin(); letra != forma.end(); letra++) // DEIXAR AS LETRAS MAIUSCULAS PARA A COMPARAÇÃO
             *letra = static_cast<char>(toupper(*letra));
@@ -68,17 +74,33 @@ void InsertWindow::on_submit_clicked(){
             for(unsigned i=0; i<num_vertices; i++){ // FOR PARA PEGAR TODOS OS PONTOS INSERIDOS PELO USUÁRIO VIA GUI
                 VerticeWindow.exec();
                 if(pontos == nullptr){
-                    Ponto temp = VerticeWindow.GetPonto();
-                    pontos = new Vertice(temp);
+                    Ponto* temp = VerticeWindow.GetPonto();
+                    if(temp != nullptr){
+                        pontos = new Vertice(*temp);
+                        delete temp;
+                    }
+                    else{
+                        excep = true;
+                        break;
+                    }
                 }
                 else{
                     Vertice* temp = VerticeWindow.GetVertice();
-                    pontos->Push(temp);
+                    if(temp != nullptr)
+                        pontos->Push(temp);
+                    else{
+                        excep = true;
+                        break;
+                    }
                 }
                 VerticeWindow.close();
             }
-            posicao_forma = io.Salvar(tipo, num_vertices, pontos); // posicao da forma
-            MBR = pontos->Envelope(); //MBR QUE ENVELOPA A FORMA
+            if(!excep){
+                posicao_forma = io.Salvar(tipo, num_vertices, pontos); // posicao da forma
+                MBR = pontos->Envelope(); //MBR QUE ENVELOPA A FORMA
+            }
+            else
+                MB.critical(nullptr, "Erro de entrada", "Não foi inserido ponto.");
             pontos->Kai();
         }
         else{
@@ -89,14 +111,20 @@ void InsertWindow::on_submit_clicked(){
             MBR = C.Envelope();
             posicao_forma = io.Salvar(C);
         }
-        root.Inserir(MBR, posicao_forma);  // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
-        MB.information(nullptr, "Sucesso", "Forma inserida no banco de dados.");
+        if(!excep){
+            root.Inserir(MBR, posicao_forma);  // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
+            MB.information(nullptr, "Sucesso", "Forma inserida no banco de dados.");
+        }
     }
-    close(); // termina a janela
 }
 
 void InsertWindow::on_cancel_clicked()
 {
+    InserirConjunto();
+    close();
+}
+
+void InsertWindow::InserirConjunto(){
     QString identificador = ui->ID->text();
     if(identificador.size()){
         fstream file(identificador.toStdString(), fstream::in);
@@ -130,5 +158,4 @@ void InsertWindow::on_cancel_clicked()
             file.close();
         }
     }
-    close();
 }

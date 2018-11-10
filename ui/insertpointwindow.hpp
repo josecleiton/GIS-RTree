@@ -17,7 +17,7 @@ class InsertPoint: public QDialog
 public:
     explicit InsertPoint(QWidget *parent = nullptr);
     ~InsertPoint();
-    SpatialData::Ponto GetPonto();
+    SpatialData::Ponto* GetPonto();
     SpatialData::Vertice* GetVertice();
 
 private:

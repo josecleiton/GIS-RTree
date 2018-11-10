@@ -40,10 +40,10 @@ void RectangleSearchWindow::on_button_clicked()
     vector<SpatialIndex::NodeAux> caminho;
     bool ChaveEncontrada = root.Busca(root.GetPtr(), R, caminho);
     if(ChaveEncontrada){
-        SpatialData::Retangulo MBR = caminho.front().ptr->Chaves[caminho.front().index].MBR;
+        SpatialIndex::Chave K = caminho.front().ptr->Chaves[caminho.front().index];
+        SpatialData::Retangulo MBR = K.MBR;
         this->SetMBR(MBR);
-        DiskAPI::Disk io(FILENAME);
-        streampos pos = caminho.front().ptr->Chaves[caminho.front().index].Dado;
+        streampos pos = K.Dado;
         DiskAPI::Registro* Reg = io.Read(pos);
         if(Reg != nullptr){
             this->reg = Reg;

@@ -28,6 +28,8 @@ private slots:
 
 private:
     Ui::InsertWindow *ui;
+    void Inserir();
+    void InserirConjunto();
 };
 
 

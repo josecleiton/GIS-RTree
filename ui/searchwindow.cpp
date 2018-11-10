@@ -128,12 +128,17 @@ void SearchWindow::on_ponto_clicked()
     InsertPoint ip;
     ip.setModal(true);
     ip.exec();
-    Ponto P = ip.GetPonto();
-    auto Lista = root.Busca(P);
-    stringstream aux;
-    aux << P;
-    if(!Lista.empty())
-        QMB.information(nullptr, "Sucesso!", QString::number(Lista.size())+" caixa(s) contêm o ponto "+QString::fromStdString(aux.str()));
+    Ponto *P = ip.GetPonto();
+    if(P != nullptr){
+        auto Lista = root.Busca(*P);
+        stringstream aux;
+        aux << *P;
+        if(!Lista.empty())
+            QMB.information(nullptr, "Sucesso!", QString::number(Lista.size())+" caixa(s) contêm o ponto "+QString::fromStdString(aux.str()));
+        else
+            QMB.critical(nullptr, "Erro", "Ponto não encontrado no BD.");
+        delete P;
+    }
     else
-        QMB.critical(nullptr, "Erro", "Ponto não encontrado no BD.");
+        QMB.critical(nullptr, "Erro de entrada", "Insira o ponto.");
 }

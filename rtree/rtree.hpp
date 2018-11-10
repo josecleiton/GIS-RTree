@@ -17,8 +17,8 @@ namespace SpatialIndex{
  * Não faço ideia de como implementar essa classe
  */
 
-enum{
-    ORDEM = 8,
+enum _RTree{
+    ORDEM = 8, // GERA NÓS COM 489 bytes
     MINCHAVES = ORDEM/2,
     MAXCHAVES = ORDEM
 };
@@ -73,7 +73,8 @@ struct NodeAux{
 class RTree{
 private:
     Node* raiz{};
-    size_t count{};
+    unsigned count{};
+    unsigned altura{};
     size_t registros{};
 public:
    RTree();

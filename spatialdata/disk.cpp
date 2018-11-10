@@ -38,6 +38,7 @@ streampos Disk::Salvar(unsigned char _tipo, unsigned& numeroVertices, Vertice* _
      */
     if(file.is_open()){
         bool active = true; // BYTE UTILIZADO PARA A REMOÇÃO LÓGICA DE UM REGISTRO
+        file.seekp(0, fstream::end);
         streampos pos = file.tellp();
         file.write(reinterpret_cast<char*>(&active), sizeof(bool));
         file.write(reinterpret_cast<char*>(&_tipo), sizeof(unsigned char));

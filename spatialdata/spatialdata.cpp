@@ -606,8 +606,8 @@ bool Retangulo::Contem(Ponto& P){
 }
 
 bool Retangulo::Contem(Retangulo& R){
-    return (this->diagonal.origem >= R.diagonal.origem or (diagonal.origem.x - R.diagonal.origem.x == 0.0) or (diagonal.origem.y - R.diagonal.origem.y == 0.0)) and
-            (this->diagonal.destino <= R.diagonal.destino or (diagonal.destino.x - R.diagonal.destino.x == 0.0) or (diagonal.destino.y - R.diagonal.destino.y == 0.0));
+    return (this->diagonal.origem <= R.diagonal.origem or (diagonal.origem.x - R.diagonal.origem.x == 0.0) or (diagonal.origem.y - R.diagonal.origem.y == 0.0)) and
+            (this->diagonal.destino >= R.diagonal.destino or (diagonal.destino.x - R.diagonal.destino.x == 0.0) or (diagonal.destino.y - R.diagonal.destino.y == 0.0));
 }
 
 double Retangulo::CalcularArea(){
