@@ -42,6 +42,11 @@ bool FindWindow::setReg(DiskAPI::Registro* R){
     return true;
 }
 
+void FindWindow::setRegistros(DiskAPI::Registro** &R, size_t tam){
+    if(R != nullptr and tam)
+        this->ui->ra->setRegistros(R, tam);
+}
+
 bool FindWindow::GetRemove(){
     return this->remove;
 }

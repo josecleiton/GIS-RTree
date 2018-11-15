@@ -46,8 +46,8 @@ void InsertWindow::Inserir(){
         streampos posicao_forma;
         bool excep = false;
 
-        for(auto letra = forma.begin(); letra != forma.end(); letra++) // DEIXAR AS LETRAS MAIUSCULAS PARA A COMPARAÇÃO
-            *letra = static_cast<char>(toupper(*letra));
+        for(auto &letra: forma)
+            letra = static_cast<char>(toupper(letra));
 
         if(forma == "POLIGONO")
             tipo = DiskAPI::POLIGONO;
@@ -114,6 +114,10 @@ void InsertWindow::Inserir(){
         if(!excep){
             root.Inserir(MBR, posicao_forma);  // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
             MB.information(nullptr, "Sucesso", "Forma inserida no banco de dados.");
+            if(ui->ID->text().size()){ //TIPO FOI INSERIDO
+                DiskAPI::Hash H;
+                H.Insere(ui->ID->text().toStdString(), posicao_forma);
+            }
         }
     }
 }

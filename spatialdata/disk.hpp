@@ -30,10 +30,21 @@ public:
     Disk(string);
     ~Disk();
     streampos Salvar(unsigned char, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
-    Registro* Read(streampos&); // LE UM POR VEZ
+    Registro* Read(streampos); // LE UM POR VEZ
     streampos Salvar(Circulo&);
     void Remove(streampos&);
     void Verifica(); // VERIFICA SE O ARQUIVO FOI ABERTO
+};
+
+class Hash{
+private:
+    vector<streampos>* handle{};
+public:
+    ~Hash();
+    bool ArquivoVazio();
+    void Insere(string, streampos);
+    void Busca(string&, bool&);
+    vector<streampos>* SelectAll(string&);
 };
 
 } // DiskAPI

@@ -6,6 +6,7 @@
 #include "rectanglesearchwindow.hpp"
 #include "insertpointwindow.hpp"
 #include "variaveis.hpp"
+#include "stringwindow.hpp"
 
 namespace Ui {
 class SearchWindow;
@@ -25,6 +26,8 @@ private slots:
     void on_interseccao_clicked();
 
     void on_ponto_clicked();
+
+    void on_id_clicked();
 
 private:
     Ui::SearchWindow *ui;

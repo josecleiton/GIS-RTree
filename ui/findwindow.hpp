@@ -19,6 +19,7 @@ public:
     explicit FindWindow(QWidget *parent = nullptr);
     ~FindWindow();
     bool setReg(DiskAPI::Registro* R);
+    void setRegistros(DiskAPI::Registro** &, size_t);
     bool GetRemove();
 
 private slots:

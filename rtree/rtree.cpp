@@ -152,7 +152,10 @@ bool RTree::ArquivoVazio(){
         RTreeFile.seekg(0, fstream::beg);
         return inicio == fim;
     }
-    return true;
+    else{
+        RTreeFile.open(RTREE_FILENAME, fstream::in|fstream::out|fstream::binary);
+        return ArquivoVazio();
+    }
 }
 
 RTree::~RTree(){

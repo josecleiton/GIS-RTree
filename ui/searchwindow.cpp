@@ -142,3 +142,31 @@ void SearchWindow::on_ponto_clicked()
     else
         QMB.critical(nullptr, "Erro de entrada", "Insira o ponto.");
 }
+
+void SearchWindow::on_id_clicked()
+{
+    string query;
+    StringWindow Aux;
+    Aux.setModal(true);
+    Aux.exec();
+    query = Aux.getStr();
+    DiskAPI::Hash PH;
+    vector<streampos>* result = PH.SelectAll(query);
+    size_t sizeResult = result->size();
+    QMessageBox QMB;
+    if(sizeResult){
+        QMB.information(nullptr, "Formas encontradas!", "Foram encontradas "+QString::fromStdString(to_string(sizeResult))+" forma(s) do tipo: "+QString::fromStdString(query)+".");
+        DiskAPI::Registro** ArrayReg = new Registro* [sizeResult];
+        for(size_t i=0; i<sizeResult; i++)
+            ArrayReg[i] = io.Read((*result)[i]);
+        FindWindow FW;
+        FW.setModal(true);
+        FW.setRegistros(ArrayReg, sizeResult);
+        FW.exec();
+        for(size_t i=0; i<sizeResult; i++)
+            delete ArrayReg[i];
+        delete[] ArrayReg;
+    }
+    else
+        QMB.critical(nullptr, "Não há formas com esse ID", "Tente novamente, por favor.");
+}

@@ -37,6 +37,7 @@ SOURCES += \
     ui/renderarea.cpp \
     ui/searchwindow.cpp \
     global/variaveis.cpp \
+    ui/stringwindow.cpp
 
 HEADERS += \
     rtree/rtree.hpp \
@@ -53,6 +54,7 @@ HEADERS += \
     ui/renderarea.hpp \
     ui/searchwindow.hpp \
     global/variaveis.hpp \
+    ui/stringwindow.hpp
 
 FORMS += \
     ui/findwindow.ui \
@@ -61,7 +63,8 @@ FORMS += \
     ui/insertwindow.ui \
     ui/mainwindow.ui \
     ui/rectanglesearchwindow.ui \
-    ui/searchwindow.ui
+    ui/searchwindow.ui \
+    ui/stringwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -75,6 +78,7 @@ DISTFILES += \
     rtree/rtree.bin \
     spatialdata/formas.bin \
     ui/jorge.png \
+    spatialdata/id_cervejaria.bin
 
 INCLUDEPATH += $$PWD/ui \
         $$PWD/rtree \

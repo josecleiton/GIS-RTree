@@ -45,6 +45,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="id">
+       <property name="text">
+        <string>Buscar por ID</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

@@ -7,6 +7,9 @@
 #include <QColor>
 #include "disk.hpp"
 #include "spatialdata.hpp"
+
+#define QNT_CORES 15
+
 using namespace DiskAPI;
 
 class RenderArea : public QWidget
@@ -18,6 +21,7 @@ public:
     QSize sizeHint() const Q_DECL_OVERRIDE;
     void setReg(DiskAPI::Registro*);
     void setReg2(DiskAPI::Registro*);
+    void setRegistros(DiskAPI::Registro**, size_t);
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 signals:
@@ -26,6 +30,10 @@ public slots:
 
 private:
     Registro *Reg{}, *Reg2{};
+    vector<Registro*> regs{};
+    void desenhaUm();
+    void desenhaN();
+    QPainter* defaultPainter();
 };
 
 #endif // RENDERAREA_HPP
