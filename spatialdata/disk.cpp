@@ -180,7 +180,7 @@ vector<streampos>* Hash::SelectAll(string& query){
         this->handle = nullptr;
     }
     vector<streampos>* result = new vector<streampos>;
-    fstream file("../GIS/spatialdata/id_"+query+".bin", fstream::in|fstream::binary);
+    fstream file("../GIS/spatialdata/hash/id_"+query+".bin", fstream::in|fstream::binary);
     streampos aux;
     if(file.is_open()){
         while(file.read(reinterpret_cast<char*>(&aux), sizeof(streampos)))
