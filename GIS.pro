@@ -38,21 +38,6 @@ SOURCES += \
     ui/searchwindow.cpp \
     global/variaveis.cpp \
     ui/stringwindow.cpp \
-    global/variaveis.cpp \
-    rtree/rtree.cpp \
-    spatialdata/circularlist.cpp \
-    spatialdata/disk.cpp \
-    spatialdata/spatialdata.cpp \
-    ui/findwindow.cpp \
-    ui/insertcirclewindow.cpp \
-    ui/insertpointwindow.cpp \
-    ui/insertwindow.cpp \
-    ui/mainwindow.cpp \
-    ui/rectanglesearchwindow.cpp \
-    ui/renderarea.cpp \
-    ui/searchwindow.cpp \
-    ui/stringwindow.cpp \
-    main.cpp
 
 HEADERS += \
     rtree/rtree.hpp \
@@ -71,20 +56,6 @@ HEADERS += \
     global/variaveis.hpp \
     ui/stringwindow.hpp \
     global/variaveis.hpp \
-    rtree/rtree.hpp \
-    spatialdata/circularlist.hpp \
-    spatialdata/disk.hpp \
-    spatialdata/spatialdata.hpp \
-    ui/findwindow.hpp \
-    ui/insertcirclewindow.hpp \
-    ui/insertpointwindow.hpp \
-    ui/insertwindow.hpp \
-    ui/mainwindow.hpp \
-    ui/rectanglesearchwindow.hpp \
-    ui/regex.hpp \
-    ui/renderarea.hpp \
-    ui/searchwindow.hpp \
-    ui/stringwindow.hpp
 
 FORMS += \
     ui/findwindow.ui \
