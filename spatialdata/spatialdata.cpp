@@ -390,9 +390,9 @@ Poligono* Poligono::Interseccao(Poligono& P){
         }
     }// for
     delete R;
-    if(P.PontoNoPoligono(this->GetPonto()))
+    if(P.PontoNoPoligonoConvexo(this->GetPonto()))
         return this;
-    else if(this->PontoNoPoligono(P.GetPonto()))
+    else if(this->PontoNoPoligonoConvexo(P.GetPonto()))
         return new Poligono(P);
     return new Poligono();
 }
@@ -420,13 +420,31 @@ int Poligono::PontoNoPoligono(Ponto& P){
     return (paridade ? DENTRO: FORA);
 }
 
+bool Poligono::PontoNoPoligonoConvexo(Ponto& s){
+    unsigned tam = this->GetSize();
+    if(tam == 1)
+        return (s == this->GetPonto());
+    if(tam == 2){
+        int c = s.Classificacao(this->GetAresta());
+        return (c == ENTRE) or (c == ORIGEM) or (c == DESTINO);
+    }
+    Vertice* origem = this->GetVertice();
+    for(unsigned i=0; i<tam; i++, this->Avancar(HORARIO)){
+        if(s.Classificacao(this->GetAresta()) == ESQUERDA){
+            this->SetV(origem);
+            return false;
+        }
+    }
+    return true;
+}
+
 ostream& operator<<(ostream& out, const Poligono& p){
     Vertice* i = p.list, *fim = i->Antihorario();
     while(true){
         out << i->GetPonto();
         out << " ";
-        i = i->Horario();
         if(i == fim) break;
+        i = i->Horario();
     }
     return out;
 }

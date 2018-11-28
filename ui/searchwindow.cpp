@@ -62,7 +62,8 @@ void SearchWindow::on_interseccao_clicked(){
                     delete FakeRegister;
                     delete P;
                     delete Q;
-                    delete Z;
+                    Z->setFakeKai(true); // FAKE KAI É NECESSÁRIO PORQUE O DESTRUCTOR DO REGISTRO
+                    delete Z; //            JÁ LIBEROU A LISTA DE VERTICES
                     R[0]->lista = R[1]->lista = nullptr;
                 }
                 else if(type == LINHA){

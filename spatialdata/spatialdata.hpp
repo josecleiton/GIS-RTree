@@ -111,6 +111,7 @@ public:
     Poligono* Split(Vertice*); // DIVIDE O POLIGONO EM RELAÇÃO A UM VERTICE
     Poligono* Interseccao(Poligono&);
     int PontoNoPoligono(Ponto&);
+    bool PontoNoPoligonoConvexo(Ponto&);
     double Area();
     void Apagar();
     void setFakeKai(bool);

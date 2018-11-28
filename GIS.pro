@@ -79,7 +79,8 @@ DISTFILES += \
     rtree/rtree.bin \
     spatialdata/formas.bin \
     ui/jorge.png \
-    spatialdata/hash/id_cervejaria.bin
+    spatialdata/hash/id_cervejaria.bin \
+    uml.xmi
 
 INCLUDEPATH += $$PWD/ui \
         $$PWD/rtree \
