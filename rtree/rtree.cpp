@@ -154,6 +154,11 @@ bool RTree::ArquivoVazio(){
     }
     else{
         RTreeFile.open(RTREE_FILENAME, fstream::in|fstream::out|fstream::binary);
+        if(!RTreeFile.is_open()){
+            string file = RTREE_FILENAME;
+            cerr << file+" não abriu!" << endl;
+            exit(-40);
+        }
         return ArquivoVazio();
     }
 }
