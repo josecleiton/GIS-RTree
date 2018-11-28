@@ -174,6 +174,16 @@ Vertice* Vertice::Split(Vertice* b){ // TENHO QUE EXPLICAR PARA OS MENINOS
     return bp;
 }
 
+double Vertice::GetMin(){
+    double minx = 0.0, miny= 0.0;
+    for(Vertice* i=this; ; i = i->Horario()){
+        minx = min(i->GetX(), minx);
+        miny = min(i->GetY(), miny);
+        if(i==this->Antihorario()) break;
+    }
+    return min(minx, miny);
+}
+
 void Vertice::Kai(){
     Vertice* list = this;
     if(list != nullptr){
@@ -187,13 +197,30 @@ void Vertice::Kai(){
     }
 }
 
-pair<QPointF*, int> Vertice::toQPoint(){
-    int tam = 1, j = 0;
+pair<QPointF*, int> Vertice::toQPoint(double gap){
+    int tam = 0;
+    double menorX = 0.0, menorY = 0.0;
+    Ponto temp;
     Vertice* fim = this->Horario();
-    for(Vertice* i = this; i != fim; i = i->Antihorario(), tam++);
+    for(Vertice* i = this; ; i = i->Antihorario()){
+        //array[j] = i->GetPonto().toQPoint();
+        temp = i->GetPonto();
+        if(gap == 0.0){
+            menorX = min(temp.x, menorX);
+            menorY = min(temp.y, menorY);
+        }
+        tam++;
+        if(i == fim) break;
+    }
     QPointF* array = new QPointF[tam];
-    for(Vertice* i = this; j < tam; i = i->Antihorario(), j++)
-        array[j] = i->GetPonto().toQPoint();
+    if(gap == 0.0) gap = abs(min(menorX, menorY))+1.0;
+    int j = 0;
+    for(Vertice* i = this; j < tam; i = i->Antihorario()){
+        temp = i->GetPonto();
+        temp.x += gap;
+        temp.y += gap;
+        array[j++] = temp.toQPoint();
+    }
     return make_pair(array, tam);
 }
 
@@ -230,7 +257,7 @@ void Poligono::Resize(){ // DEVE SER CHAMADO SEMPRE QUE UMA CADEIA DE VERTICES D
 }
 
 Poligono::~Poligono(){
-    this->GetVertice()->Kai();
+    if(!fakeKai) this->GetVertice()->Kai();
     this->list = nullptr;
 }
 
@@ -288,6 +315,23 @@ Poligono* Poligono::Split(Vertice* b){
     return new Poligono(bp);
 }
 
+double Poligono::Area(){
+    double area = 0.0;
+    unsigned tam = this->GetSize();
+    vector<double> X(tam+1), Y(tam+1);
+    Ponto temp;
+    for(unsigned i=0; i<tam; i++, this->Avancar(HORARIO)){
+        temp = this->GetPonto();
+        X[i] = temp.x;
+        Y[i] = temp.y;
+    }
+    X[tam] = X[0];
+    Y[tam] = Y[0];
+    for(unsigned i=0, j=tam-1; i<tam; j=i, i++)
+        area += (X[j]+X[i])*(Y[j]-Y[i]);
+    return abs(area/2.0);
+}
+
 Poligono* Poligono::Interseccao(Poligono& P){
     Poligono* R = nullptr;
     Ponto iPnt, startPnt;
@@ -297,7 +341,7 @@ Poligono* Poligono::Interseccao(Poligono& P){
     Aresta p, q;
     int pclass, qclass, crosstype;
     bool pAIMSq, qAIMSp;
-    for(unsigned i=1; (i <= maxItns) or (fase == 2); i++){
+    for(unsigned i=1; (i <= maxItns) /*or (fase == 2)*/; i++){
         p = this->GetAresta();
         q = P.GetAresta();
         pclass = p.GetDestino().Classificacao(q);
@@ -345,28 +389,46 @@ Poligono* Poligono::Interseccao(Poligono& P){
 
         }
     }// for
-    if(PontoNoPoligonoConvexo(this->GetPonto(), P))
+    delete R;
+    if(P.PontoNoPoligono(this->GetPonto()))
         return this;
-    else if(PontoNoPoligonoConvexo(P.GetPonto(), *this))
+    else if(this->PontoNoPoligono(P.GetPonto()))
         return new Poligono(P);
-    return new Poligono;
+    return new Poligono();
 }
 
 void Poligono::Apagar(){
     this->list = nullptr;
 }
 
+void Poligono::setFakeKai(bool a){
+    this->fakeKai = a;
+}
+
 int Poligono::PontoNoPoligono(Ponto& P){
-    double total = 0.0, x;
-    Aresta aux;
+    int paridade = 0;
+    Aresta a;
     for(unsigned i=0; i<this->GetSize(); i++, this->Avancar(HORARIO)){
-        aux = this->GetAresta();
-        x = aux.Angulo(P);
-        if(x == 180.0)
-            return FRONTEIRA;
-        total += x;
+        a = this->GetAresta();
+        switch(a.Tipo(P)){
+            case TOCANDO:
+                return FRONTEIRA;
+             case CRUZANDO:
+                paridade = 1 - paridade;
+        }
     }
-    return ((total < -180.0) ? DENTRO: FORA);
+    return (paridade ? DENTRO: FORA);
+}
+
+ostream& operator<<(ostream& out, const Poligono& p){
+    Vertice* i = p.list, *fim = i->Antihorario();
+    while(true){
+        out << i->GetPonto();
+        out << " ";
+        i = i->Horario();
+        if(i == fim) break;
+    }
+    return out;
 }
 
 bool aimsAt(Aresta& a, Aresta& b, int aclass, int crossType){
@@ -505,13 +567,13 @@ double Aresta::Inclinacao(){
     return DBL_MAX;
 }
 
-int Aresta::Tipo(Ponto& P){
+int Aresta::Tipo(Ponto& a){
     Ponto v = this->origem, w = this->destino;
-    switch(P.Classificacao(*this)){
+    switch(a.Classificacao(*this)){
         case ESQUERDA:
-            return ((v.y < P.y) and (P.y <= w.x)) ? CRUZANDO : INESSENTIAL;
+            return ((v.y < a.y) and (a.y <= w.x)) ? CRUZANDO : INESSENTIAL;
         case DIREITA:
-            return ((w.y < P.y) and (P.y <= v.y)) ? CRUZANDO : INESSENTIAL;
+            return ((w.y < a.y) and (a.y <= v.y)) ? CRUZANDO : INESSENTIAL;
         case ENTRE:
         case ORIGEM:
         case DESTINO:
@@ -700,9 +762,6 @@ Circulo::Circulo(double R,Ponto centro){
     centro.x= centro.x;
     centro.y=centro.y;
 }
-Circulo::~Circulo(){
-
-}
 double Circulo::Diametro(){
     return this->raio*2;
 }
@@ -804,24 +863,6 @@ Retangulo Circulo::Envelope(){
     return Retangulo(origem, destino);
 }
 
-bool PontoNoPoligonoConvexo(Ponto &s, Poligono &p){
-    unsigned TamanhoPoligono = p.GetSize();
-    if(TamanhoPoligono == 1)
-        return s == p.GetPonto();
-    if(TamanhoPoligono == 2){
-        int aux = s.Classificacao(p.GetAresta());
-        return aux == ENTRE or aux == ORIGEM or aux == DESTINO;
-    }
-    Vertice* origem = p.GetVertice();
-    for(unsigned i=0; i<TamanhoPoligono; i++, p.Avancar(HORARIO)){
-        if(s.Classificacao(p.GetAresta()) == ESQUERDA){
-            p.SetV(origem);
-            return false;
-        }
-    }
-    return true;
-}
-
 Vertice* MenorVertice(Poligono &p, int (*cmp)(Ponto*, Ponto*)){
     Vertice* aux = p.GetVertice();
     p.Avancar(HORARIO);
@@ -843,86 +884,4 @@ int DireitaEsquerda(Ponto* a, Ponto* b){
     return EsquerdaDireita(b, a);
 }
 
-list<Poligono*> Triangulacao(Poligono& P){
-    list<Poligono*> triangulos;
-    //if(tamanho >= 3){
-        if(P.GetSize() == 3)
-            triangulos.push_back(&P);
-        else{ // POLIGONO TEM MAIS DO QUE 3 LADOS
-            FindVerticeConvexo(P);
-            Vertice* d = FindIntrudingVertex(P);
-            if(d == nullptr){ // no intruding vertex
-                Vertice* c = P.Vizinho(HORARIO);
-                P.Avancar(ANTIHORARIO);
-                Poligono* q = P.Split(c);
-                auto r = Triangulacao(P);
-                triangulos.splice(triangulos.end(), r);
-                triangulos.push_back(q);
-            }
-            else{
-                Poligono* q = P.Split(d);
-                auto r = Triangulacao(*q);
-                auto s = Triangulacao(P);
-                triangulos.splice(triangulos.end(), r);
-                triangulos.splice(triangulos.end(), s);
-            }
-        }
-    //}// ELSE BASE DA RECURSÃO
-    return triangulos;
-}
-
-void FindVerticeConvexo(Poligono& p){
-    Vertice* a = p.Vizinho(ANTIHORARIO);
-    Vertice* b = p.GetVertice();
-    Vertice* c = p.Vizinho(HORARIO);
-    while(c->Classificacao(*a, *b) != DIREITA){
-        a = b;
-        b = p.Avancar(HORARIO);
-        c = p.Vizinho(ANTIHORARIO);
-    }
-}
-
-Vertice* FindIntrudingVertex(Poligono& p){
-    Vertice* a = p.Vizinho(ANTIHORARIO);
-    Vertice* b = p.GetVertice();
-    Vertice* c = p.Avancar(HORARIO);
-    Vertice* d = nullptr;
-    double bestD = -1.0; // distancia ao melhor candidato;
-    Aresta ca(c->GetPonto(), a->GetPonto());
-    Vertice *v = p.Avancar(HORARIO);
-    while(v != a){
-        if(PontoNoTriangulo(*v, *a, *b, *c)){
-            double dist = v->Distancia(ca);
-            if(dist > bestD){
-                d = v;
-                bestD = dist;
-            }
-        }
-        v = p.Avancar(HORARIO);
-    }
-    p.SetV(b);
-    return d;
-}
-
-bool PontoNoTriangulo(Ponto& p, Ponto& a, Ponto& b, Ponto& c){
-    return ((p.Classificacao(a, b) != ESQUERDA) and
-            (p.Classificacao(b, c) != ESQUERDA) and
-            (p.Classificacao(c, a) != ESQUERDA));
-}
-
-double Area(Poligono &P){
-    double area= 0.0;
-    unsigned tam = P.GetSize();
-    vector<double> X(tam+1), Y(tam+1);
-    for(unsigned i=0; i<P.GetSize(); i++, P.Avancar(HORARIO)){
-        X[i]=P.GetPonto().x;
-        Y[i]=P.GetPonto().y;
-    }
-    X[tam] = X[0];
-    Y[tam] = Y[0];
-    for(unsigned i=0, j=tam-1; i<tam; j=i, i++){
-        area += (X[j]+X[i])*(Y[j]-Y[i]);
-    }
-    return abs(area/2.0);
-}
 }// NAMESPACE SPATIAL DATA

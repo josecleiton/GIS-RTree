@@ -20,6 +20,7 @@ struct Registro{
     Registro(unsigned char type = INDEFINIDO, Vertice* v = nullptr, unsigned t = 0);
     ~Registro();
     void* Conversao();
+    string StrTipo();
 };
 
 class Disk{
@@ -42,7 +43,7 @@ private:
 public:
     ~Hash();
     bool ArquivoVazio();
-    void Insere(string, streampos);
+    void Insere(string, streampos&);
     void Busca(string&, bool&);
     vector<streampos>* SelectAll(string&);
 };

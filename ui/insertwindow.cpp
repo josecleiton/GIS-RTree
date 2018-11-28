@@ -37,9 +37,7 @@ void InsertWindow::Inserir(){
     QMessageBox MB;
     unsigned int num_vertices = ui->numVert->text().toUInt(); // NUM DE VERTICES DETERMINADO PELA GUI
     //QString identificador = ui->ID->text();
-    if(!num_vertices)
-        MB.critical(nullptr, "Entrada incorreta!", "Não é possível inserir uma forma sem pontos.");
-    else{
+    if(num_vertices){
         string forma = ui->tipoForma->text().toStdString();
         unsigned char tipo; // TIPO DA FORMA (POLIGONO, POLIGONAL ETC)
         Retangulo MBR;
@@ -120,6 +118,8 @@ void InsertWindow::Inserir(){
             }
         }
     }
+    else
+        MB.critical(nullptr, "Entrada incorreta!", "Não é possível inserir uma forma sem pontos.");
 }
 
 void InsertWindow::on_cancel_clicked()

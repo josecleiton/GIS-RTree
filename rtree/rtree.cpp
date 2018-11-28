@@ -542,6 +542,8 @@ list<Chave> RTree::EncontreAsFolhas(Node*& no){ // CUIDADO COM ESSE METODO
 }
 
 string RTree::GetNivel(){
+    return to_string(this->altura);
+    /*
     string saida;
     size_t N = GetRegistros();
     double m = MINCHAVES, h = ceil(log(N)/log(m));
@@ -551,6 +553,7 @@ string RTree::GetNivel(){
     unsigned alturaMinima = static_cast<unsigned>(h-1);
     saida = "[" + to_string(alturaMinima) +", "+ to_string(alturaMaxima) + "]";
     return saida;
+    */
 }
 
 bool Node::Folha(){

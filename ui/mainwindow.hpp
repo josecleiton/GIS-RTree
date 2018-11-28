@@ -26,6 +26,8 @@ private slots:
 
     void on_info_clicked();
 
+    void on_creditos_clicked();
+
 private:
     Ui::MainWindow *ui;
     void EmptyDS();

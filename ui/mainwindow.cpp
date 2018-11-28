@@ -54,3 +54,14 @@ void MainWindow::EmptyDS(){
 void MainWindow::on_cancel_clicked(){
     close();
 }
+
+void MainWindow::on_creditos_clicked()
+{
+    QMessageBox QMB;
+    QString feito("Feito por: Danilo Nascimento, José Cleiton Borges, Matheus Souza.\n");
+    QString orientador("Orientador: Jorge Sampaio Farias\n");
+    QString universidade("UNEB - Universidade do Estado da Bahia\n");
+    QString curso("Sistemas de Informação - Estruturas de Dados II\n");
+    QString ano("Período: 2018.2\n");
+    QMB.information(nullptr, "Créditos", feito+universidade+curso+orientador+ano);
+}

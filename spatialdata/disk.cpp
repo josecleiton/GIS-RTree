@@ -108,7 +108,7 @@ Registro* Disk::Read(streampos pos){
             Reg = new Registro(tipo, Lista, numeroVertices);
             return Reg;
         }
-        clog << "Registro na posição: " << pos << " está inativo." << endl;
+        clog << "Registro na posição: " << pos << " foi ignorado por estar inativo." << endl;
     }
     return nullptr;
 }
@@ -144,6 +144,14 @@ void* Registro::Conversao(){ // SE A CONVERSÃO FOR PARA PONTO OU ARESTA, PRECIS
     return lista;
 }
 
+string Registro::StrTipo(){
+    if(tipo == POLIGONO or tipo == POLIGONO_NAO_CONVEXO) return "POLIGONO";
+    else if(tipo == LINHA) return "LINHA";
+    else if(tipo == PONTO) return "PONTO";
+    else if(tipo == CIRCULO) return "CIRCULO";
+    else return "INDEFINIDO";
+}
+
 void Disk::Remove(streampos& pos){
     if(file.is_open()){
         bool active = false;
@@ -161,14 +169,14 @@ Hash::~Hash(){
     if(this->handle != nullptr) delete this->handle;
 }
 
-void Hash::Insere(string id, streampos forma){
+void Hash::Insere(string id, streampos& forma){
     fstream forma_file("../GIS/spatialdata/id_"+id+".bin", fstream::app|fstream::binary);
     if(forma_file.is_open()){
         forma_file.write(reinterpret_cast<char*>(&forma), sizeof(streampos));
         forma_file.close();
     }
     else{
-        cerr << "ERRO NA ABERTURA DO ARQUIVO: " << "id_"+id << endl;
+        cerr << "ERRO NA ABERTURA DO ARQUIVO: " << "../GIS/spatialdata/id_"+id+".bin" << endl;
         exit(-42);
     }
 }

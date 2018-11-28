@@ -19,9 +19,9 @@ public:
     explicit RenderArea(QWidget *parent = nullptr);
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
     QSize sizeHint() const Q_DECL_OVERRIDE;
-    void setReg(DiskAPI::Registro*);
-    void setReg2(DiskAPI::Registro*);
-    void setRegistros(DiskAPI::Registro**, size_t);
+    void setRegistros(vector<Registro*>&);
+    bool listaValida();
+    double getGap();
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 signals:
@@ -29,10 +29,8 @@ signals:
 public slots:
 
 private:
-    Registro *Reg{}, *Reg2{};
     vector<Registro*> regs{};
-    void desenhaUm();
-    void desenhaN();
+    void desenha();
     QPainter* defaultPainter();
 };
 

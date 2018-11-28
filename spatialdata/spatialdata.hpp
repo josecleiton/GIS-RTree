@@ -76,8 +76,9 @@ public:
     void Splice(Vertice*); // JUNTA DUAS LISTAS
     Retangulo Envelope(); // MINIMUM BOUNDING RECTANGLE PARA A R-TREE
     Vertice* Split(Vertice*); // DIVIDE A LISTA
-    pair<QPointF*, int> toQPoint();
+    pair<QPointF*, int> toQPoint(double);
     void Kai();
+    double GetMin();
     friend class Poligono;
 };
 
@@ -88,6 +89,7 @@ private:
     Vertice* list;
     unsigned m_size;
     void resize();
+    bool fakeKai{};
 public:
     Poligono(); // CONSTRUTOR PADRÃO
     Poligono(Poligono&);  // COPIA UM POLIGONO PARA ESTE OBJETO
@@ -107,10 +109,12 @@ public:
     void Pop(); // RETIRA O VERTICE ATUAL DA LISTA
     void Resize(); // RECALCULA O TAMANHO DA LISTA (NECESSÁRIO EM TODO PUSH OU POP)
     Poligono* Split(Vertice*); // DIVIDE O POLIGONO EM RELAÇÃO A UM VERTICE
-    double AreaTriangulacao(vector<Poligono*>&) const; // RETORNA A AREA A PARTIR DE TRIANGULAÇÃO (NÃO USE)
     Poligono* Interseccao(Poligono&);
     int PontoNoPoligono(Ponto&);
+    double Area();
     void Apagar();
+    void setFakeKai(bool);
+    friend ostream& operator<<(ostream&, const Poligono&);
 };
 
 class Aresta{
@@ -171,7 +175,6 @@ public:
     double raio;
     Circulo();
     Circulo(double,Ponto);
-    ~Circulo(); //DESTRUTOR
     double Diametro();
     double Comprimento();
     double Area();
@@ -184,17 +187,8 @@ public:
 };
 #pragma pack(pop)
 
-double ProdutodePontos(Ponto&, Ponto&);
-Vertice* MenorVertice(Poligono&, int (*cmp)(Ponto*, Ponto*));
 int EsquerdaDireita(Ponto*, Ponto*);
 int DireitaEsquerda(Ponto*, Ponto*);
-bool PontoNoPoligonoConvexo(Ponto&, Poligono&);
-// PARA TRIANGULAR O(N^2)
-list<Poligono*> Triangulacao(Poligono&);
-void FindVerticeConvexo(Poligono&);
-Vertice* FindIntrudingVertex(Poligono&);
-bool PontoNoTriangulo(Ponto&, Ponto&, Ponto&, Ponto&);
-double Area(Poligono&);
 bool aimsAt(Aresta&, Aresta&, int, int);
 int crossingPoint(Aresta&, Aresta&, Ponto&);
 void advance(Poligono&, Poligono&, bool);

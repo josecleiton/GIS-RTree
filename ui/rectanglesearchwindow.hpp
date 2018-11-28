@@ -22,7 +22,7 @@ class RectangleSearchWindow : public QDialog
 public:
     explicit RectangleSearchWindow(QWidget *parent = nullptr);
     ~RectangleSearchWindow();
-    DiskAPI::Registro* GetRegistro();
+    DiskAPI::Registro** GetRegistro();
     void SetInterseccao(bool);
     void SetMBR(SpatialData::Retangulo);
     SpatialData::Retangulo GetMBR();
@@ -34,10 +34,9 @@ private slots:
     void on_button_clicked();
 
     void on_cancel_clicked();
-
 private:
     Ui::RectangleSearchWindow *ui{};
-    DiskAPI::Registro* reg{};
+    DiskAPI::Registro** listaRegistros{};
     SpatialData::Retangulo MBR{};
     bool interseccao;
 };

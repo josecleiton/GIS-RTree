@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QMessageBox>
 #include <iostream>
+#include <sstream>
 #include "disk.hpp"
 #include "renderarea.hpp"
 
@@ -18,17 +19,20 @@ class FindWindow : public QDialog
 public:
     explicit FindWindow(QWidget *parent = nullptr);
     ~FindWindow();
-    bool setReg(DiskAPI::Registro* R);
-    void setRegistros(DiskAPI::Registro** &, size_t);
+    bool setRegistros(DiskAPI::Registro** &, size_t);
     bool GetRemove();
+    bool listaValida();
 
 private slots:
     void on_remove_clicked();
+
+    void on_info_clicked();
 
 private:
     Ui::FindWindow *ui;
     bool remove;
     unsigned count{};
+    vector<Registro*> regs{};
 };
 
 #endif // FINDWINDOW_HPP

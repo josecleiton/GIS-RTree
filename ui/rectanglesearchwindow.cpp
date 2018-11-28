@@ -29,7 +29,7 @@ void RectangleSearchWindow::ClearForm(){
 }
 
 void RectangleSearchWindow::ClearReg(){
-    this->reg = nullptr;
+    this->listaRegistros = nullptr;
 }
 
 void RectangleSearchWindow::on_button_clicked()
@@ -44,20 +44,22 @@ void RectangleSearchWindow::on_button_clicked()
         SpatialData::Retangulo MBR = K.MBR;
         this->SetMBR(MBR);
         streampos pos = K.Dado;
-        DiskAPI::Registro* Reg = io.Read(pos);
-        if(Reg != nullptr){
-            this->reg = Reg;
+        DiskAPI::Registro** Reg = new DiskAPI::Registro*[1];
+        Reg[0] = io.Read(pos);
+        if(Reg[0] != nullptr){
             if(!Interseccao()){
                 FindWindow FW;
                 FW.setModal(true);
-                FW.setReg(Reg);
+                FW.setRegistros(Reg, 1);
                 FW.exec();
                 if(FW.GetRemove()){
                     root.Remove(caminho);
                     io.Remove(pos);
                 }
-                delete Reg;
+                delete Reg[0];
+                delete[] Reg;
             }
+            this->listaRegistros = Reg;
             SpatialIndex::Kai(caminho);
         }
         else{
@@ -70,12 +72,12 @@ void RectangleSearchWindow::on_button_clicked()
         //NÃO ENCONTRADO
         QMessageBox mbox;
         mbox.critical(nullptr, "Erro", "Retângulo não encontrado no banco de dados.");
-        this->reg = nullptr;
+        this->listaRegistros= nullptr;
     }
 }
 
-DiskAPI::Registro* RectangleSearchWindow::GetRegistro(){
-    return this->reg;
+DiskAPI::Registro** RectangleSearchWindow::GetRegistro(){
+    return this->listaRegistros;
 }
 
 bool RectangleSearchWindow::Interseccao(){
