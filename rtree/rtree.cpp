@@ -3,9 +3,6 @@
 
 namespace SpatialIndex{
 
-static fstream RTreeFile; // BUFFER QUE CARREGA O ARQUIVO RTREE_FILE USADO
-//                           COMO STREAM DOS NÓS DA ÁRVORE R
-
 Chave::Chave(Retangulo& _mbr, streampos& _dado, unsigned id): MBR(_mbr){
     if(id == FOLHA)
         this->Dado = _dado;
