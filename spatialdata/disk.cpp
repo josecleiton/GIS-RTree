@@ -58,6 +58,7 @@ streampos Disk::Salvar(unsigned char _tipo, unsigned& numeroVertices, Vertice* _
 streampos Disk::Salvar(Circulo& C){
     if(file.is_open()){
         bool active = true;
+        file.seekp(0, fstream::end);
         streampos pos = file.tellp();
         unsigned char k = CIRCULO;
         file.write(reinterpret_cast<char*>(&active), sizeof(bool));
@@ -101,9 +102,9 @@ Registro* Disk::Read(streampos pos){
                 file.read(reinterpret_cast<char*>(&aux), sizeof(Circulo));
                 if(Lista == nullptr){
                     Lista = new Vertice(aux.centro);
-                    Vertice* temp = new Vertice(aux.raio, aux.raio);
-                    Lista->Push(temp);
+                    Lista->Push(new Vertice(aux.raio, aux.raio));
                 }
+                numeroVertices = 1;
             }
             Reg = new Registro(tipo, Lista, numeroVertices);
             return Reg;
@@ -121,25 +122,14 @@ Registro::~Registro(){
 }
 
 void* Registro::Conversao(){ // SE A CONVERSÃO FOR PARA PONTO OU ARESTA, PRECISO DO delete
-    if(tipo == POLIGONO or tipo == POLIGONO_NAO_CONVEXO){
-        Poligono* P = new Poligono(lista);
-        return P;
-    }
-    else if(tipo == LINHA){
-        Ponto a, b;
-        a = lista->GetPonto();
-        b = lista->Horario()->GetPonto();
-        Aresta* A = new Aresta(a, b);
-        return A;
-    }
-    else if(tipo == PONTO){
-        Ponto* P = new Ponto(lista->GetPonto());
-        return P;
-    }
-    else if(tipo == CIRCULO){
-        Circulo* c = new Circulo(lista->Horario()->GetX(), lista->GetPonto());
-        return c;
-    }
+    if(tipo == POLIGONO or tipo == POLIGONO_NAO_CONVEXO)
+        return new Poligono(lista);
+    else if(tipo == LINHA)
+        return new Aresta(lista->GetPonto(), lista->Horario()->GetPonto());
+    else if(tipo == PONTO)
+        return new Ponto(lista->GetPonto());
+    else if(tipo == CIRCULO)
+        return new Circulo(lista->Horario()->GetX(), lista->GetPonto());
     cerr << "Retornando a própria lista de vértices, tipo não suportado para conversão" << endl;
     return lista;
 }

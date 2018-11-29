@@ -97,7 +97,16 @@ void FindWindow::on_info_clicked() // MOSTRA AS INFORMAÇÕES DOS REGISTROS ENCO
             delete temp;
         }
         else{
+            Vertice* temp = r->lista, *fim = temp->Antihorario();
             conteudo += "Quantidade de Vértices: "+to_string(r->tam)+"\n";
+            conteudo += "Coordenadas dos Vértices: ";
+            while(true){
+                aux << temp->GetPonto();
+                aux << " ";
+                if(temp == fim) break;
+                temp = temp->Horario();
+            }
+            conteudo += aux.str() + "\n";
         }
         info.information(nullptr, "Forma n. "+QString::fromStdString(to_string(count++)), QString::fromStdString(conteudo));
     }

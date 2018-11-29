@@ -12,6 +12,7 @@
 #include <cmath>
 #include <algorithm>
 #include <QPointF>
+#include <iomanip>
 #include "circularlist.hpp"
 using namespace std;
 namespace SpatialData{
@@ -181,8 +182,8 @@ public:
     double Area();
     int CirculoPoint(Ponto& ); //INTERSEÇÃO PONTO ESTA OU NÃO NO CIRCULO
     int InterCirculo( Circulo&, Circulo& );// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
-    Vertice* PontinterCirculo( Circulo& , Circulo& ); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
-    Vertice* CirculoIntRetas( Circulo& ,  Ponto& , Ponto& ); // INTERSEÇÃO CIRCULO E RETAS;
+    pair<Vertice*, unsigned> PontinterCirculo( Circulo& , Circulo& ); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
+    pair<Vertice*, unsigned> CirculoIntRetas( Circulo& ,  Ponto , Ponto ); // INTERSEÇÃO CIRCULO E RETAS;
     Retangulo Envelope();
 
 };

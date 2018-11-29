@@ -24,6 +24,7 @@ void SearchWindow::on_retangulo_clicked(){
 void SearchWindow::on_interseccao_clicked(){
     RectangleSearchWindow RSW;
     DiskAPI::Registro **R = new DiskAPI::Registro*[2], **temp = nullptr;
+    R[0] = R[1] = nullptr;
     SpatialData::Retangulo MBR[2];
     for(unsigned j=0; j<2; j++){
         RSW.setModal(true);
@@ -36,12 +37,12 @@ void SearchWindow::on_interseccao_clicked(){
             MBR[j] = RSW.GetMBR();
             delete[] temp;
         }
-        else
-            R[j] = nullptr;
+        else break;
         RSW.ClearForm();
     }
     QMessageBox QMB;
     FindWindow FW;
+    FW.setModal(true);
     bool active = true;
     if(R[0] != nullptr and R[1] != nullptr){
         if(active and MBR[0].Interseccao(MBR[1])){ // TESTA SE HÁ INTERSECÇÃO ENTRE OS RETANGULOS
@@ -49,6 +50,7 @@ void SearchWindow::on_interseccao_clicked(){
                 unsigned char type = R[0]->tipo;
                 Registro* FakeRegister = nullptr;
                 Registro** FakeArrayRegister = new Registro*[1];
+                FakeArrayRegister[0] = nullptr;
                 if(type == POLIGONO){
                     Poligono* P = reinterpret_cast<Poligono*>(R[0]->Conversao());
                     Poligono* Q = reinterpret_cast<Poligono*>(R[1]->Conversao());
@@ -56,7 +58,6 @@ void SearchWindow::on_interseccao_clicked(){
                     FakeRegister = new Registro(type, Z->GetVertice(), Z->GetSize());
                     FakeArrayRegister[0] = FakeRegister;
                     if(FW.setRegistros(FakeArrayRegister, 1)){
-                        FW.setModal(true);
                         FW.exec();
                     }
                     delete FakeRegister;
@@ -96,17 +97,27 @@ void SearchWindow::on_interseccao_clicked(){
                     delete P1;
                     delete P2;
                 }
+                else if(type == CIRCULO){
+                    Circulo* A = reinterpret_cast<Circulo*>(R[0]->Conversao());
+                    Circulo* B = reinterpret_cast<Circulo*>(R[1]->Conversao());
+                    pair<Vertice*, unsigned> lista = A->PontinterCirculo(*A, *B);
+                    if(lista.first != nullptr)
+                        FakeArrayRegister[0] = new Registro(INDEFINIDO, lista.first, lista.second);
+                    if(FW.setRegistros(FakeArrayRegister, 1))
+                        FW.exec();
+                    if(lista.first != nullptr) delete FakeArrayRegister[0];
+                }
                 delete[] FakeArrayRegister;
             }
             else{
-                if(R[0]->tipo == POLIGONO){
-                    Poligono* P = reinterpret_cast<Poligono*>(R[0]->Conversao());
-                    if(R[1]->tipo == PONTO){// ponto no poligono
-                        Ponto* A = reinterpret_cast<Ponto*>(R[1]->Conversao());
+                if(R[0]->tipo == POLIGONO or R[1]->tipo == POLIGONO){
+                    int pol = (R[0]->tipo == POLIGONO)?0:1;
+                    Poligono* P = reinterpret_cast<Poligono*>(R[pol]->Conversao());
+                    if(R[!pol]->tipo == PONTO){// ponto no poligono
+                        Ponto* A = reinterpret_cast<Ponto*>(R[!pol]->Conversao());
                         int classificacao = P->PontoNoPoligono(*A);
                         if(classificacao == DENTRO or classificacao == FRONTEIRA){
                             FW.setRegistros(R, 2);
-                            FW.setModal(true);
                             FW.exec();
                         }
                         else
@@ -114,7 +125,23 @@ void SearchWindow::on_interseccao_clicked(){
                         delete A;
                     }
                     delete P;
-                    R[0]->lista = nullptr;
+                    R[pol]->lista = nullptr;
+                }
+                if(R[0]->tipo == CIRCULO or R[1]->tipo == CIRCULO){
+                    int cic = (R[0]->tipo == CIRCULO)?0:1;
+                    Circulo* C = reinterpret_cast<Circulo*>(R[cic]->Conversao());
+                    if(R[!cic]->tipo == LINHA){
+                        Aresta* A = reinterpret_cast<Aresta*>(R[!cic]->Conversao());
+                        pair<Vertice*, unsigned> lista = C->CirculoIntRetas(*C, A->GetOrigem(), A->GetDestino());
+                        Registro** FakeArrayRegister = new Registro*[1];
+                        if(lista.first != nullptr)
+                            FakeArrayRegister[0] = new Registro(INDEFINIDO, lista.first, lista.second);
+                        if(FW.setRegistros(FakeArrayRegister, 1))
+                            FW.exec();
+                        if(lista.first != nullptr) delete FakeArrayRegister[0];
+                        delete[] FakeArrayRegister;
+                        delete A;
+                    }
                 }
             }
         } // INTERSECÇÃO ENTRE RETANGULOS

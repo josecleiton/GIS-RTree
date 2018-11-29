@@ -43,9 +43,8 @@ void RectangleSearchWindow::on_button_clicked()
         SpatialIndex::Chave K = caminho.front().ptr->Chaves[caminho.front().index];
         SpatialData::Retangulo MBR = K.MBR;
         this->SetMBR(MBR);
-        streampos pos = K.Dado;
         DiskAPI::Registro** Reg = new DiskAPI::Registro*[1];
-        Reg[0] = io.Read(pos);
+        Reg[0] = io.Read(K.Dado);
         if(Reg[0] != nullptr){
             if(!Interseccao()){
                 FindWindow FW;
@@ -54,7 +53,7 @@ void RectangleSearchWindow::on_button_clicked()
                 FW.exec();
                 if(FW.GetRemove()){
                     root.Remove(caminho);
-                    io.Remove(pos);
+                    io.Remove(K.Dado);
                 }
                 delete Reg[0];
                 delete[] Reg;

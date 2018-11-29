@@ -122,6 +122,7 @@ QPointF Ponto::toQPoint(){
 }
 
 ostream& operator<<(ostream& out, const Ponto& P){
+    out << fixed << showpoint << setprecision(5);
     out << "(" << P.GetX() << ", " << P.GetY() << ")";
     return out;
 }
@@ -360,14 +361,11 @@ Poligono* Poligono::Interseccao(Poligono& P){
                 else
                     return R;
             }
-            if(pclass == DIREITA)
-                inflag = P_DENTRO;
-            else if(qclass == DIREITA)
-                inflag = Q_DENTRO;
-            else
-                inflag = DESCONHECIDO;
+            if(pclass == DIREITA) inflag = P_DENTRO;
+            else if(qclass == DIREITA) inflag = Q_DENTRO;
+            else inflag = DESCONHECIDO;
         }
-        else if((crosstype == COLINEAR) and (pclass != ATRAS) and (qclass != ATRAS))
+        else if(crosstype == COLINEAR and pclass != ATRAS and qclass != ATRAS)
             inflag = DESCONHECIDO;
         pAIMSq = aimsAt(p, q, pclass, crosstype);
         qAIMSp = aimsAt(q, p, qclass, crosstype);
@@ -391,7 +389,7 @@ Poligono* Poligono::Interseccao(Poligono& P){
     }// for
     delete R;
     if(P.PontoNoPoligonoConvexo(this->GetPonto()))
-        return this;
+        return new Poligono(*this);
     else if(this->PontoNoPoligonoConvexo(P.GetPonto()))
         return new Poligono(P);
     return new Poligono();
@@ -775,10 +773,10 @@ Circulo::Circulo(){
     centro.x=0.0;
     centro.y=0.0;
 }
-Circulo::Circulo(double R,Ponto centro){
+Circulo::Circulo(double R,Ponto Centro){
     raio= R;
-    centro.x= centro.x;
-    centro.y=centro.y;
+    centro.x= Centro.x;
+    centro.y= Centro.y;
 }
 double Circulo::Diametro(){
     return this->raio*2;
@@ -815,12 +813,12 @@ int Circulo::InterCirculo( Circulo& c1, Circulo& c2)// VERIFICA SE EXISTE INTERS
     return 1; //exite interseção
 }
 
-Vertice* Circulo::PontinterCirculo(Circulo& c1, Circulo& c2){ //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
+pair<Vertice*, unsigned> Circulo::PontinterCirculo(Circulo& c1, Circulo& c2){ //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
     double dist= sqrt ( pow ((c2.centro.x - c1.centro.x), 2.0 ) + pow((c2.centro.y - c1.centro.y ), 2.0 ));
     double A , H;
     Ponto P,P1 ,P2;
 
-    A= (pow(c1.raio,2.0)-pow(c2.raio,2.0)+pow(dist,2.0))/dist*2.0;
+    A= (pow(c1.raio,2.0)-pow(c2.raio,2.0)+pow(dist,2.0))/(dist*2.0);
     H= sqrt(pow(c1.raio,2.0)) - pow(A,2.0);
 
     P.x=c1.centro.x + A*(c2.centro.x-c1.centro.x)/dist;
@@ -830,16 +828,18 @@ Vertice* Circulo::PontinterCirculo(Circulo& c1, Circulo& c2){ //   PONTOS QUE IN
     P1.y= P.y - H*(c2.centro.x-c1.centro.x)/dist;
     double soma=c1.raio+c2.raio;
     Vertice* resultado = new Vertice(P1);
+    unsigned tam = 1;
     double diff = dist-soma;
     if(diff==0.0){ //intercepta em um dois
         P2.x= P.x - H*(c2.centro.y-c1.centro.y)/dist;
         P2.y= P.y + H*(c2.centro.x-c1.centro.x)/dist;
         resultado->Push(P2);
+        tam++;
     }
-    return resultado;
+    return make_pair(resultado, tam);
 }
 
-Vertice* Circulo::CirculoIntRetas(Circulo& T, Ponto& p1, Ponto& p2){
+pair<Vertice*, unsigned> Circulo::CirculoIntRetas(Circulo& T, Ponto p1, Ponto p2){
     Vertice* resultado = nullptr;
     double A ,B, C, Delta;
     double u1,u2;
@@ -854,12 +854,13 @@ Vertice* Circulo::CirculoIntRetas(Circulo& T, Ponto& p1, Ponto& p2){
     u1 = (-B + sqrt(Delta))/(2.0*A);
     R1.x= p1.x+ u1*(p2.x-p1.x);
     R1.y=p1.y+ u1*(p2.y-p1.y);
-
+    unsigned tam = 0;
     if(Delta==0.0) {// um ponto de interseção
         u1=-B /(2.0*A);
         R1.x= p1.x + (p2.x-p1.x)*u1;
         R1.y=p1.y + (p2.y-p1.y)*u1;
         resultado = new Vertice(R1);
+        tam=1;
     }
     else if(Delta>0) // dois pontos de interseção
     {        u1 = (-B - sqrt(Delta))/(2.0*A);
@@ -871,8 +872,9 @@ Vertice* Circulo::CirculoIntRetas(Circulo& T, Ponto& p1, Ponto& p2){
              resultado = new Vertice(R1);
              resultado->Push(R2);
             // Retornar R1 e R2
+             tam=2;
     }
-    return resultado;
+    return make_pair(resultado, tam);
 }
 
 Retangulo Circulo::Envelope(){
