@@ -15,6 +15,7 @@ InsertPoint::InsertPoint(QWidget *parent) :
 
 InsertPoint::~InsertPoint()
 {
+    delete ui->campoX->validator();
     delete ui;
 }
 

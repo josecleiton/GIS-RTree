@@ -25,6 +25,8 @@ InsertWindow::InsertWindow(QWidget *parent) :
 }
 
 InsertWindow::~InsertWindow(){
+    delete ui->numVert->validator();
+    delete ui->tipoForma->validator();
     delete ui;
 }
 

@@ -18,6 +18,7 @@ RectangleSearchWindow::RectangleSearchWindow(QWidget *parent) :
 
 RectangleSearchWindow::~RectangleSearchWindow()
 {
+    delete ui->p1x->validator();
     delete ui;
 }
 

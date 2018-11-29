@@ -16,6 +16,7 @@ InsertCircleWindow::InsertCircleWindow(QWidget *parent) :
 
 InsertCircleWindow::~InsertCircleWindow()
 {
+    delete ui->raio->validator();
     delete ui;
 }
 

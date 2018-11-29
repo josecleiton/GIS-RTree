@@ -14,6 +14,7 @@ StringWindow::StringWindow(QWidget *parent) :
 
 StringWindow::~StringWindow()
 {
+    delete ui->campoStr->validator();
     delete ui;
 }
 
