@@ -19,7 +19,7 @@ class FindWindow : public QDialog
 public:
     explicit FindWindow(QWidget *parent = nullptr);
     ~FindWindow();
-    bool setRegistros(DiskAPI::Registro** &, size_t);
+    bool setRegistros(DiskAPI::Registro** &, size_t, bool);
     bool GetRemove();
     bool listaValida();
 

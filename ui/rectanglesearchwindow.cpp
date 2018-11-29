@@ -49,7 +49,7 @@ void RectangleSearchWindow::on_button_clicked()
             if(!Interseccao()){
                 FindWindow FW;
                 FW.setModal(true);
-                FW.setRegistros(Reg, 1);
+                FW.setRegistros(Reg, 1, false);
                 FW.exec();
                 if(FW.GetRemove()){
                     root.Remove(caminho);

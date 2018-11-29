@@ -57,7 +57,7 @@ void SearchWindow::on_interseccao_clicked(){
                     Poligono* Z = P->Interseccao(*Q);
                     FakeRegister = new Registro(type, Z->GetVertice(), Z->GetSize());
                     FakeArrayRegister[0] = FakeRegister;
-                    if(FW.setRegistros(FakeArrayRegister, 1)){
+                    if(FW.setRegistros(FakeArrayRegister, 1, true)){
                         FW.exec();
                     }
                     delete FakeRegister;
@@ -103,7 +103,7 @@ void SearchWindow::on_interseccao_clicked(){
                     pair<Vertice*, unsigned> lista = A->PontinterCirculo(*A, *B);
                     if(lista.first != nullptr)
                         FakeArrayRegister[0] = new Registro(INDEFINIDO, lista.first, lista.second);
-                    if(FW.setRegistros(FakeArrayRegister, 1))
+                    if(FW.setRegistros(FakeArrayRegister, 1, true))
                         FW.exec();
                     if(lista.first != nullptr) delete FakeArrayRegister[0];
                 }
@@ -117,7 +117,7 @@ void SearchWindow::on_interseccao_clicked(){
                         Ponto* A = reinterpret_cast<Ponto*>(R[!pol]->Conversao());
                         int classificacao = P->PontoNoPoligono(*A);
                         if(classificacao == DENTRO or classificacao == FRONTEIRA){
-                            FW.setRegistros(R, 2);
+                            FW.setRegistros(R, 2, false);
                             FW.exec();
                         }
                         else
@@ -136,7 +136,7 @@ void SearchWindow::on_interseccao_clicked(){
                         Registro** FakeArrayRegister = new Registro*[1];
                         if(lista.first != nullptr)
                             FakeArrayRegister[0] = new Registro(INDEFINIDO, lista.first, lista.second);
-                        if(FW.setRegistros(FakeArrayRegister, 1))
+                        if(FW.setRegistros(FakeArrayRegister, 1, true))
                             FW.exec();
                         if(lista.first != nullptr) delete FakeArrayRegister[0];
                         delete[] FakeArrayRegister;
@@ -198,7 +198,7 @@ void SearchWindow::on_id_clicked()
             ArrayReg[i] = io.Read((*result)[i]);
         FindWindow FW;
         FW.setModal(true);
-        FW.setRegistros(ArrayReg, sizeResult);
+        FW.setRegistros(ArrayReg, sizeResult, false);
         FW.exec();
         for(size_t i=0; i<sizeResult; i++)
             delete ArrayReg[i];

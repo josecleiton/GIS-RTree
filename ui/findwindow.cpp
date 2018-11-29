@@ -27,7 +27,7 @@ void FindWindow::on_remove_clicked()
     }
 }
 
-bool FindWindow::setRegistros(DiskAPI::Registro** &R, size_t tam){
+bool FindWindow::setRegistros(DiskAPI::Registro** &R, size_t tam, bool inter){
     if(R != nullptr and tam){
         vector<Registro*> v(R, R+tam);
         this->regs = v;
@@ -36,6 +36,8 @@ bool FindWindow::setRegistros(DiskAPI::Registro** &R, size_t tam){
             this->ui->remove->setDisabled(true);
             this->ui->info->setDisabled(true);
         }
+        else if(inter)
+            this->ui->remove->setDisabled(true);
         return true;
     }
     return false;
