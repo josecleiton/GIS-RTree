@@ -113,3 +113,7 @@ void FindWindow::on_info_clicked() // MOSTRA AS INFORMAÇÕES DOS REGISTROS ENCO
         info.information(nullptr, "Forma n. "+QString::fromStdString(to_string(count++)), QString::fromStdString(conteudo));
     }
 }
+
+void FindWindow::setInterCircle(bool op){
+    this->ui->ra->setInterCircle(op);
+}

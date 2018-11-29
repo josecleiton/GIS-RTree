@@ -788,18 +788,19 @@ double Circulo::Area(){
     return PI*pow(this->raio,2);
 }
 
-int Circulo::CirculoPoint(Ponto &P){
+int Circulo::Interseccao(Ponto &P){
 
     if(pow((this->centro.x-P.y),2)+pow((this->centro.y-P.y),2)< pow(this->raio,2))
-        return 1;// PONTO DENTRO DO CIRCULO
+        return DENTRO;// PONTO DENTRO DO CIRCULO
     if(pow((this->centro.x-P.y),2)+pow((this->centro.y-P.y),2)> pow(this->raio,2))
-        return -1; // PONTO FORA
-    else return 0; // PONTO NA CIRCUNFER?NCIA
+        return FORA; // PONTO FORA
+    else return FRONTEIRA; // PONTO NA CIRCUNFER?NCIA
 
 }
 
-int Circulo::InterCirculo( Circulo& c1, Circulo& c2)// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
+int Circulo::InterCirculo(Circulo& c2)// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
 {
+    Circulo c1 = *this;
     double dist= sqrt ( pow ((c2.centro.x - c1.centro.x), 2.0 ) + pow((c2.centro.y - c1.centro.y ), 2.0 ));
     double soma=c1.raio+c2.raio;
     double subt= c1.raio-c2.raio;
@@ -813,33 +814,34 @@ int Circulo::InterCirculo( Circulo& c1, Circulo& c2)// VERIFICA SE EXISTE INTERS
     return 1; //exite interseção
 }
 
-pair<Vertice*, unsigned> Circulo::PontinterCirculo(Circulo& c1, Circulo& c2){ //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
+pair<Vertice*, unsigned> Circulo::Interseccao(Circulo& c2){ //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
+    Circulo c1 = *this;
     double dist= sqrt ( pow ((c2.centro.x - c1.centro.x), 2.0 ) + pow((c2.centro.y - c1.centro.y ), 2.0 ));
     double A , H;
     Ponto P,P1 ,P2;
 
     A= (pow(c1.raio,2.0)-pow(c2.raio,2.0)+pow(dist,2.0))/(dist*2.0);
-    H= sqrt(pow(c1.raio,2.0)) - pow(A,2.0);
+    H= sqrt(pow(c1.raio,2.0) - pow(A,2.0));
 
     P.x=c1.centro.x + A*(c2.centro.x-c1.centro.x)/dist;
     P.y=c1.centro.y +A*(c2.centro.y-c1.centro.y)/dist;
 
     P1.x= P.x + H*(c2.centro.y-c1.centro.y)/dist;
     P1.y= P.y - H*(c2.centro.x-c1.centro.x)/dist;
-    double soma=c1.raio+c2.raio;
+
     Vertice* resultado = new Vertice(P1);
     unsigned tam = 1;
-    double diff = dist-soma;
-    if(diff==0.0){ //intercepta em um dois
-        P2.x= P.x - H*(c2.centro.y-c1.centro.y)/dist;
-        P2.y= P.y + H*(c2.centro.x-c1.centro.x)/dist;
-        resultado->Push(P2);
-        tam++;
-    }
+     P2.x= P.x - H*(c2.centro.y-c1.centro.y)/dist;
+     P2.y= P.y + H*(c2.centro.x-c1.centro.x)/dist;
+     resultado->Push(P2);
+     tam++;
+
     return make_pair(resultado, tam);
 }
 
-pair<Vertice*, unsigned> Circulo::CirculoIntRetas(Circulo& T, Ponto p1, Ponto p2){
+pair<Vertice*, unsigned> Circulo::Interseccao(Aresta& R){
+    Circulo T = *this;
+    Ponto p1 = R.GetDestino(), p2 = R.GetOrigem();
     Vertice* resultado = nullptr;
     double A ,B, C, Delta;
     double u1,u2;

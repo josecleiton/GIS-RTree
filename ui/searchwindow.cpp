@@ -46,28 +46,28 @@ void SearchWindow::on_interseccao_clicked(){
     bool active = true;
     if(R[0] != nullptr and R[1] != nullptr){
         if(active and MBR[0].Interseccao(MBR[1])){ // TESTA SE HÁ INTERSECÇÃO ENTRE OS RETANGULOS
+            Registro** FakeArrayRegister = new Registro*[1];
+            FakeArrayRegister[0] = nullptr;
+            unsigned char ndtype;
             if(R[0]->tipo == R[1]->tipo){
-                unsigned char type = R[0]->tipo;
-                Registro* FakeRegister = nullptr;
-                Registro** FakeArrayRegister = new Registro*[1];
-                FakeArrayRegister[0] = nullptr;
-                if(type == POLIGONO){
+                ndtype = R[0]->tipo;
+                if(ndtype == POLIGONO){
                     Poligono* P = reinterpret_cast<Poligono*>(R[0]->Conversao());
                     Poligono* Q = reinterpret_cast<Poligono*>(R[1]->Conversao());
                     Poligono* Z = P->Interseccao(*Q);
-                    FakeRegister = new Registro(type, Z->GetVertice(), Z->GetSize());
-                    FakeArrayRegister[0] = FakeRegister;
+                    FakeArrayRegister[0] = new Registro(ndtype, Z->GetVertice(), Z->GetSize());
                     if(FW.setRegistros(FakeArrayRegister, 1, true)){
                         FW.exec();
                     }
-                    delete FakeRegister;
+                    if(FakeArrayRegister[0] != nullptr)
+                        delete FakeArrayRegister[0];
                     delete P;
                     delete Q;
                     Z->setFakeKai(true); // FAKE KAI É NECESSÁRIO PORQUE O DESTRUCTOR DO REGISTRO
                     delete Z; //            JÁ LIBEROU A LISTA DE VERTICES
                     R[0]->lista = R[1]->lista = nullptr;
                 }
-                else if(type == LINHA){
+                else if(ndtype == LINHA){
                     double t;
                     Ponto P;
                     Aresta* A = reinterpret_cast<Aresta*>(R[0]->Conversao());
@@ -87,7 +87,7 @@ void SearchWindow::on_interseccao_clicked(){
                     delete A;
                     delete B;
                 }
-                else if(type == PONTO){
+                else if(ndtype == PONTO){
                     Ponto* P1 = reinterpret_cast<Ponto*>(R[0]->Conversao());
                     Ponto* P2 = reinterpret_cast<Ponto*>(R[1]->Conversao());
                     if(P1 != P2)
@@ -97,23 +97,25 @@ void SearchWindow::on_interseccao_clicked(){
                     delete P1;
                     delete P2;
                 }
-                else if(type == CIRCULO){
+                else if(ndtype == CIRCULO){
                     Circulo* A = reinterpret_cast<Circulo*>(R[0]->Conversao());
                     Circulo* B = reinterpret_cast<Circulo*>(R[1]->Conversao());
-                    pair<Vertice*, unsigned> lista = A->PontinterCirculo(*A, *B);
+                    pair<Vertice*, unsigned> lista = A->Interseccao(*B);
                     if(lista.first != nullptr)
                         FakeArrayRegister[0] = new Registro(INDEFINIDO, lista.first, lista.second);
                     if(FW.setRegistros(FakeArrayRegister, 1, true))
                         FW.exec();
-                    if(lista.first != nullptr) delete FakeArrayRegister[0];
+                    if(FakeArrayRegister[0] != nullptr) delete FakeArrayRegister[0];
+                    delete A;
+                    delete B;
                 }
-                delete[] FakeArrayRegister;
             }
             else{
                 if(R[0]->tipo == POLIGONO or R[1]->tipo == POLIGONO){
                     int pol = (R[0]->tipo == POLIGONO)?0:1;
                     Poligono* P = reinterpret_cast<Poligono*>(R[pol]->Conversao());
-                    if(R[!pol]->tipo == PONTO){// ponto no poligono
+                    ndtype = R[!pol]->tipo;
+                    if(ndtype == PONTO){// ponto no poligono
                         Ponto* A = reinterpret_cast<Ponto*>(R[!pol]->Conversao());
                         int classificacao = P->PontoNoPoligono(*A);
                         if(classificacao == DENTRO or classificacao == FRONTEIRA){
@@ -130,20 +132,48 @@ void SearchWindow::on_interseccao_clicked(){
                 if(R[0]->tipo == CIRCULO or R[1]->tipo == CIRCULO){
                     int cic = (R[0]->tipo == CIRCULO)?0:1;
                     Circulo* C = reinterpret_cast<Circulo*>(R[cic]->Conversao());
-                    if(R[!cic]->tipo == LINHA){
+                    ndtype = R[!cic]->tipo;
+                    if(ndtype == LINHA){
                         Aresta* A = reinterpret_cast<Aresta*>(R[!cic]->Conversao());
-                        pair<Vertice*, unsigned> lista = C->CirculoIntRetas(*C, A->GetOrigem(), A->GetDestino());
-                        Registro** FakeArrayRegister = new Registro*[1];
+                        pair<Vertice*, unsigned> lista = C->Interseccao(*A);
                         if(lista.first != nullptr)
                             FakeArrayRegister[0] = new Registro(INDEFINIDO, lista.first, lista.second);
                         if(FW.setRegistros(FakeArrayRegister, 1, true))
                             FW.exec();
                         if(lista.first != nullptr) delete FakeArrayRegister[0];
-                        delete[] FakeArrayRegister;
                         delete A;
                     }
+                    else if(ndtype == PONTO){
+                        Ponto* P = reinterpret_cast<Ponto*>(R[!cic]->Conversao());
+                        int classificacao = C->Interseccao(*P);
+                        if(classificacao != FORA){
+                            QString msg = "Ponto está: ";
+                            msg += (classificacao == DENTRO)?"DENTRO":"NA BORDA";
+                            msg += " da circunferência.\n";
+                            QMB.information(nullptr, "Ponto", msg);
+                            if(classificacao == DENTRO){
+                                FW.setRegistros(R, 2, false);
+                                FW.setInterCircle(true);
+                                FW.exec();
+                            }
+                            else{
+                                Vertice* FakeList = new Vertice(*P);
+                                FakeArrayRegister[0] = new Registro(PONTO, FakeList, 1);
+                                FW.setRegistros(FakeArrayRegister, 1, true);
+                                FW.exec();
+                                FakeArrayRegister[0]->tam = 0;
+                                delete FakeList;
+                                delete FakeArrayRegister[0];
+                            }
+                        }
+                        else QMB.critical(nullptr, "Ponto", "Ponto está fora da circunferência");
+                        delete P;
+                    }
+
+                    delete C;
                 }
             }
+            delete[] FakeArrayRegister;
         } // INTERSECÇÃO ENTRE RETANGULOS
         else if(active)
             QMB.warning(nullptr,"Intersecção entre MBRs", "Não há sobreposição dos MBR, logo não há intersecção entre as formas geométricas.");

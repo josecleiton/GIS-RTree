@@ -180,10 +180,10 @@ public:
     double Diametro();
     double Comprimento();
     double Area();
-    int CirculoPoint(Ponto& ); //INTERSEÇÃO PONTO ESTA OU NÃO NO CIRCULO
-    int InterCirculo( Circulo&, Circulo& );// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
-    pair<Vertice*, unsigned> PontinterCirculo( Circulo& , Circulo& ); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
-    pair<Vertice*, unsigned> CirculoIntRetas( Circulo& ,  Ponto , Ponto ); // INTERSEÇÃO CIRCULO E RETAS;
+    int Interseccao(Ponto&); //INTERSEÇÃO PONTO ESTA OU NÃO NO CIRCULO
+    int InterCirculo(Circulo&);// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
+    pair<Vertice*, unsigned> Interseccao(Circulo&); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
+    pair<Vertice*, unsigned> Interseccao(Aresta&); // INTERSEÇÃO CIRCULO E RETAS;
     Retangulo Envelope();
 
 };

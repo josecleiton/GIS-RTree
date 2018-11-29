@@ -60,7 +60,12 @@ void RenderArea::desenha(){
                 delete[] vertices.first;
             }
             else{
-                QPointF centro(10, 10);
+                QPointF centro;
+                if(!interCircle){
+                    centro.setX(10);
+                    centro.setY(10);
+                }
+                else centro = r->lista->GetPonto().toQPoint();
                 qreal raio = r->lista->Horario()->GetX();
                 p->drawEllipse(centro, raio, raio);
             }
@@ -82,4 +87,8 @@ bool RenderArea::listaValida(){
     for(auto r: regs)
         if(r[0].tam == 0) return false;
     return true;
+}
+
+void RenderArea::setInterCircle(bool op){
+    this->interCircle = op;
 }
