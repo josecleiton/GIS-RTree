@@ -1,12 +1,7 @@
 #include "insertwindow.hpp"
 #include "ui_insertwindow.h"
-#include "rtree.hpp"
-#include "spatialdata.hpp"
-#include "disk.hpp"
-#include "variaveis.hpp"
 #include "insertpointwindow.hpp"
 #include "insertcirclewindow.hpp"
-
 
 InsertWindow::InsertWindow(QWidget *parent) :
     QDialog(parent),
@@ -22,6 +17,7 @@ InsertWindow::InsertWindow(QWidget *parent) :
     ui->tipoForma->setValidator(ValidaPalavra);
     //ui->ID->setValidator(ValidaNome);
     this->setWindowTitle("Insira uma forma geométrica");
+    this->setWindowIcon(QIcon(ICON));
 }
 
 InsertWindow::~InsertWindow(){

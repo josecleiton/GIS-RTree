@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QMessageBox>
+#include "icon.hpp"
 #include "insertwindow.hpp"
 #include "searchwindow.hpp"
 #include "variaveis.hpp"

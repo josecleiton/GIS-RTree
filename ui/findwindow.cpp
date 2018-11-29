@@ -8,6 +8,7 @@ FindWindow::FindWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Forma encontrada!");
     this->remove = false;
+    this->setWindowIcon(QIcon(ICON));
 }
 
 FindWindow::~FindWindow()

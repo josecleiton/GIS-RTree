@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QMessageBox>
 #include <vector>
+#include "icon.hpp"
 #include "variaveis.hpp"
 #include "rtree.hpp"
 #include "spatialdata.hpp"

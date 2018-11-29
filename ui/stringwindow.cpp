@@ -10,6 +10,7 @@ StringWindow::StringWindow(QWidget *parent) :
     QRegExpValidator *validator = new QRegExpValidator(regx, this);
     ui->campoStr->setValidator(validator);
     this->setWindowTitle("Identificador");
+    this->setWindowIcon(QIcon(ICON));
 }
 
 StringWindow::~StringWindow()

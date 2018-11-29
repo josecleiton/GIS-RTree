@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("Filhos de Jorge");
-    this->setWindowIcon(QIcon("../GIS/ui/jorge.png"));
+    this->setWindowIcon(QIcon(ICON));
 }
 
 MainWindow::~MainWindow()

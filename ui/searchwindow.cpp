@@ -7,6 +7,7 @@ SearchWindow::SearchWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("Buscar na R-Tree");
+    this->setWindowIcon(QIcon(ICON));
 }
 
 SearchWindow::~SearchWindow()

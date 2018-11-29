@@ -2,6 +2,7 @@
 #define FINDWINDOW_HPP
 
 #include <QDialog>
+#include "icon.hpp"
 #include <QMessageBox>
 #include <iostream>
 #include <sstream>

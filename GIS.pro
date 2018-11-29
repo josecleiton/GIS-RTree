@@ -55,7 +55,8 @@ HEADERS += \
     ui/searchwindow.hpp \
     global/variaveis.hpp \
     ui/stringwindow.hpp \
-    global/variaveis.hpp
+    global/variaveis.hpp \
+    global/icon.hpp
 
 FORMS += \
     ui/insertcirclewindow.ui \

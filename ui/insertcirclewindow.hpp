@@ -2,6 +2,7 @@
 #define INSERTCIRCLEWINDOW_HPP
 
 #include <QDialog>
+#include "icon.hpp"
 #include "regex.hpp"
 #include "spatialdata.hpp"
 

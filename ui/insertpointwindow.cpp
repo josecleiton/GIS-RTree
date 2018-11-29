@@ -11,6 +11,7 @@ InsertPoint::InsertPoint(QWidget *parent) :
     ui->campoX->setValidator(validator);
     ui->campoY->setValidator(validator);
     this->setWindowTitle("Insira um ponto");
+    this->setWindowIcon(QIcon(ICON));
 }
 
 InsertPoint::~InsertPoint()

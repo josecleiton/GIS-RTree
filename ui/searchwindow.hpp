@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <QDialog>
+#include "icon.hpp"
 #include "rectanglesearchwindow.hpp"
 #include "insertpointwindow.hpp"
 #include "variaveis.hpp"

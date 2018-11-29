@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <string>
+#include "icon.hpp"
 #include "regex.hpp"
 
 namespace Ui {

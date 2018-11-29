@@ -2,11 +2,17 @@
 #define INSERTWINDOW_HPP
 
 #include <QDialog>
+#include "icon.hpp"
 #include <QMessageBox>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include "regex.hpp"
+#include "rtree.hpp"
+#include "spatialdata.hpp"
+#include "disk.hpp"
+#include "variaveis.hpp"
+
 using namespace std;
 
 namespace Ui {
