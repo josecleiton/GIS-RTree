@@ -1,6 +1,5 @@
 #ifndef VARIAVEIS_HPP
 #define VARIAVEIS_HPP
-#define ICON "../GIS/ui/jorge.png"
 #include "rtree.hpp"
 #include "disk.hpp"
 
