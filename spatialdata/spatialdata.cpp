@@ -577,6 +577,10 @@ bool Aresta::isVertical(){
     return (t==0.0)?true:false;
 }
 
+double Aresta::y(double x){
+    return Inclinacao()*(x-origem.x)+origem.y;
+}
+
 double Aresta::Inclinacao(){
     if(!isVertical())
         return (destino.y - origem.y)/(destino.x - origem.y);

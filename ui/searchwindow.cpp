@@ -112,7 +112,7 @@ void SearchWindow::on_interseccao_clicked(){
                 }
             }
             else{
-                if(R[0]->tipo == POLIGONO or R[1]->tipo == POLIGONO){
+                if(R[0]->tipo == POLIGONO or R[1]->tipo == POLIGONO){ // POLIGONO
                     int pol = (R[0]->tipo == POLIGONO)?0:1;
                     Poligono* P = reinterpret_cast<Poligono*>(R[pol]->Conversao());
                     ndtype = R[!pol]->tipo;
@@ -129,8 +129,8 @@ void SearchWindow::on_interseccao_clicked(){
                     }
                     delete P;
                     R[pol]->lista = nullptr;
-                }
-                if(R[0]->tipo == CIRCULO or R[1]->tipo == CIRCULO){
+                } // POLIGONO
+                else if(R[0]->tipo == CIRCULO or R[1]->tipo == CIRCULO){ // CIRCULO
                     int cic = (R[0]->tipo == CIRCULO)?0:1;
                     Circulo* C = reinterpret_cast<Circulo*>(R[cic]->Conversao());
                     ndtype = R[!cic]->tipo;
@@ -172,7 +172,28 @@ void SearchWindow::on_interseccao_clicked(){
                     }
 
                     delete C;
-                }
+                } // CIRCULO
+                else if(R[0]->tipo == LINHA or R[1]->tipo == LINHA){ // linha
+                    int line = (R[0]->tipo == LINHA)?0:1;
+                    Aresta* A = reinterpret_cast<Aresta*>(R[line]->Conversao());
+                    ndtype = R[!line]->tipo;
+                    if(ndtype == PONTO){
+                        Ponto* P = reinterpret_cast<Ponto*>(R[!line]->Conversao());
+                        int clasf = P->Classificacao(*A);
+                        bool inter = (clasf == ENTRE or clasf == ORIGEM or clasf == DESTINO) ? true : false;
+                        QString result;
+                        result = "Ponto não está na reta!\n";
+                        if(inter){
+                            result.replace(6, 3, "");
+                            stringstream aux;
+                            aux << *P;
+                            result += "Coordenada do ponto: " + QString::fromStdString(aux.str())+"\n";
+                        }
+                        QMB.information(nullptr, "Intersecção", result);
+                        delete P;
+                    }
+                    delete A;
+                } // linha
             }
             delete[] FakeArrayRegister;
         } // INTERSECÇÃO ENTRE RETANGULOS

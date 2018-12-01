@@ -60,8 +60,7 @@ void FindWindow::on_info_clicked() // MOSTRA AS INFORMAÇÕES DOS REGISTROS ENCO
     std::string conteudo;
     int count = 1;
     for(auto r: regs){
-        aux.str("");
-        aux.clear();
+        aux.str(""); aux.clear();
         conteudo = "Tipo: ";
         tipo = r->tipo;
         conteudo += r->StrTipo()+"\n";
@@ -74,11 +73,16 @@ void FindWindow::on_info_clicked() // MOSTRA AS INFORMAÇÕES DOS REGISTROS ENCO
         }
         else if(tipo == LINHA){
             Aresta* temp = reinterpret_cast<Aresta*>(r->Conversao());
+            string origem;
             conteudo += "Origem: ";
             aux << temp->GetOrigem();
-            aux.clear();
-            conteudo += aux.str()+"\n Destino: ";
+            origem = aux.str();
+            conteudo += origem+"\nDestino: ";
+            aux.str(""); aux.clear();
             aux << temp->GetDestino();
+            conteudo += aux.str() + "\nInclinação: ";
+            aux.str(""); aux.clear();
+            aux << temp->Inclinacao();
             conteudo += aux.str() + "\n";
             delete temp;
         }
