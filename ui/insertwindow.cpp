@@ -36,14 +36,11 @@ void InsertWindow::Inserir(){
     unsigned int num_vertices = ui->numVert->text().toUInt(); // NUM DE VERTICES DETERMINADO PELA GUI
     //QString identificador = ui->ID->text();
     if(num_vertices){
-        string forma = ui->tipoForma->text().toStdString();
+        QString forma = ui->tipoForma->text().toUpper();
         unsigned char tipo; // TIPO DA FORMA (POLIGONO, POLIGONAL ETC)
         Retangulo MBR;
         streampos posicao_forma;
         bool excep = false;
-
-        for(auto &letra: forma)
-            letra = static_cast<char>(toupper(letra));
 
         if(forma == "POLIGONO")
             tipo = DiskAPI::POLIGONO;
