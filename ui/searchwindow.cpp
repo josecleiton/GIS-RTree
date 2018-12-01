@@ -218,23 +218,30 @@ void SearchWindow::on_id_clicked()
     Aux.setModal(true);
     Aux.exec();
     query = Aux.getStr();
-    DiskAPI::Hash PH;
+    SpatialIndex::Hash PH;
     vector<streampos>* result = PH.SelectAll(query);
     size_t sizeResult = result->size();
     QMessageBox QMB;
+    unsigned ativos = 0;
     if(sizeResult){
-        QMB.information(nullptr, "Formas encontradas!", "Foram encontradas "+QString::fromStdString(to_string(sizeResult))+" forma(s) do tipo: "+QString::fromStdString(query)+".");
         DiskAPI::Registro** ArrayReg = new Registro* [sizeResult];
-        for(size_t i=0; i<sizeResult; i++)
+        for(size_t i=0; i<sizeResult; i++){
             ArrayReg[i] = io.Read((*result)[i]);
-        FindWindow FW;
-        FW.setModal(true);
-        FW.setRegistros(ArrayReg, sizeResult, false);
-        FW.exec();
-        for(size_t i=0; i<sizeResult; i++)
-            delete ArrayReg[i];
+            if(ArrayReg[i]) ativos++;
+        }
+        if(ativos){
+            QMB.information(nullptr, "Formas encontradas!", "Foram encontradas "+QString::fromStdString(to_string(ativos))+" forma(s) do tipo: "+QString::fromStdString(query)+".");
+            FindWindow FW;
+            FW.setModal(true);
+            FW.setRegistros(ArrayReg, sizeResult, false);
+            FW.exec();
+            for(size_t i=0; i<sizeResult; i++)
+                if(ArrayReg[i] != nullptr)
+                    delete ArrayReg[i];
+            delete[] ArrayReg;
+            return;
+        }
         delete[] ArrayReg;
     }
-    else
-        QMB.critical(nullptr, "Não há formas com esse ID", "Tente novamente, por favor.");
+    QMB.critical(nullptr, "Não há formas com esse ID", "Tente novamente, por favor.");
 }

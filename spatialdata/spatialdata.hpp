@@ -89,7 +89,6 @@ class Poligono{
 private:
     Vertice* list;
     unsigned m_size;
-    void resize();
     bool fakeKai{};
 public:
     Poligono(); // CONSTRUTOR PADRÃO

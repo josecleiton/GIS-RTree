@@ -602,4 +602,42 @@ bool operator>(const Chave& A, const Chave& B){
     return A.MBR > B.MBR;
 }
 
+Hash::Hash(){
+    this->path = H_FILENAME;
+}
+
+Hash::~Hash(){
+    if(this->handle != nullptr) delete this->handle;
+}
+
+void Hash::Insere(string id, streampos& forma){
+    fstream forma_file(path+"id_"+id+".bin", fstream::app|fstream::binary);
+    if(forma_file.is_open()){
+        forma_file.write(reinterpret_cast<char*>(&forma), sizeof(streampos));
+        forma_file.close();
+    }
+    else{
+        cerr << "ERRO NA ABERTURA DO ARQUIVO: " << "../GIS/spatialdata/id_"+id+".bin" << endl;
+        exit(-42);
+    }
+}
+
+
+vector<streampos>* Hash::SelectAll(string& query){
+    if(this->handle != nullptr){
+        delete this->handle;
+        this->handle = nullptr;
+    }
+    vector<streampos>* result = new vector<streampos>;
+    fstream file(path+"id_"+query+".bin", fstream::in|fstream::binary);
+    streampos aux;
+    if(file.is_open()){
+        while(file.read(reinterpret_cast<char*>(&aux), sizeof(streampos)))
+            result->push_back(aux);
+        file.close();
+    }
+    this->handle = result;
+    return result;
+}
+
 } // NAMESPACE SPATIALINDEX

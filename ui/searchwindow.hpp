@@ -8,6 +8,7 @@
 #include "insertpointwindow.hpp"
 #include "variaveis.hpp"
 #include "stringwindow.hpp"
+#include "rtree.hpp"
 
 namespace Ui {
 class SearchWindow;

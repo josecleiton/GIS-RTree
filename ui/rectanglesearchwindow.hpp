@@ -2,9 +2,9 @@
 #define RECTANGLESEARCHWINDOW_HPP
 
 #include <QDialog>
+#include "icon.hpp"
 #include <QMessageBox>
 #include <vector>
-#include "icon.hpp"
 #include "variaveis.hpp"
 #include "rtree.hpp"
 #include "spatialdata.hpp"

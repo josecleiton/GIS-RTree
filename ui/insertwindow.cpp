@@ -111,7 +111,7 @@ void InsertWindow::Inserir(){
             root.Inserir(MBR, posicao_forma);  // FUNÇÃO NA ARVORE PARA INSERIR O MBR E A POSIÇÃO EM DISCO (TEM QUE SER IMPLEMENTADA)
             MB.information(nullptr, "Sucesso", "Forma inserida no banco de dados.");
             if(ui->ID->text().size()){ //TIPO FOI INSERIDO
-                DiskAPI::Hash H;
+                SpatialIndex::Hash H;
                 H.Insere(ui->ID->text().toStdString(), posicao_forma);
             }
         }

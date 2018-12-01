@@ -9,6 +9,7 @@
 #include "spatialdata.hpp"
 
 #define RTREE_FILENAME "../GIS/rtree/rtree.bin"
+#define H_FILENAME "../GIS/spatialdata/"
 using namespace std;
 using namespace SpatialData;
 namespace SpatialIndex{
@@ -107,6 +108,20 @@ public:
 
 void Kai(stack<NodeAux>&);
 void Kai(vector<NodeAux>&);
+
+class Hash{
+private:
+    vector<streampos>* handle{};
+    string path;
+public:
+    Hash();
+    ~Hash();
+    bool ArquivoVazio();
+    void Insere(string, streampos&);
+    void Busca(string&, bool&);
+    vector<streampos>* SelectAll(string&);
+};
+
 
 }
 #endif // RTREE_HPP
