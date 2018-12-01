@@ -19,11 +19,11 @@ FindWindow::~FindWindow()
 void FindWindow::on_remove_clicked()
 {
     QMessageBox ask;
-    int escolha = ask.warning(nullptr, "Tem certeza?", "Sua decisão afetará significativamente o banco de dados.", QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+    int escolha = ask.warning(nullptr, "Tem certeza?", "Sua decisão afetará significativamente a organização dos dados.", QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
     if(escolha == QMessageBox::Ok){
         this->remove = true;
         QMessageBox QMB;
-        QMB.information(nullptr, "Sucesso", "Forma(s) removida(s) do banco de dados.");
+        QMB.information(nullptr, "Sucesso", "Forma(s) removida(s) da R-Tree.");
         this->close();
     }
 }

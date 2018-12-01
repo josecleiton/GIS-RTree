@@ -65,14 +65,14 @@ void RectangleSearchWindow::on_button_clicked()
         }
         else{
             QMessageBox erro;
-            erro.critical(nullptr, "ERRO CRITICO DE ORGANIZAÇÃO", "Fatal error: banco de dados necessita reorganização.");
+            erro.critical(nullptr, "ERRO CRITICO DE ORGANIZAÇÃO", "Fatal error: os dados necessitam de reorganização.");
             this->close();
         }
     }
     else{
         //NÃO ENCONTRADO
         QMessageBox mbox;
-        mbox.critical(nullptr, "Erro", "Retângulo não encontrado no banco de dados.");
+        mbox.critical(nullptr, "Erro", "Retângulo não encontrado na R-Tree.");
         this->listaRegistros= nullptr;
     }
 }

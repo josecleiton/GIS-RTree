@@ -19,7 +19,7 @@
      <item alignment="Qt::AlignHCenter">
       <widget class="QLabel" name="titulo">
        <property name="text">
-        <string>Busca no BD</string>
+        <string>Busca nas Estruturas de Dados</string>
        </property>
       </widget>
      </item>

@@ -225,7 +225,7 @@ void SearchWindow::on_ponto_clicked()
         if(!Lista.empty())
             QMB.information(nullptr, "Sucesso!", QString::number(Lista.size())+" caixa(s) contêm o ponto "+QString::fromStdString(aux.str()));
         else
-            QMB.critical(nullptr, "Erro", "Ponto não encontrado no BD.");
+            QMB.critical(nullptr, "Erro", "Ponto não encontrado na R-Tree.");
         delete P;
     }
     else

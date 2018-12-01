@@ -47,7 +47,7 @@ void MainWindow::on_info_clicked()
 
 void MainWindow::EmptyDS(){
     QMessageBox mbox;
-    mbox.critical(nullptr, "Erro", "Primeiro insira elementos no banco de dados.");
+    mbox.critical(nullptr, "Erro", "Primeiro insira elementos na estrutura de dados.");
 }
 
 

@@ -30,7 +30,7 @@ QPainter* RenderArea::defaultPainter(){
 
 void RenderArea::desenha(){
     QColor cores[QNT_CORES] = {
-        Qt::blue, Qt::green, Qt::red, Qt::darkRed,
+        Qt::blue, Qt::black, Qt::red, Qt::darkRed,
         Qt::darkGreen, Qt::darkBlue, Qt::cyan, Qt::magenta,
         Qt::yellow, Qt::gray, Qt::darkCyan, Qt::darkMagenta,
         Qt::darkYellow, Qt::darkGray, Qt::lightGray
