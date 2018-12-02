@@ -31,6 +31,8 @@ private slots:
 
     void on_id_clicked();
 
+    void on_all_clicked();
+
 private:
     Ui::SearchWindow *ui;
 };

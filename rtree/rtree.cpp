@@ -504,7 +504,7 @@ list<Chave> RTree::Reorganizar(stack<NodeAux>& Caminho){
     if(No.ptr != root.GetPtr()){
         if(No.ptr->Chaves.size() < MINCHAVES){
             this->count--;
-            Q.splice(Q.end(), EncontreAsFolhas(No.ptr));
+            Q.splice(Q.end(), EncontreAsFolhas(No.ptr, true));
             Caminho.pop();
             Q.splice(Q.end(), Reorganizar(Caminho));
         }
@@ -522,7 +522,7 @@ void RTree::Reinserir(list<Chave>& ChavesExcedentes){
     ChavesExcedentes.clear();
 }
 
-list<Chave> RTree::EncontreAsFolhas(Node*& no){ // CUIDADO COM ESSE METODO
+list<Chave> RTree::EncontreAsFolhas(Node* no, bool remove){ // CUIDADO COM ESSE METODO
     list<Chave> LC;
     if(no->Folha()){
         for(auto item: no->Chaves)
@@ -532,12 +532,12 @@ list<Chave> RTree::EncontreAsFolhas(Node*& no){ // CUIDADO COM ESSE METODO
         Node* aux = nullptr;
         for(auto item: no->Chaves){
             aux = new Node(item.ChildPtr);
-            LC.splice(LC.end(), EncontreAsFolhas(aux));
+            LC.splice(LC.end(), EncontreAsFolhas(aux, remove));
         }
 
     }
     if(no != raiz){
-        no->Delete();
+        if(remove) no->Delete();
         delete no;
     }
     return LC;

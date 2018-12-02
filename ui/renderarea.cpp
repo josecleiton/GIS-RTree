@@ -41,10 +41,10 @@ void RenderArea::desenha(){
     double gap = getGap();
     for(auto r: regs){
         if(r != nullptr and r->tam){
-            vertices = r->lista->toQPoint(gap);
             p->setPen(QPen(cores[i++%QNT_CORES], 0.3, Qt::SolidLine));
             tipo = r->tipo;
             if(tipo != CIRCULO){
+                vertices = r->lista->toQPoint(gap);
                 if(tipo == POLIGONO)
                     p->drawConvexPolygon(vertices.first, vertices.second);
                 else if(tipo == LINHA)
@@ -54,8 +54,9 @@ void RenderArea::desenha(){
                 else if(tipo == PONTO)
                     p->drawPoint(vertices.first[0]);
                 else{
-                    for(int i=0; i<vertices.second; i++)
-                        p->drawPoint(vertices.first[i]);
+                    int i=0;
+                    while(i < vertices.second)
+                        p->drawPoint(vertices.first[i++]);
                 }
                 delete[] vertices.first;
             }
@@ -76,11 +77,10 @@ void RenderArea::desenha(){
 
 double RenderArea::getGap(){
     double gap = 0.0;
-    if(regs.size() > 1){
+    if(regs.size() > 1)
         for(auto r: regs)
             gap = min(r->lista->GetMin(), gap);
-    }
-    return gap;
+    return abs(gap);
 }
 
 bool RenderArea::listaValida(){

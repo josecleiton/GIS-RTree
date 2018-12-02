@@ -101,7 +101,7 @@ public:
    void Remove(stack<NodeAux>&);
    list<Chave> Reorganizar(stack<NodeAux>&);
    void Reinserir(list<Chave>&);
-   list<Chave> EncontreAsFolhas(Node*&);
+   list<Chave> EncontreAsFolhas(Node*, bool remove);
    bool ArquivoVazio();
    string GetNivel();
 };

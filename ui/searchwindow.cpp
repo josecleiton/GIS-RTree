@@ -266,3 +266,23 @@ void SearchWindow::on_id_clicked()
     }
     QMB.critical(nullptr, "Não há formas com esse ID", "Tente novamente, por favor.");
 }
+
+void SearchWindow::on_all_clicked()
+{
+    //PEGA TODAS AS CHAVES E MOSTRA
+    FindWindow FW;
+    FW.setModal(true);
+    auto ListaChaves = root.EncontreAsFolhas(root.GetPtr(), false);
+    DiskAPI::Registro **R = new DiskAPI::Registro*[ListaChaves.size()];
+    DiskAPI::Disk io(FILENAME);
+    unsigned i = 0;
+    for(auto chave: ListaChaves)
+        R[i++] = io.Read(chave.Dado);
+    FW.setRegistros(R, ListaChaves.size(), true);
+    FW.setInterCircle(true);
+    FW.exec();
+    for(i=0; i<ListaChaves.size(); i++)
+        if(R[i] != nullptr)
+            delete R[i];
+    delete[] R;
+}

@@ -13,55 +13,51 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item alignment="Qt::AlignHCenter">
-      <widget class="QLabel" name="titulo">
-       <property name="text">
-        <string>Busca nas Estruturas de Dados</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="interseccao">
-       <property name="text">
-        <string>Buscar por Intersecção</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="retangulo">
-       <property name="text">
-        <string>Buscar por Retângulo</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ponto">
-       <property name="text">
-        <string>Buscar por Ponto</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="id">
-       <property name="text">
-        <string>Buscar por ID</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QPushButton" name="all">
+     <property name="text">
+      <string>Buscar Todos</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="retangulo">
+     <property name="text">
+      <string>Buscar por Retângulo</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="interseccao">
+     <property name="text">
+      <string>Buscar por Intersecção</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="ponto">
+     <property name="text">
+      <string>Buscar por Ponto</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="id">
+     <property name="text">
+      <string>Buscar por ID</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
