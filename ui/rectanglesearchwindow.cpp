@@ -53,7 +53,7 @@ void RectangleSearchWindow::on_button_clicked()
                 FW.setModal(true);
                 FW.setRegistros(Reg, 1, false);
                 FW.exec();
-                if(FW.GetRemove()){
+                if(FW.getRemove()){
                     root.Remove(caminho);
                     io.Remove(K.Dado);
                 }

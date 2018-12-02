@@ -271,6 +271,7 @@ void SearchWindow::on_all_clicked()
 {
     //PEGA TODAS AS CHAVES E MOSTRA
     FindWindow FW;
+    FW.setWindowTitle("SELECT *");
     FW.setModal(true);
     auto ListaChaves = root.EncontreAsFolhas(root.GetPtr(), false);
     DiskAPI::Registro **R = new DiskAPI::Registro*[ListaChaves.size()];

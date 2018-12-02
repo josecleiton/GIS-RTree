@@ -21,7 +21,7 @@ public:
     explicit FindWindow(QWidget *parent = nullptr);
     ~FindWindow();
     bool setRegistros(DiskAPI::Registro** &, size_t, bool);
-    bool GetRemove();
+    bool getRemove();
     bool listaValida();
     void setInterCircle(bool);
 
