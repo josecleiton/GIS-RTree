@@ -27,6 +27,7 @@ void MainWindow::on_buscar_clicked(){
         SearchWindow searchwindow;
         searchwindow.setModal(true);
         searchwindow.exec();
+        if(searchwindow.getNuke()) this->close();
     }
     else
         EmptyDS();

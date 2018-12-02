@@ -15,12 +15,19 @@ SearchWindow::~SearchWindow()
     delete ui;
 }
 
+bool SearchWindow::getNuke(){
+    return this->nuke;
+}
+
 void SearchWindow::on_retangulo_clicked(){
     RectangleSearchWindow recwindow;
     recwindow.setModal(true);
     recwindow.SetInterseccao(false);
     recwindow.exec();
-    if(recwindow.GetNuke()) this->close();
+    if(recwindow.GetNuke()){
+        this->nuke = true;
+        this->close();
+    }
 }
 
 void SearchWindow::on_interseccao_clicked(){
@@ -286,6 +293,7 @@ void SearchWindow::on_all_clicked()
         root.ApagarArvore();
         io.RemoveAll();
         io.CleanDir(H_FILENAME, "id_*");
+        this->nuke = true;
         this->close();
     }
     for(i=0; i<ListaChaves.size(); i++)

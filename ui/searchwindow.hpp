@@ -21,6 +21,7 @@ class SearchWindow : public QDialog
 public:
     explicit SearchWindow(QWidget *parent = nullptr);
     ~SearchWindow();
+    bool getNuke();
 
 private slots:
     void on_retangulo_clicked();
@@ -35,6 +36,7 @@ private slots:
 
 private:
     Ui::SearchWindow *ui;
+    bool nuke{};
 };
 
 #endif // SEARCHWINDOW_HPP
