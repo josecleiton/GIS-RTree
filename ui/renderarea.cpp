@@ -61,12 +61,11 @@ void RenderArea::desenha(){
                 delete[] vertices.first;
             }
             else{
-                QPointF centro;
+                QPointF centro(r->lista->GetX()+gap, r->lista->GetY()+gap);
                 if(!interCircle){
                     centro.setX(10);
                     centro.setY(10);
                 }
-                else centro = r->lista->GetPonto().toQPoint();
                 qreal raio = r->lista->Horario()->GetX();
                 p->drawEllipse(centro, raio, raio);
             }
