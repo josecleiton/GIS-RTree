@@ -116,10 +116,7 @@ Registro* Disk::Read(streampos pos){
 
 bool Disk::RemoveAll(){
     file.close();
-    if(remove(FILENAME))
-        cerr << "Failed to delete " << FILENAME << ": " << strerror(errno) << '\n';
-    else
-        clog << "Arquivo " << FILENAME << " excluido." << '\n';
+    remove(FILENAME);
     file.open(FILENAME, fstream::binary|fstream::app|fstream::in);
     if(file.is_open()) return true;
     cerr << "Arquivo: " << FILENAME << " não abriu.";
@@ -127,7 +124,8 @@ bool Disk::RemoveAll(){
 }
 
 void Disk::CleanDir(QString path, QString rule){
-    QDirIterator it(path, QStringList() << rule, QDir::Files);
+    QDir p(path);
+    QDirIterator it(p.absolutePath(), QStringList() << rule, QDir::Files);
     while(it.hasNext()){
         QFile f(it.next());
         f.remove();

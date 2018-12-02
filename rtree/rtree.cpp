@@ -192,14 +192,10 @@ bool RTree::ApagarArvore(){
         raiz = nullptr;
     }
     RTreeFile.close();
-    if(remove(RTREE_FILENAME))
-        cerr << "Failed to delete " << RTREE_FILENAME << ": " << strerror(errno) << '\n';
-    else
-        clog << "Arquivo " << RTREE_FILENAME << " excluido." << '\n';
     fstream temp(RTREE_FILENAME, fstream::binary|fstream::out);
     if(temp.is_open()){
         temp.close();
-        RTreeFile.open(RTREE_FILENAME, fstream::binary|fstream::in|fstream::out);
+        RTreeFile.open(RTREE_FILENAME, fstream::binary|fstream::out|fstream::in);
         if(RTreeFile.is_open()) return true;
     }
     cerr << "Arquivo: " << RTREE_FILENAME << " não foi reaberto." << endl;

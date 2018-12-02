@@ -10,6 +10,7 @@
 
 #define RTREE_FILENAME "../GIS/rtree/rtree.bin"
 #define H_FILENAME "../GIS/spatialdata/hash/"
+
 using namespace std;
 using namespace SpatialData;
 namespace SpatialIndex{
