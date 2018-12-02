@@ -87,8 +87,10 @@ public:
    bool IsEmpty();
    Node* GetPtr();
    void CriaArvore(Retangulo&, streampos&);
+   bool ApagarArvore();
    list<Chave> Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
    bool Busca(Node*, Retangulo&, vector<NodeAux>&);
+   bool Busca(Node*, Chave&, vector<NodeAux>&);
    Node* EscolhaSubArvore(Node*&, stack<NodeAux>&, Retangulo&);
    list<Chave> Traversal(streampos&, Ponto&);
    void InserirNo(Node*&, stack<NodeAux>&, Chave&);

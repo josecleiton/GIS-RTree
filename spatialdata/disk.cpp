@@ -114,6 +114,27 @@ Registro* Disk::Read(streampos pos){
     return nullptr;
 }
 
+bool Disk::RemoveAll(){
+    file.close();
+    remove(FILENAME);
+    fstream temp(FILENAME, fstream::binary|fstream::out);
+    if(temp.is_open()){
+        temp.close();
+        file.open(FILENAME, fstream::app|fstream::binary|fstream::in);
+        if(file.is_open()) return true;
+    }
+    cerr << "Arquivo: " << FILENAME << " não abriu.";
+    exit(-40);
+}
+
+void Disk::CleanDir(QString path, QString rule){
+    QDirIterator it(path, QStringList() << rule, QDir::Files);
+    while(it.hasNext()){
+        QFile f(it.next());
+        f.remove();
+    }
+}
+
 Registro::Registro(unsigned char type, Vertice* v, unsigned t): tipo(type), lista(v), tam(t){
 }
 
@@ -130,7 +151,7 @@ void* Registro::Conversao(){ // SE A CONVERSÃO FOR PARA PONTO OU ARESTA, PRECIS
         return new Ponto(lista->GetPonto());
     else if(tipo == CIRCULO)
         return new Circulo(lista->Horario()->GetX(), lista->GetPonto());
-    cerr << "Retornando a própria lista de vértices, tipo não suportado para conversão" << endl;
+    clog << "Retornando a própria lista de vértices, tipo não suportado para conversão" << endl;
     return lista;
 }
 

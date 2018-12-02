@@ -254,7 +254,7 @@ void SearchWindow::on_id_clicked()
             QMB.information(nullptr, "Formas encontradas!", "Foram encontradas "+QString::fromStdString(to_string(ativos))+" forma(s) do tipo: "+QString::fromStdString(query)+".");
             FindWindow FW;
             FW.setModal(true);
-            FW.setRegistros(ArrayReg, sizeResult, false);
+            FW.setRegistros(ArrayReg, sizeResult, true);
             FW.exec();
             for(size_t i=0; i<sizeResult; i++)
                 if(ArrayReg[i] != nullptr)
@@ -279,9 +279,14 @@ void SearchWindow::on_all_clicked()
     unsigned i = 0;
     for(auto chave: ListaChaves)
         R[i++] = io.Read(chave.Dado);
-    FW.setRegistros(R, ListaChaves.size(), true);
+    FW.setRegistros(R, ListaChaves.size(), false);
     FW.setInterCircle(true);
     FW.exec();
+    if(FW.getRemove()){
+        root.ApagarArvore();
+        io.RemoveAll();
+        io.CleanDir(H_FILENAME, "id_*");
+    }
     for(i=0; i<ListaChaves.size(); i++)
         if(R[i] != nullptr)
             delete R[i];

@@ -2,6 +2,7 @@
 #define DISK_HPP
 #include <iostream>
 #include <fstream>
+#include <QDirIterator>
 #include "spatialdata.hpp"
 #define FILENAME "../GIS/spatialdata/formas.bin"
 
@@ -35,6 +36,8 @@ public:
     streampos Salvar(Circulo&);
     void Remove(streampos&);
     void Verifica(); // VERIFICA SE O ARQUIVO FOI ABERTO
+    bool RemoveAll();
+    void CleanDir(QString, QString);
 };
 
 } // DiskAPI
