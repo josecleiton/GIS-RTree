@@ -60,9 +60,6 @@ Node::Node(streampos& no){
         cerr << "Página inválida! Reorganize antes de fazer outra requisição." << endl;
 }
 
-Node::~Node(){
-}
-
 streampos Node::SalvarNo(){
     unsigned count = static_cast<unsigned>(this->Chaves.size());
     Retangulo V;
@@ -177,7 +174,7 @@ void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
     streampos posicao = 1;
     this->count = 1u;
     this->altura = 0u;
-    this->registros = 0ull;
+    this->registros = 1ull;
     RTreeFile.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
     RTreeFile.write(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
     RTreeFile.write(reinterpret_cast<char*>(&(this->altura)), sizeof (unsigned));
@@ -195,8 +192,11 @@ bool RTree::ApagarArvore(){
         raiz = nullptr;
     }
     RTreeFile.close();
-    remove(RTREE_FILENAME);
-    fstream temp(RTREE_FILENAME, fstream::out|fstream::binary);
+    if(remove(RTREE_FILENAME))
+        cerr << "Failed to delete " << RTREE_FILENAME << ": " << strerror(errno) << '\n';
+    else
+        clog << "Arquivo " << RTREE_FILENAME << " excluido." << '\n';
+    fstream temp(RTREE_FILENAME, fstream::binary|fstream::out);
     if(temp.is_open()){
         temp.close();
         RTreeFile.open(RTREE_FILENAME, fstream::binary|fstream::in|fstream::out);
@@ -531,7 +531,7 @@ Node* RTree::Divide(Node* &no){
     return NoG2;
 }
 
-void RTree::Remove(Chave& K){
+bool RTree::Remove(Chave& K){
     vector<NodeAux> toStack;
     stack<NodeAux> caminho;
     Busca(root.GetPtr(), K, toStack);
@@ -540,17 +540,17 @@ void RTree::Remove(Chave& K){
         toStack.pop_back();
     }
     Remove(caminho);
-    if(root.GetPtr()->Chaves.empty()) //SE A RAIZ ESTIVER VAZIA, APAGUE A ARVORE
-        ApagarArvore();
+    return root.GetPtr()->Chaves.empty(); //SE A RAIZ ESTIVER VAZIA
 }
 
-void RTree::Remove(vector<NodeAux>& toStack){
+bool RTree::Remove(vector<NodeAux>& toStack){
     stack<NodeAux> caminho;
     while(!toStack.empty()){
         caminho.push(toStack.back());
         toStack.pop_back();
     }
     Remove(caminho);
+    return root.GetPtr()->Chaves.empty(); //SE A RAIZ ESTIVER VAZIA
 }
 
 void RTree::Remove(stack<NodeAux>& Caminho){
@@ -565,6 +565,7 @@ list<Chave> RTree::Reorganizar(stack<NodeAux>& Caminho){
     if(Caminho.empty()) return Q;
     NodeAux No = Caminho.top();
     No.ptr->Chaves.erase(No.ptr->Chaves.begin()+No.index);
+    if(No.ptr->Folha()) registros--;
     if(No.ptr != root.GetPtr()){
         if(No.ptr->Chaves.size() < MINCHAVES){
             this->count--;

@@ -10,7 +10,7 @@ Disk::Disk(string name, bool append){
 }
 
 Disk::Disk(string name){
-    file.open(name, fstream::app|fstream::binary|fstream::in);
+    file.open(name, fstream::binary|fstream::app|fstream::in);
     Verifica();
 }
 
@@ -116,13 +116,12 @@ Registro* Disk::Read(streampos pos){
 
 bool Disk::RemoveAll(){
     file.close();
-    remove(FILENAME);
-    fstream temp(FILENAME, fstream::binary|fstream::out);
-    if(temp.is_open()){
-        temp.close();
-        file.open(FILENAME, fstream::app|fstream::binary|fstream::in);
-        if(file.is_open()) return true;
-    }
+    if(remove(FILENAME))
+        cerr << "Failed to delete " << FILENAME << ": " << strerror(errno) << '\n';
+    else
+        clog << "Arquivo " << FILENAME << " excluido." << '\n';
+    file.open(FILENAME, fstream::binary|fstream::app|fstream::in);
+    if(file.is_open()) return true;
     cerr << "Arquivo: " << FILENAME << " não abriu.";
     exit(-40);
 }

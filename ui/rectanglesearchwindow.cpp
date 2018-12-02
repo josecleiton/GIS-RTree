@@ -54,8 +54,14 @@ void RectangleSearchWindow::on_button_clicked()
                 FW.setRegistros(Reg, 1, false);
                 FW.exec();
                 if(FW.getRemove()){
-                    root.Remove(caminho);
-                    io.Remove(K.Dado);
+                    if(!root.Remove(caminho))
+                        io.Remove(K.Dado);
+                    else{
+                        root.ApagarArvore();
+                        io.RemoveAll();
+                        io.CleanDir(H_FILENAME, "id_*");
+                        this->nuke = true;
+                    }
                 }
                 delete Reg[0];
                 delete[] Reg;
@@ -95,6 +101,10 @@ void RectangleSearchWindow::SetMBR(SpatialData::Retangulo R){
 
 SpatialData::Retangulo RectangleSearchWindow::GetMBR(){
     return this->MBR;
+}
+
+bool RectangleSearchWindow::GetNuke(){
+    return this->nuke;
 }
 
 void RectangleSearchWindow::on_cancel_clicked()

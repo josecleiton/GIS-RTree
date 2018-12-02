@@ -30,6 +30,7 @@ public:
     bool Interseccao();
     void ClearForm();
     void ClearReg();
+    bool GetNuke();
 
 private slots:
     void on_button_clicked();
@@ -39,7 +40,8 @@ private:
     Ui::RectangleSearchWindow *ui{};
     DiskAPI::Registro** listaRegistros{};
     SpatialData::Retangulo MBR{};
-    bool interseccao;
+    bool interseccao{};
+    bool nuke{};
 };
 
 #endif // RECTANGLESEARCHWINDOW_HPP

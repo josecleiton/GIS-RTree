@@ -37,7 +37,7 @@ public:
     void Remove(streampos&);
     void Verifica(); // VERIFICA SE O ARQUIVO FOI ABERTO
     bool RemoveAll();
-    void CleanDir(QString, QString);
+    void CleanDir(QString path, QString rule);
 };
 
 } // DiskAPI

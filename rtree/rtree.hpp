@@ -55,7 +55,6 @@ struct Node{
     Node(streampos&);
     Node(Retangulo& R, streampos& PosR);
     Node(vector<Node*>&);
-    ~Node();
     streampos SalvarNo();
     streampos Delete();
     bool Ajusta(Retangulo&, unsigned);
@@ -98,8 +97,8 @@ public:
    void DividirEAjustar(Node*&, stack<NodeAux>&);
    Node* Divide(Node*&);
    void CriaNovaRaiz(Node*&, Node*&);
-   void Remove(Chave& K);
-   void Remove(vector<NodeAux>&);
+   bool Remove(Chave& K);
+   bool Remove(vector<NodeAux>&);
    void Remove(stack<NodeAux>&);
    list<Chave> Reorganizar(stack<NodeAux>&);
    void Reinserir(list<Chave>&);

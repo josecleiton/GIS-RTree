@@ -113,6 +113,7 @@ public:
     int PontoNoPoligono(Ponto&);
     bool PontoNoPoligonoConvexo(Ponto&);
     double Area();
+    Ponto Centroide(double area);
     void Apagar();
     void setFakeKai(bool);
     friend ostream& operator<<(ostream&, const Poligono&);

@@ -91,7 +91,11 @@ void FindWindow::on_info_clicked() // MOSTRA AS INFORMAÇÕES DOS REGISTROS ENCO
             conteudo += "Quantidade de Vértices: "+to_string(temp->GetSize())+"\n";
             conteudo += "Coordenadas dos Vértices: ";
             aux << *temp;
-            conteudo += aux.str()+"\n Area: "+to_string(temp->Area())+"\n";
+            double area = temp->Area();
+            conteudo += aux.str()+"\n Area: "+to_string(area)+"\n Centroide: ";
+            aux.str(""); aux.clear();
+            aux << temp->Centroide(area);
+            conteudo += aux.str()+"\n";
             temp->setFakeKai(true);
             delete temp;
         }

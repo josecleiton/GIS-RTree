@@ -333,6 +333,25 @@ double Poligono::Area(){
     return abs(area/2.0);
 }
 
+Ponto Poligono::Centroide(double area){
+    unsigned numVertices = this->GetSize();
+    vector<double> X(numVertices+1), Y(numVertices+1);
+    Ponto temp;
+    for(unsigned i=0; i<numVertices; i++, this->Avancar(HORARIO)){
+        temp = this->GetPonto();
+        X[i] = temp.x;
+        Y[i] = temp.y;
+    }
+    X[numVertices] = X[0];
+    Y[numVertices] = Y[0];
+    double xc = 0.0, yc = 0.0;
+    for(unsigned i=0; i < numVertices; i++){
+        xc+=(X[i]+X[i+1])*(X[i]*Y[i+1]-X[i+1]*Y[i])/(6*area);
+        yc+=(Y[i]+Y[i+1])*(X[i]*Y[i+1]-X[i+1]*Y[i])/(6*area);
+    }
+    return Ponto(xc, yc);
+}
+
 Poligono* Poligono::Interseccao(Poligono& P){
     Poligono* R = nullptr;
     Ponto iPnt, startPnt;

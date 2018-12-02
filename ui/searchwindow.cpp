@@ -20,12 +20,13 @@ void SearchWindow::on_retangulo_clicked(){
     recwindow.setModal(true);
     recwindow.SetInterseccao(false);
     recwindow.exec();
+    if(recwindow.GetNuke()) this->close();
 }
 
 void SearchWindow::on_interseccao_clicked(){
     RectangleSearchWindow RSW;
     DiskAPI::Registro **R = new DiskAPI::Registro*[2], **temp = nullptr;
-    R[0] = R[1] = nullptr;
+    memset(R, 0, sizeof(DiskAPI::Registro*)*2);
     SpatialData::Retangulo MBR[2];
     for(unsigned j=0; j<2; j++){
         RSW.setModal(true);
@@ -275,7 +276,6 @@ void SearchWindow::on_all_clicked()
     FW.setModal(true);
     auto ListaChaves = root.EncontreAsFolhas(root.GetPtr(), false);
     DiskAPI::Registro **R = new DiskAPI::Registro*[ListaChaves.size()];
-    DiskAPI::Disk io(FILENAME);
     unsigned i = 0;
     for(auto chave: ListaChaves)
         R[i++] = io.Read(chave.Dado);
@@ -286,6 +286,7 @@ void SearchWindow::on_all_clicked()
         root.ApagarArvore();
         io.RemoveAll();
         io.CleanDir(H_FILENAME, "id_*");
+        this->close();
     }
     for(i=0; i<ListaChaves.size(); i++)
         if(R[i] != nullptr)
