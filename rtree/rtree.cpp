@@ -202,9 +202,14 @@ bool RTree::ApagarArvore(){
     exit(-41);
 }
 
-size_t RTree::GetCount(){
+unsigned RTree::GetCount(){
     return this->count;
 }
+
+unsigned RTree::GetAltura(){
+    return this->altura;
+}
+
 size_t RTree::GetRegistros(){
     return this->registros;
 }
@@ -602,21 +607,6 @@ list<Chave> RTree::EncontreAsFolhas(Node* no, bool remove){ // CUIDADO COM ESSE 
         delete no;
     }
     return LC;
-}
-
-string RTree::GetNivel(){
-    return to_string(this->altura);
-    /*
-    string saida;
-    size_t N = GetRegistros();
-    double m = MINCHAVES, h = ceil(log(N)/log(m));
-    unsigned alturaMaxima = static_cast<unsigned>(h-1);
-    m = MAXCHAVES;
-    h = ceil(log(N)/log(m));
-    unsigned alturaMinima = static_cast<unsigned>(h-1);
-    saida = "[" + to_string(alturaMinima) +", "+ to_string(alturaMaxima) + "]";
-    return saida;
-    */
 }
 
 bool Node::Folha(){

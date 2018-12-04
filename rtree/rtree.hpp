@@ -80,7 +80,8 @@ private:
 public:
    RTree();
    ~RTree();
-   size_t GetCount();
+   unsigned GetCount();
+   unsigned GetAltura();
    size_t GetRegistros();
    void Inserir(Retangulo&, streampos&);
    void Inserir(Chave&);
@@ -105,7 +106,6 @@ public:
    void Reinserir(list<Chave>&);
    list<Chave> EncontreAsFolhas(Node*, bool remove);
    bool ArquivoVazio();
-   string GetNivel();
 };
 
 void Kai(stack<NodeAux>&);
@@ -120,7 +120,6 @@ public:
     ~Hash();
     bool ArquivoVazio();
     void Insere(string, streampos&);
-    void Busca(string&, bool&);
     vector<streampos>* SelectAll(string&);
 };
 

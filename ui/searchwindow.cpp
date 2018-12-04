@@ -244,6 +244,7 @@ void SearchWindow::on_id_clicked()
 {
     string query;
     StringWindow Aux;
+    Aux.setWindowTitle("Insira o identificador");
     Aux.setModal(true);
     Aux.exec();
     query = Aux.getStr();

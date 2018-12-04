@@ -9,7 +9,7 @@ StringWindow::StringWindow(QWidget *parent) :
     QRegExp regx(WORD_REGEX);
     QRegExpValidator *validator = new QRegExpValidator(regx, this);
     ui->campoStr->setValidator(validator);
-    this->setWindowTitle("Identificador");
+    this->setWindowTitle("Insira uma palavra");
     this->setWindowIcon(QIcon(ICON));
 }
 

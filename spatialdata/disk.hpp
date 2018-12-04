@@ -28,7 +28,7 @@ class Disk{
 private:
     fstream file;
 public:
-    Disk(string, bool);
+    Disk(string, bool append);
     Disk(string);
     ~Disk();
     streampos Salvar(unsigned char, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO

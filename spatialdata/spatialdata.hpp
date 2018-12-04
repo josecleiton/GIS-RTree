@@ -157,7 +157,7 @@ public:
     bool InterRetang(Ponto&, Ponto&, Ponto&, Ponto&); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
     bool Contem(Ponto&);
     bool Contem(Retangulo&);
-    double Ajusta(Retangulo&, bool&);
+    double Ajusta(Retangulo&, bool& mod);
     double CalcularArea();
     double GetArea();
     const Aresta& GetDiagonal();
@@ -193,7 +193,7 @@ int EsquerdaDireita(Ponto*, Ponto*);
 int DireitaEsquerda(Ponto*, Ponto*);
 bool aimsAt(Aresta&, Aresta&, int, int);
 int crossingPoint(Aresta&, Aresta&, Ponto&);
-void advance(Poligono&, Poligono&, bool);
+void advance(Poligono&, Poligono&, bool inside);
 
 bool operator==(const Aresta&, const Aresta&);
 bool operator!=(const Aresta&, const Aresta&);
