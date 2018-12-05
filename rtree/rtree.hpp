@@ -77,16 +77,19 @@ private:
     unsigned count{}; // CONTADOR DE NÓS
     unsigned altura{}; // ALTURA DA ÁRVORE
     size_t registros{}; // NUMERO DE REGISTROS
+    fstream treeFile; // BUFFER QUE CARREGA O ARQUIVO RTREE_FILE USADO
+    //                           COMO STREAM DOS NÓS DA ÁRVORE R
 public:
    RTree();
    ~RTree();
+   fstream& File();
    unsigned GetCount();
    unsigned GetAltura();
    size_t GetRegistros();
    void Inserir(Retangulo&, streampos&); // INSERE O RETANGULO NA ÁRVORE
    void Inserir(Chave&);
    bool IsEmpty();
-   Node* GetPtr();
+   Node* NodePtr();
    void CriaArvore(Retangulo&, streampos&); // CRIA ÁRVORE COM UM ELEMENTO
    bool ApagarArvore(); // APAGA TODA A ARVORE (FISICAMENTE)
    list<Chave> Busca(Ponto&); // BUSCA UM PONTO NA ARVORE

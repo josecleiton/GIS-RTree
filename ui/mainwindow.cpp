@@ -23,7 +23,7 @@ void MainWindow::on_inserir_clicked()
 }
 
 void MainWindow::on_buscar_clicked(){
-    if(root.GetPtr() != nullptr){
+    if(root.NodePtr() != nullptr){
         SearchWindow searchwindow;
         searchwindow.setModal(true);
         searchwindow.exec();
@@ -36,7 +36,7 @@ void MainWindow::on_buscar_clicked(){
 void MainWindow::on_info_clicked()
 {
     QMessageBox w;
-    if(root.GetPtr() != nullptr){
+    if(root.NodePtr() != nullptr){
         string nos = to_string(root.GetCount());
         string nivel = to_string(root.GetAltura());
         string folhas = to_string(root.GetRegistros());
@@ -59,10 +59,11 @@ void MainWindow::on_cancel_clicked(){
 void MainWindow::on_creditos_clicked()
 {
     QMessageBox QMB;
-    QString feito("Feito por: Danilo Nascimento, José Cleiton Borges, Matheus Souza.\n");
+    QString feito("Feito por: Danilo Nascimento, José Cleiton Borges, Matheus Souza\n");
     QString orientador("Orientador: Jorge Sampaio Farias\n");
     QString universidade("UNEB - Universidade do Estado da Bahia\n");
     QString curso("Sistemas de Informação - Estruturas de Dados II\n");
     QString ano("Período: 2018.2\n");
-    QMB.information(nullptr, "Créditos", feito+universidade+curso+orientador+ano);
+    QString licensa("Licensa: MIT");
+    QMB.information(nullptr, "Créditos", universidade+curso+orientador+feito+ano+licensa);
 }

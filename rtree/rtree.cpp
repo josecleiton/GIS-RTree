@@ -51,15 +51,15 @@ Node::Node(vector<Node*>& K){
 
 Node::Node(streampos& no){
     bool active = false;
-    RTreeFile.seekg(no, fstream::beg);
-    RTreeFile.read(reinterpret_cast<char*>(&active), sizeof(bool));
+    root.File().seekg(no, fstream::beg);
+    root.File().read(reinterpret_cast<char*>(&active), sizeof(bool));
     if(active){
         unsigned count;
-        RTreeFile.read(reinterpret_cast<char*>(&Nivel), sizeof(unsigned));
-        RTreeFile.read(reinterpret_cast<char*>(&count), sizeof(unsigned));
+        root.File().read(reinterpret_cast<char*>(&Nivel), sizeof(unsigned));
+        root.File().read(reinterpret_cast<char*>(&count), sizeof(unsigned));
         this->Chaves.resize(count);
         for(unsigned i=0; i<count; i++)
-            RTreeFile.read(reinterpret_cast<char*>(&(Chaves[i])), sizeof(Chave));
+            root.File().read(reinterpret_cast<char*>(&(Chaves[i])), sizeof(Chave));
         this->DiskPos = no;
     }
     else
@@ -73,27 +73,27 @@ streampos Node::SalvarNo(){
     bool active = true;
     Chave key(V, x, FOLHA);
     if(DiskPos)
-        RTreeFile.seekp(this->DiskPos, fstream::beg);
+        root.File().seekp(this->DiskPos, fstream::beg);
     else{
-        RTreeFile.seekp(0, fstream::end);
-        this->DiskPos = RTreeFile.tellp();
+        root.File().seekp(0, fstream::end);
+        this->DiskPos = root.File().tellp();
     }
-    RTreeFile.write(reinterpret_cast<char*>(&active), sizeof(bool));
-    RTreeFile.write(reinterpret_cast<char*>(&(this->Nivel)), sizeof(unsigned));
-    RTreeFile.write(reinterpret_cast<char*>(&count), sizeof(unsigned));
+    root.File().write(reinterpret_cast<char*>(&active), sizeof(bool));
+    root.File().write(reinterpret_cast<char*>(&(this->Nivel)), sizeof(unsigned));
+    root.File().write(reinterpret_cast<char*>(&count), sizeof(unsigned));
     for(unsigned i=0; i<MAXCHAVES; i++){
         if(i<count)
-            RTreeFile.write(reinterpret_cast<char*>(&(this->Chaves[i])), sizeof(Chave));
+            root.File().write(reinterpret_cast<char*>(&(this->Chaves[i])), sizeof(Chave));
         else
-            RTreeFile.write(reinterpret_cast<char*>(&key), sizeof(Chave));
+            root.File().write(reinterpret_cast<char*>(&key), sizeof(Chave));
     }
     return this->DiskPos;
 }
 
 streampos Node::Delete(){
     bool active = false;
-    RTreeFile.seekp(this->DiskPos, fstream::beg);
-    RTreeFile.write(reinterpret_cast<char*>(&active), sizeof(bool));
+    root.File().seekp(this->DiskPos, fstream::beg);
+    root.File().write(reinterpret_cast<char*>(&active), sizeof(bool));
     return this->DiskPos;
 }
 /*
@@ -124,14 +124,14 @@ Retangulo Node::GetRetangulo(){
 }
 
 RTree::RTree(){
-    RTreeFile.open(RTREE_FILENAME, fstream::binary|fstream::in|fstream::out);
+    this->treeFile.open(RTREE_FILENAME, fstream::binary|fstream::in|fstream::out);
     if(!ArquivoVazio()){
-        if(RTreeFile.is_open()){
+        if(this->treeFile.is_open()){
             streampos PosicaoDaRaiz;
-            RTreeFile.read(reinterpret_cast<char*>(&PosicaoDaRaiz), sizeof(streampos));
-            RTreeFile.read(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
-            RTreeFile.read(reinterpret_cast<char*>(&(this->altura)), sizeof(unsigned));
-            RTreeFile.read(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
+            this->treeFile.read(reinterpret_cast<char*>(&PosicaoDaRaiz), sizeof(streampos));
+            this->treeFile.read(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
+            this->treeFile.read(reinterpret_cast<char*>(&(this->altura)), sizeof(unsigned));
+            this->treeFile.read(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
             this->raiz = new Node(PosicaoDaRaiz);
         }
         else{
@@ -144,35 +144,30 @@ RTree::RTree(){
 }
 
 bool RTree::ArquivoVazio(){
-    if(RTreeFile.is_open()){
+    if(this->treeFile.is_open()){
         streampos inicio, fim;
-        inicio = RTreeFile.tellg();
-        RTreeFile.seekg(0, fstream::end);
-        fim = RTreeFile.tellg();
-        RTreeFile.seekg(0, fstream::beg);
+        inicio = this->treeFile.tellg();
+        this->treeFile.seekg(0, fstream::end);
+        fim = this->treeFile.tellg();
+        this->treeFile.seekg(0, fstream::beg);
         return inicio == fim;
     }
     else{
-        RTreeFile.open(RTREE_FILENAME, fstream::in|fstream::out|fstream::binary);
-        if(!RTreeFile.is_open()){
-            string file = RTREE_FILENAME;
-            cerr << file+" não abriu!" << endl;
-            exit(-40);
-        }
-        return ArquivoVazio();
+        cerr << strerror(errno) << endl;
+        abort();
     }
 }
 
 RTree::~RTree(){
     if(raiz != nullptr){
-        RTreeFile.seekp(0, fstream::beg);
-        RTreeFile.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
-        RTreeFile.write(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
-        RTreeFile.write(reinterpret_cast<char*>(&(this->altura)), sizeof(unsigned));
-        RTreeFile.write(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
+        this->treeFile.seekp(0, fstream::beg);
+        this->treeFile.write(reinterpret_cast<char*>(&(this->raiz->DiskPos)), sizeof(streampos));
+        this->treeFile.write(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
+        this->treeFile.write(reinterpret_cast<char*>(&(this->altura)), sizeof(unsigned));
+        this->treeFile.write(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
         delete this->raiz;
     }
-    RTreeFile.close();
+    this->treeFile.close();
 }
 
 void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
@@ -181,15 +176,19 @@ void RTree::CriaArvore(Retangulo& MbrForma, streampos& pos){
     this->count = 1u;
     this->altura = 0u;
     this->registros = 1ull;
-    RTreeFile.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
-    RTreeFile.write(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
-    RTreeFile.write(reinterpret_cast<char*>(&(this->altura)), sizeof (unsigned));
-    RTreeFile.write(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
-    root->DiskPos = RTreeFile.tellp();
-    RTreeFile.seekp(0, fstream::beg);
-    RTreeFile.write(reinterpret_cast<char*>(&(root->DiskPos)), sizeof(streampos));
+    this->treeFile.write(reinterpret_cast<char*>(&posicao), sizeof(streampos));
+    this->treeFile.write(reinterpret_cast<char*>(&(this->count)), sizeof(unsigned));
+    this->treeFile.write(reinterpret_cast<char*>(&(this->altura)), sizeof (unsigned));
+    this->treeFile.write(reinterpret_cast<char*>(&(this->registros)), sizeof(size_t));
+    root->DiskPos = this->treeFile.tellp();
+    this->treeFile.seekp(0, fstream::beg);
+    this->treeFile.write(reinterpret_cast<char*>(&(root->DiskPos)), sizeof(streampos));
     this->raiz = root;
     root->SalvarNo();
+}
+
+fstream& RTree::File(){
+    return this->treeFile;
 }
 
 bool RTree::ApagarArvore(){
@@ -197,12 +196,12 @@ bool RTree::ApagarArvore(){
         delete raiz;
         raiz = nullptr;
     }
-    RTreeFile.close();
+    this->treeFile.close();
     fstream temp(RTREE_FILENAME, fstream::binary|fstream::out);
     if(temp.is_open()){
         temp.close();
-        RTreeFile.open(RTREE_FILENAME, fstream::binary|fstream::out|fstream::in);
-        if(RTreeFile.is_open()) return true;
+        this->treeFile.open(RTREE_FILENAME, fstream::binary|fstream::out|fstream::in);
+        if(this->treeFile.is_open()) return true;
     }
     cerr << "Arquivo: " << RTREE_FILENAME << " não foi reaberto." << endl;
     exit(-41);
@@ -224,8 +223,8 @@ bool RTree::IsEmpty(){
     return !count;
 }
 
-Node* RTree::GetPtr(){
-    return raiz;
+Node* RTree::NodePtr(){
+    return this->raiz;
 }
 
 bool RTree::Busca(Node* no, Retangulo& K, vector<NodeAux>& q){
@@ -294,7 +293,7 @@ bool RTree::Busca(Node* no, Chave& K, vector<NodeAux>& q){
 
 
 list<Chave> RTree::Busca(Ponto& P){
-    streampos RaizPos = root.GetPtr()->DiskPos;
+    streampos RaizPos = root.NodePtr()->DiskPos;
     list<Chave> ListadeNo = Traversal(RaizPos, P), resultado;
     for(auto item: ListadeNo){
         if(item.MBR.Contem(P))
@@ -319,7 +318,7 @@ list<Chave> RTree::Traversal(streampos& no, Ponto& P){
 }
 
 void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
-    Node* no = root.GetPtr();
+    Node* no = root.NodePtr();
     registros++;
     if(no == nullptr)
         return CriaArvore(MbrForma, pos);
@@ -335,7 +334,7 @@ void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
 
 void RTree::Inserir(Chave& K){
     Chave A = K;
-    Node* no = root.GetPtr();
+    Node* no = root.NodePtr();
     if(no == nullptr)
         return CriaArvore(A.MBR, A.Dado);
     stack<NodeAux> CaminhoNo;
@@ -539,13 +538,13 @@ Node* RTree::Divide(Node* &no){
 bool RTree::Remove(Chave& K){
     vector<NodeAux> toStack;
     stack<NodeAux> caminho;
-    Busca(root.GetPtr(), K, toStack);
+    Busca(root.NodePtr(), K, toStack);
     while(!toStack.empty()){
         caminho.push(toStack.back());
         toStack.pop_back();
     }
     Remove(caminho);
-    return root.GetPtr()->Chaves.empty(); //SE A RAIZ ESTIVER VAZIA
+    return root.NodePtr()->Chaves.empty(); //SE A RAIZ ESTIVER VAZIA
 }
 
 bool RTree::Remove(vector<NodeAux>& toStack){
@@ -555,7 +554,7 @@ bool RTree::Remove(vector<NodeAux>& toStack){
         toStack.pop_back();
     }
     Remove(caminho);
-    return root.GetPtr()->Chaves.empty(); //SE A RAIZ ESTIVER VAZIA
+    return root.NodePtr()->Chaves.empty(); //SE A RAIZ ESTIVER VAZIA
 }
 
 void RTree::Remove(stack<NodeAux>& Caminho){
@@ -571,7 +570,7 @@ list<Chave> RTree::Reorganizar(stack<NodeAux>& Caminho){
     NodeAux No = Caminho.top();
     No.ptr->Chaves.erase(No.ptr->Chaves.begin()+No.index);
     if(No.ptr->Folha()) registros--;
-    if(No.ptr != root.GetPtr()){
+    if(No.ptr != root.NodePtr()){
         if(No.ptr->Chaves.size() < MINCHAVES){
             this->count--;
             Q.splice(Q.end(), EncontreAsFolhas(No.ptr, true));
@@ -622,7 +621,7 @@ bool Node::Overflow(){
 }
 
 void Kai(stack<NodeAux>& pilha){
-    Node* raiz = root.GetPtr();
+    Node* raiz = root.NodePtr();
     Node* aux = nullptr;
     while(!pilha.empty()){
         aux = pilha.top().ptr;
@@ -633,7 +632,7 @@ void Kai(stack<NodeAux>& pilha){
 }
 
 void Kai(vector<NodeAux>& DS){
-    Node* raiz = root.GetPtr(), *aux = nullptr;
+    Node* raiz = root.NodePtr(), *aux = nullptr;
     while(!DS.empty()){
         aux = DS.back().ptr;
         if(aux != nullptr and aux != raiz)

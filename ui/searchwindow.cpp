@@ -282,7 +282,7 @@ void SearchWindow::on_all_clicked()
     FindWindow FW;
     FW.setWindowTitle("SELECT *");
     FW.setModal(true);
-    auto ListaChaves = root.EncontreAsFolhas(root.GetPtr(), false);
+    auto ListaChaves = root.EncontreAsFolhas(root.NodePtr(), false);
     DiskAPI::Registro **R = new DiskAPI::Registro*[ListaChaves.size()];
     unsigned i = 0;
     for(auto chave: ListaChaves)
