@@ -26,7 +26,7 @@ struct Registro{
 
 class Disk{
 private:
-    fstream file;
+    fstream file; // CLASSE QUE MANTEM O ARQUIVO COM OS OBJETOS SPATIALDATA
 public:
     Disk(string, bool append);
     Disk(string);
@@ -34,10 +34,10 @@ public:
     streampos Salvar(unsigned char, unsigned&, Vertice*); // ESCREVE SEQUENCIALMENTE NO DISCO
     Registro* Read(streampos); // LE UM POR VEZ
     streampos Salvar(Circulo&);
-    void Remove(streampos&);
+    void Remove(streampos&); // REMOVE LOGICAMENTE UM REGISTRO
     void Verifica(); // VERIFICA SE O ARQUIVO FOI ABERTO
-    bool RemoveAll();
-    void CleanDir(QString path, QString rule);
+    bool RemoveAll(); // REMOVE TODOS OS REGISTROS FISICAMENTE
+    void CleanDir(QString path, QString rule); // LIMPA UM DIRETORIO A PARTIR DE UMA REGRA
 };
 
 } // DiskAPI

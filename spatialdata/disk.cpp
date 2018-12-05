@@ -101,8 +101,10 @@ Registro* Disk::Read(streampos pos){
                 Circulo aux;
                 file.read(reinterpret_cast<char*>(&aux), sizeof(Circulo));
                 if(Lista == nullptr){
-                    Lista = new Vertice(aux.centro);
-                    Lista->Push(new Vertice(aux.raio, aux.raio));
+                    double raio = aux.GetRaio();
+                    Ponto centro = aux.GetCentro();
+                    Lista = new Vertice(centro);
+                    Lista->Push(new Vertice(raio, raio));
                 }
                 numeroVertices = 1;
             }

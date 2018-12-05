@@ -22,6 +22,12 @@ Chave::Chave(Node*& No){
     *this = k;
 }
 
+bool Chave::Ajusta(Retangulo& alvo){
+    bool modificado = false;
+    this->MBR.Ajusta(alvo, modificado);
+    return modificado;
+}
+
 Node::Node(Retangulo& R, streampos& PosR){
     Chave k(R, PosR, FOLHA);
     Chaves.push_back(k);
@@ -414,7 +420,9 @@ void RTree::AjustaCaminho(stack<NodeAux>& caminho){
 void RTree::AjustaCaminho(stack<NodeAux>& caminho, Retangulo R){
     if(!caminho.empty()){
         NodeAux pai = caminho.top();
-        if(pai.ptr->Ajusta(R, pai.index)){
+        // .INDEX = POSIÇÃO DO NÓ ATUAL NO PAI
+        // .PTR = PONTEIRO PARA O PAI
+        if(pai.ptr->Chaves[pai.index].Ajusta(R)){
             pai.ptr->SalvarNo();
             Retangulo R = pai.ptr->GetRetangulo();
             if(pai.ptr != this->raiz)
@@ -433,22 +441,18 @@ void RTree::DividirEAjustar(Node* &no, stack<NodeAux>& caminho){
     if(!EhRaiz){
         Chave k(novoNo);
         NodeAux pai = caminho.top();
+        // .INDEX = POSIÇÃO DO NÓ ATUAL NO PAI
+        // .PTR = PONTEIRO PARA O PAI
         caminho.pop();
         Retangulo R = no->GetRetangulo();
         delete novoNo;
         delete no;
-        if(pai.ptr->Ajusta(R, pai.index))
+        if(pai.ptr->Chaves[pai.index].Ajusta(R))
             pai.ptr->SalvarNo();
         InserirNo(pai.ptr, caminho, k);
     }
     else
         CriaNovaRaiz(no, novoNo);
-}
-
-bool Node::Ajusta(Retangulo& MBR, unsigned index){
-    bool modificado = false;
-    Chaves[index].MBR.Ajusta(MBR, modificado);
-    return modificado;
 }
 
 void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){

@@ -640,13 +640,6 @@ double Aresta::Angulo(Ponto& P){
         return x;
 }
 
-double Aresta::GetCoeficienteAngular(){
-    if(destino != origem)
-        return (destino.y-origem.y)/(destino.x-origem.x);
-    return 0.0;
-}
-
-
 Ponto Aresta::GetOrigem() const{
     return this->origem;
 }
@@ -681,50 +674,21 @@ Retangulo::Retangulo(Ponto& origem, Ponto& destino): diagonal(origem, destino){
     CalcularArea();
 }
 
-bool Retangulo::InterRetang(Ponto& A , Ponto& B ,Ponto& C,Ponto& D){
-
-    Ponto Pmax, Pmin,Pmin2,Pmax2;
-
-        Pmin.x= min(A.x,B.x);
-        Pmin.y= min(A.y,B.y);
-        Pmax.x= max(A.x,B.x);
-        Pmax.y= max(A.y,B.y);
-        Pmin2.x= min(C.x,D.x);
-        Pmin2.y= min(C.y,D.y);
-        Pmax2.x= max(C.x,D.x);
-        Pmax2.y= max(C.y,D.y);
-
-
-    if((Pmax.x >= Pmin2.x) && (Pmax2.x >= Pmin.x) && (Pmax.y >= Pmin2.y) && (Pmax2.y >= Pmin.y))
-        return true;
-
-    return false;
-
-}
-
 bool Retangulo::Contem(Ponto& P){
-    return((P.x<=max(this->diagonal.origem.x,this->diagonal.destino.x))&& (P.x >=min(this->diagonal.origem.x,this->diagonal.destino.x))&&(P.y<=max(this->diagonal.origem.y,this->diagonal.destino.y))&& (P.y >=min(this->diagonal.origem.y,this->diagonal.destino.y)));
+    return ((P.x<=max(this->diagonal.origem.x,this->diagonal.destino.x))
+           and (P.x >=min(this->diagonal.origem.x,this->diagonal.destino.x))
+           and (P.y<=max(this->diagonal.origem.y,this->diagonal.destino.y))
+           and (P.y >=min(this->diagonal.origem.y,this->diagonal.destino.y)));
 }
 
 bool Retangulo::Contem(Retangulo& R){
-    return (this->diagonal.origem <= R.diagonal.origem or (diagonal.origem.x - R.diagonal.origem.x == 0.0) or (diagonal.origem.y - R.diagonal.origem.y == 0.0)) and
-            (this->diagonal.destino >= R.diagonal.destino or (diagonal.destino.x - R.diagonal.destino.x == 0.0) or (diagonal.destino.y - R.diagonal.destino.y == 0.0));
+    return (this->diagonal.origem <= R.diagonal.origem or (diagonal.origem.x - R.diagonal.origem.x == 0.0) or (diagonal.origem.y - R.diagonal.origem.y == 0.0))
+            and (this->diagonal.destino >= R.diagonal.destino or (diagonal.destino.x - R.diagonal.destino.x == 0.0) or (diagonal.destino.y - R.diagonal.destino.y == 0.0));
 }
 
 double Retangulo::CalcularArea(){
     this->area =  abs(diagonal.origem.x-diagonal.destino.x) * abs(diagonal.origem.y-diagonal.destino.y);
     return this->area;
-/*
-    Ponto A = diagonal.destino;
-    Ponto B = diagonal.origem;
-    Ponto C(B.GetX(), B.GetY()-A.GetY());
-    Vertice* v = new Vertice(A);
-    v->Push(B);
-    v->Push(C);
-    Poligono P(v);
-    area = Area(P);
-    return area;
-*/
 }
 
 double Retangulo::GetArea(){
@@ -800,6 +764,18 @@ Circulo::Circulo(double R,Ponto Centro){
     raio= R;
     centro.x= Centro.x;
     centro.y= Centro.y;
+}
+Ponto Circulo::GetCentro(){
+    return this->centro;
+}
+double Circulo::GetRaio(){
+    return  this->raio;
+}
+void Circulo::SetCentro(Ponto _centro){
+    this->centro = _centro;
+}
+void Circulo::SetRaio(double _raio){
+    this->raio = _raio;
 }
 double Circulo::Diametro(){
     return this->raio*2;

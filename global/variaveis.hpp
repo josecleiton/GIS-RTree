@@ -6,7 +6,7 @@
 //ARQUIVO PARA A DEFINIÇÃO DE VARIÁVEIS GLOBAIS
 extern fstream RTreeFile; // BUFFER QUE CARREGA O ARQUIVO RTREE_FILE USADO
 //                           COMO STREAM DOS NÓS DA ÁRVORE R
-extern SpatialIndex::RTree root;
+extern SpatialIndex::RTree root; // RAIZ DA ÁRVORE R
 extern DiskAPI::Disk io;  // UMA API VAGABUNDA PARA AJUDAR NOS ACESSOS AO DISCO
 
 #endif // VARIAVEIS_HPP

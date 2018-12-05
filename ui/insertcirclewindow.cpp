@@ -27,8 +27,8 @@ SpatialData::Circulo InsertCircleWindow::GetInfo(){
 
 void InsertCircleWindow::on_button_clicked()
 {
-    this->A.centro = SpatialData::Ponto(ui->xc->text().toDouble(), ui->yc->text().toDouble());
-    this->A.raio = ui->raio->text().toDouble();
+    A.SetCentro(SpatialData::Ponto(ui->xc->text().toDouble(), ui->yc->text().toDouble()));
+    A.SetRaio(ui->raio->text().toDouble());
 }
 
 void InsertCircleWindow::on_buttonBox_clicked()

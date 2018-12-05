@@ -47,7 +47,7 @@ public:
     double Distancia(Ponto&); // DISTANCIA EM RELAÇÃO A OUTRO PONTO
     double GetX() const{ return x; }
     double GetY() const{ return y; }
-    QPointF toQPoint();
+    QPointF toQPoint(); // RETORNA UM PONTO PARA SER PLOTADO NA AREA DE RENDER DO QT
     double operator[](int);
     friend ostream& operator<<(ostream&, const Ponto&);
 };
@@ -72,14 +72,14 @@ public:
     Vertice* Vizinho(int); // retorna o nó vizinho
     Ponto& GetPonto(); // RETORNA OS PONTOS DO VERTICE
     Vertice* Push(Vertice*); // COLOCA UM VERTICE NA LISTA
-    Vertice* Push(Ponto);
+    Vertice* Push(Ponto); // COLOCA UM PONTO NA LISTA
     Vertice* Pop(); // RETIRA O VERTICE ATUAL DA LISTA
     void Splice(Vertice*); // JUNTA DUAS LISTAS
     Retangulo Envelope(); // MINIMUM BOUNDING RECTANGLE PARA A R-TREE
     Vertice* Split(Vertice*); // DIVIDE A LISTA
-    pair<QPointF*, int> toQPoint(double);
-    void Kai();
-    double GetMin();
+    pair<QPointF*, int> toQPoint(double); // RETORNA UMA LISTA DE QPOINTF
+    void Kai(); // LIBERA A LISTA
+    double GetMin(); // RETORNA O MENOR VALOR DA LISTA DE VERTICES
     friend class Poligono;
 };
 
@@ -109,13 +109,13 @@ public:
     void Pop(); // RETIRA O VERTICE ATUAL DA LISTA
     void Resize(); // RECALCULA O TAMANHO DA LISTA (NECESSÁRIO EM TODO PUSH OU POP)
     Poligono* Split(Vertice*); // DIVIDE O POLIGONO EM RELAÇÃO A UM VERTICE
-    Poligono* Interseccao(Poligono&);
+    Poligono* Interseccao(Poligono&); // INTERSECÇÃO ENTRE POLÍGONOS
     int PontoNoPoligono(Ponto&);
     bool PontoNoPoligonoConvexo(Ponto&);
     double Area();
     Ponto Centroide(double area);
-    void Apagar();
-    void setFakeKai(bool);
+    void Apagar(); // APAGA A LISTA
+    void setFakeKai(bool); // FLAG PARA A LIBERAÇÃO OU NÃO DA LISTA DE VERTICES
     friend ostream& operator<<(ostream&, const Poligono&);
 };
 
@@ -128,7 +128,7 @@ public:
     Aresta(Ponto&, Ponto&);
     Aresta& Rotacao(); // ROTACIONA A RETA EM 90º NO SENTIDO HORÁRIO
     Aresta& Flip(); // ROTACIONA A RETA EM 180º NO SENTIDO HORÁRIO
-    Ponto GetPonto(double&);
+    Ponto GetPonto(double&); // RETORNA UM PONTO (X, Y) APÓS O X SER INSERIDO
     Ponto GetOrigem() const;
     Ponto GetDestino() const;
     double Dist() const; // RETORNA A DISTANCIA ENTRE ORIGEM E DESTINO
@@ -138,8 +138,7 @@ public:
     double Inclinacao(); // RETORNA A INCLINAÇÃO DA RETA
     double y(double); // DADO UM X, RETORNA O Y (VISTO QUE A RETA É SEMPRE INFINITA)
     int Tipo(Ponto&);
-    double Angulo(Ponto&);
-    double GetCoeficienteAngular();
+    double Angulo(Ponto&); // ANGULO EM GRAUS DA RETA
     friend class Ponto;
     friend class Retangulo;
     friend bool operator<(const Retangulo&, const Retangulo&);
@@ -148,21 +147,20 @@ public:
 
 class Retangulo{
 private:
-    Aresta diagonal;
+    Aresta diagonal; // É GUARDADO APENAS A DIAGONAL DO RETANGULO
     double area{};
 public:
     Retangulo(Ponto&, Ponto&);
     Retangulo();
     Retangulo(const Retangulo&);
-    bool InterRetang(Ponto&, Ponto&, Ponto&, Ponto&); // VERIFICA SE EXISTE INTERSEÇÃO ENTREM DOIS RETANGULOS
-    bool Contem(Ponto&);
-    bool Contem(Retangulo&);
-    double Ajusta(Retangulo&, bool& mod);
+    bool Interseccao(Retangulo&); // VERIFICA SE HÁ INTERSEÇÃO ENTREM DOIS RETANGULOS
+    bool Contem(Ponto&); // VERIFICA SE CONTEM O PONTO
+    bool Contem(Retangulo&); // VERIFICA SE CONTEM O RETÂNGULO
+    double Ajusta(Retangulo&, bool& mod); // AJUSTA A DIAGONAL EM RELAÇÃO AO RETANGULO
     double CalcularArea();
     double GetArea();
     const Aresta& GetDiagonal();
     Retangulo CresceParaConter(Retangulo&);
-    bool Interseccao(Retangulo&);
     friend bool operator<(const Retangulo&, const Retangulo&);
     friend bool operator>(const Retangulo&, const Retangulo&);
     friend bool operator==(const Retangulo&, const Retangulo&);
@@ -172,19 +170,24 @@ public:
 
 #pragma pack(push, 1)
 class Circulo{
-public:
+private:
     Ponto centro;
     double raio;
+public:
     Circulo();
     Circulo(double,Ponto);
-    double Diametro();
-    double Comprimento();
-    double Area();
+    Ponto GetCentro();
+    double GetRaio();
+    void SetCentro(Ponto);
+    void SetRaio(double);
+    double Diametro(); // DIAMENTRO
+    double Comprimento(); // PERIMETRO
+    double Area(); // AREA
     int Interseccao(Ponto&); //INTERSEÇÃO PONTO ESTA OU NÃO NO CIRCULO
     int InterCirculo(Circulo&);// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
     pair<Vertice*, unsigned> Interseccao(Circulo&); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
     pair<Vertice*, unsigned> Interseccao(Aresta&); // INTERSEÇÃO CIRCULO E RETAS;
-    Retangulo Envelope();
+    Retangulo Envelope(); // MBB DO CIRCULO
 
 };
 #pragma pack(pop)

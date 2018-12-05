@@ -101,9 +101,9 @@ void FindWindow::on_info_clicked() // MOSTRA AS INFORMAÇÕES DOS REGISTROS ENCO
         }
         else if(tipo == CIRCULO){
             Circulo* temp = reinterpret_cast<Circulo*>(r->Conversao());
-            aux << temp->centro;
+            aux << temp->GetCentro();
             conteudo += "Centro: "+aux.str()+"\n";
-            conteudo += "Raio: "+to_string(temp->raio)+"\n";
+            conteudo += "Raio: "+to_string(temp->GetRaio())+"\n";
             conteudo += "Area: "+to_string(temp->Area())+"\n";
             delete temp;
         }
