@@ -17,7 +17,8 @@ Disk::Disk(string name){
 void Disk::Verifica(){
     if(!file.is_open()){
         cerr << "Arquivo não encontrado no disco." << endl;
-        exit(-1);
+        cerr << strerror(errno) << endl;
+        abort();
     }
 }
 
@@ -51,7 +52,8 @@ streampos Disk::Salvar(unsigned char _tipo, unsigned& numeroVertices, Vertice* _
     }
     else{
         cerr << "Forma geométrica não pode ser salva no disco." << endl;
-        exit(-1);
+        cerr << strerror(errno) << endl;
+        abort();
     }
 }
 
@@ -68,7 +70,8 @@ streampos Disk::Salvar(Circulo& C){
     }
     else{
         cerr << "Forma geométrica não pode ser salva no disco." << endl;
-        exit(-1);
+        cerr << strerror(errno) << endl;
+        abort();
     }
 }
 
@@ -122,7 +125,8 @@ bool Disk::RemoveAll(){
     file.open(FILENAME, fstream::binary|fstream::app|fstream::in);
     if(file.is_open()) return true;
     cerr << "Arquivo: " << FILENAME << " não abriu.";
-    exit(-40);
+    cerr << strerror(errno) << endl;
+    abort();
 }
 
 void Disk::CleanDir(QString path, QString rule){
@@ -170,7 +174,8 @@ void Disk::Remove(streampos& pos){
     }
     else{
         cerr << "Arquivo não abriu. " << endl;
-        exit(-40);
+        cerr << strerror(errno) << endl;
+        abort();
     }
 
 }

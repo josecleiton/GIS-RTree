@@ -105,22 +105,23 @@ bool Node::Cresce(Retangulo& EntryMBR, unsigned indexChave){
 */
 
 Retangulo Node::GetRetangulo(){
-    vector<double> a(2, DBL_MAX), b(2, DBL_MIN);
-    vector<pair<double, double>> k(2);
+    vector<double> CoordOrigem(2, DBL_MAX), CoordDestino(2, DBL_MIN);
+    vector<pair<double, double>> CoordTemporarias(2); // Possíveis coordenadas min/max a serem avaliadas pela rotina
     for(auto item: Chaves){
-        k[0] = make_pair(item.MBR.GetDiagonal().GetOrigem().GetX(), item.MBR.GetDiagonal().GetOrigem().GetY());
-        k[1] = make_pair(item.MBR.GetDiagonal().GetDestino().GetX(), item.MBR.GetDiagonal().GetDestino().GetY());
-        if(k[0].first < a[0])
-            a[0] = k[0].first;
-        if(k[0].second < a[1])
-            a[1] = k[0].second;
-        if(k[1].first > b[0])
-            b[0] = k[1].first;
-        if(k[1].second > b[1])
-            b[1] = k[1].second;
+        CoordTemporarias[0] = make_pair(item.MBR.GetDiagonal().GetOrigem().GetX(), item.MBR.GetDiagonal().GetOrigem().GetY());
+        CoordTemporarias[1] = make_pair(item.MBR.GetDiagonal().GetDestino().GetX(), item.MBR.GetDiagonal().GetDestino().GetY());
+
+        if(CoordTemporarias[0].first < CoordOrigem[0])
+            CoordOrigem[0] = CoordTemporarias[0].first;
+        if(CoordTemporarias[0].second < CoordOrigem[1])
+            CoordOrigem[1] = CoordTemporarias[0].second;
+        if(CoordTemporarias[1].first > CoordDestino[0])
+            CoordDestino[0] = CoordTemporarias[1].first;
+        if(CoordTemporarias[1].second > CoordDestino[1])
+            CoordDestino[1] = CoordTemporarias[1].second;
     }
-    Ponto A(a[0], a[1]), B(b[0], b[1]);
-    return Retangulo(A,B);
+    Ponto Origem(CoordOrigem[0], CoordOrigem[1]), Destino(CoordDestino[0], CoordDestino[1]);
+    return Retangulo(Origem, Destino);
 }
 
 RTree::RTree(){
@@ -136,7 +137,8 @@ RTree::RTree(){
         }
         else{
             cerr << "Exceção ao ler/abrir o arquivo: " << RTREE_FILENAME << endl;
-            exit(-40);
+            cerr << strerror(errno) << endl;
+            abort();
         }
     }
     else
@@ -204,7 +206,8 @@ bool RTree::ApagarArvore(){
         if(this->treeFile.is_open()) return true;
     }
     cerr << "Arquivo: " << RTREE_FILENAME << " não foi reaberto." << endl;
-    exit(-41);
+    cerr << strerror(errno) << endl;
+    abort();
 }
 
 unsigned RTree::GetCount(){
@@ -672,7 +675,8 @@ void Hash::Insere(string id, streampos& forma){
     }
     else{
         cerr << "ERRO NA ABERTURA DO ARQUIVO: " << "../GIS/spatialdata/id_"+id+".bin" << endl;
-        exit(-42);
+        cerr << strerror(errno) << endl;
+        abort();
     }
 }
 
