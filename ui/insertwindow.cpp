@@ -18,6 +18,8 @@ InsertWindow::InsertWindow(QWidget *parent) :
     //ui->ID->setValidator(ValidaNome);
     this->setWindowTitle("Insira uma forma geométrica");
     this->setWindowIcon(QIcon(ICON));
+    QMessageBox MB;
+    MB.information(nullptr, "Ordem de Inserção", "Insira os vertices em sentido antihorário para a forma geométrica ser mostrada adequadamente na busca.\n");
 }
 
 InsertWindow::~InsertWindow(){

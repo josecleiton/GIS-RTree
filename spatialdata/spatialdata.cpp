@@ -132,15 +132,15 @@ ostream& operator<<(ostream& out, const Ponto& P){
 Vertice::Vertice(double x, double y): Ponto(x,y){
 }
 
-Vertice::Vertice(Ponto& p): Ponto(p){
+Vertice::Vertice(Ponto p): Ponto(p){
 }
 
 Vertice* Vertice::Horario(){
-    return static_cast<Vertice*>(m_next);
+    return static_cast<Vertice*>(m_prev);
 }
 
 Vertice* Vertice::Antihorario(){
-    return static_cast<Vertice*>(m_prev);
+    return static_cast<Vertice*>(m_next);
 }
 
 Vertice* Vertice::Vizinho(int rotacao){
@@ -352,67 +352,6 @@ Ponto Poligono::Centroide(double area){
     return Ponto(xc, yc);
 }
 
-Poligono* Poligono::Interseccao(Poligono& P){
-    Poligono* R = nullptr;
-    Ponto iPnt, startPnt;
-    int inflag = DESCONHECIDO;
-    int fase = 1;
-    unsigned maxItns = 2 * (this->GetSize() + P.GetSize());
-    Aresta p, q;
-    int pclass, qclass, crosstype;
-    bool pAIMSq, qAIMSp;
-    for(unsigned i=1; (i <= maxItns) /*or (fase == 2)*/; i++){
-        p = this->GetAresta();
-        q = P.GetAresta();
-        pclass = p.GetDestino().Classificacao(q);
-        qclass = q.GetDestino().Classificacao(p);
-        crosstype = crossingPoint(p, q, iPnt);
-        if(crosstype == CONSECUTIVO_CRUZADO){
-            if(fase == 1){
-                fase = 2;
-                R = new Poligono;
-                R->Push(iPnt);
-                startPnt = iPnt;
-            }
-            else if(iPnt != R->GetPonto()){
-                if(iPnt != startPnt)
-                    R->Push(iPnt);
-                else
-                    return R;
-            }
-            if(pclass == DIREITA) inflag = P_DENTRO;
-            else if(qclass == DIREITA) inflag = Q_DENTRO;
-            else inflag = DESCONHECIDO;
-        }
-        else if(crosstype == COLINEAR and pclass != ATRAS and qclass != ATRAS)
-            inflag = DESCONHECIDO;
-        pAIMSq = aimsAt(p, q, pclass, crosstype);
-        qAIMSp = aimsAt(q, p, qclass, crosstype);
-        if(pAIMSq and qAIMSp){
-            if((inflag == Q_DENTRO) or ((inflag == DESCONHECIDO) and (pclass == ESQUERDA)))
-                advance(*this, *R, false);
-            else
-                advance(P, *R, false);
-        }
-        else if(pAIMSq)
-            advance(*this, *R, inflag == P_DENTRO);
-        else if(qAIMSp)
-            advance(P, *R, inflag == Q_DENTRO);
-        else{
-            if((inflag == Q_DENTRO) or ((inflag == DESCONHECIDO) and (pclass == ESQUERDA)))
-                advance(*this, *R, false);
-            else
-                advance(P, *R, false);
-
-        }
-    }// for
-    delete R;
-    if(P.PontoNoPoligonoConvexo(this->GetPonto()))
-        return new Poligono(*this);
-    else if(this->PontoNoPoligonoConvexo(P.GetPonto()))
-        return new Poligono(P);
-    return new Poligono();
-}
 
 void Poligono::Apagar(){
     this->list = nullptr;
@@ -455,6 +394,81 @@ bool Poligono::PontoNoPoligonoConvexo(Ponto& s){
     return true;
 }
 
+Aresta* Poligono::clipping(Aresta& alvo){
+    double t0 = 0.0, t1 = 1.0, t;
+    Ponto v = alvo.GetDestino()-alvo.GetOrigem(), n;
+    Aresta e, f;
+    for(unsigned i=0; i<this->GetSize(); i++, this->Avancar(HORARIO)){
+        e = this->GetAresta();
+        if(alvo.Interseccao(e, t) == CONSECUTIVO){
+            f = e;
+            f.Rotacao();
+            n = f.GetDestino()-f.GetOrigem();
+            if(n*v > 0.0){
+                if(t > t0) t0 = t;
+            }
+            else{
+                if(t < t1) t1 = t;
+            }
+        }
+        else{
+            if(alvo.GetOrigem().Classificacao(e) == ESQUERDA)
+                return nullptr;
+        }
+    }
+    return (t0 <= t1) ? new Aresta(alvo.GetPonto(t0), alvo.GetPonto(t1)) : new Aresta;
+}
+
+
+Poligono* Poligono::clipping(Poligono& alvo){
+    Poligono* q = new Poligono(*this), *r = nullptr;
+    bool flag = true;
+    Aresta a;
+    for(unsigned i=0; i<alvo.GetSize(); i++, alvo.Avancar(HORARIO)){
+        a = alvo.GetAresta();
+        if(clipPoligonoAresta(*q, a, r)){
+            delete q;
+            q = r;
+        }
+        else{
+            delete q;
+            flag = false;
+            break;
+        }
+    }
+    return (flag) ? q: new Poligono;
+}
+
+bool Poligono::clipPoligonoAresta(Poligono& s, Aresta& e, Poligono*& result){
+    Poligono *p = new Poligono;
+    Ponto crossingPt, origem, destino;
+    bool origemDentro, destDentro;
+    for(unsigned i=0; i<s.GetSize(); s.Avancar(HORARIO), i++){
+        origem = s.GetPonto();
+        destino = s.Horario()->GetPonto();
+        origemDentro = origem.Classificacao(e) != ESQUERDA;
+        destDentro = destino.Classificacao(e) != ESQUERDA;
+        if(origemDentro != destDentro){
+            double t;
+            e.Interseccao(s.GetAresta(), t);
+            crossingPt = e.GetPonto(t);
+        }
+        if(origemDentro and destDentro)
+            p->Push(destino);
+        else if(origemDentro and !destDentro){
+            if(origem != crossingPt)
+                p->Push(crossingPt);
+        }
+        else if(!origemDentro and !destDentro);
+        else{
+            p->Push(crossingPt);
+            if(destino != crossingPt) p->Push(destino);
+        }
+    }
+    result = p;
+    return (result->GetSize() > 0);
+}
+
 ostream& operator<<(ostream& out, const Poligono& p){
     Vertice* i = p.list, *fim = i->Antihorario();
     while(true){
@@ -464,48 +478,6 @@ ostream& operator<<(ostream& out, const Poligono& p){
         i = i->Horario();
     }
     return out;
-}
-
-bool aimsAt(Aresta& a, Aresta& b, int aclass, int crossType){
-    Ponto va = a.GetDestino() - a.GetOrigem();
-    Ponto vb = b.GetDestino() - b.GetOrigem();
-    if(crossType != COLINEAR){
-        if((va.x * vb.y) >= (vb.x * va.y))
-            return (aclass != DIREITA);
-        else
-            return (aclass != ESQUERDA);
-    }
-    else
-        return (aclass != FRENTE);
-}
-
-int crossingPoint(Aresta& e, Aresta& f, Ponto& p){
-    double s,t;
-    int classe = e.Interseccao(f, s);
-    if((classe == COLINEAR) or (classe == PARALELA))
-        return classe;
-    double lene = (e.GetDestino()-e.GetOrigem()).Tamanho();
-    if((s < -EPSILON2*lene) or (s > 1.0+EPSILON2*lene))
-        return CONSECUTIVO_NAO_CRUZADO;
-    f.Interseccao(e, t);
-    double lenf = (f.GetDestino()-f.GetOrigem()).Tamanho();
-    if((-EPSILON2*lenf <= t) and (t <= 1.0+EPSILON2*lenf)){
-        if(t<=EPSILON2*lenf) p = f.GetOrigem();
-        else if(t >= 1.0+EPSILON2*lenf) p = f.GetDestino();
-        else if(s <= EPSILON2*lene) p = e.GetOrigem();
-        else if(s >= 1.0-EPSILON2*lene) p = e.GetDestino();
-        else p = f.GetPonto(t);
-        return CONSECUTIVO_CRUZADO;
-    }
-    else
-        return CONSECUTIVO_NAO_CRUZADO;
-}
-
-void advance(Poligono& A, Poligono& B, bool inside){
-    A.Avancar(HORARIO);
-    if(inside and (B.GetPonto() != A.GetPonto()))
-        B.Push(A.GetPonto());
-
 }
 
 Aresta Poligono::GetAresta(){
@@ -529,7 +501,7 @@ Retangulo Vertice::Envelope(){
 
 // CLASSE ARESTA
 
-Aresta::Aresta(Ponto& _origem, Ponto& _dest): origem(_origem), destino(_dest){
+Aresta::Aresta(Ponto _origem, Ponto _dest): origem(_origem), destino(_dest){
 }
 
 Aresta::Aresta(): origem(Ponto(0.0, 0.0)), destino(Ponto(0.0,0.0)){
@@ -557,7 +529,7 @@ double Aresta::Dist() const{
     return sqrt(pow(origem.x - destino.x, 2)+pow(origem.y - destino.y, 2));
 }
 
-int Aresta::Interseccao(Aresta& E, double& t){
+int Aresta::Interseccao(Aresta E, double& t){
     Ponto a = origem;
     Ponto b = destino;
     Ponto c = E.origem;
@@ -601,6 +573,7 @@ double Aresta::y(double x){
 }
 
 double Aresta::Inclinacao(){
+    if(destino.x - origem.y != 0.0) return 0.0;
     if(!isVertical())
         return (destino.y - origem.y)/(destino.x - origem.y);
     return DBL_MAX;
@@ -797,7 +770,7 @@ int Circulo::Interseccao(Ponto &P){
 
 }
 
-int Circulo::InterCirculo(Circulo& c2)// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
+int Circulo::VerificaInterseccao(Circulo& c2)// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
 {
     Circulo c1 = *this;
     double dist= sqrt ( pow ((c2.centro.x - c1.centro.x), 2.0 ) + pow((c2.centro.y - c1.centro.y ), 2.0 ));
@@ -805,12 +778,12 @@ int Circulo::InterCirculo(Circulo& c2)// VERIFICA SE EXISTE INTERSEÇÃO ENTRE C
     double subt= c1.raio-c2.raio;
 
     if(dist>soma|| dist<abs(subt))
-        return -1; // círculos não se interceptam
+        return NAO_HA_INTERSECCAO; // círculos não se interceptam
     double diff = c1.raio-c2.raio;
     if(dist==0.0 && diff==0.0)
-        return 0; // circulos idênticos
+        return CIRCULOS_INDENTICOS; // circulos idênticos
 
-    return 1; //exite interseção
+    return HA_INTERSECCAO; //saida de interseção
 }
 
 pair<Vertice*, unsigned> Circulo::Interseccao(Circulo& c2){ //   PONTOS QUE INTERCEPTA DOIS CIRCULOS

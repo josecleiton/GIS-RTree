@@ -63,7 +63,8 @@ void SearchWindow::on_interseccao_clicked(){
                 if(ndtype == POLIGONO){
                     Poligono* P = reinterpret_cast<Poligono*>(R[0]->Conversao());
                     Poligono* Q = reinterpret_cast<Poligono*>(R[1]->Conversao());
-                    Poligono* Z = P->Interseccao(*Q);
+                    //Poligono* Z = P->Interseccao(*Q);
+                    Poligono* Z = P->clipping(*Q);
                     FakeArrayRegister[0] = new Registro(ndtype, Z->GetVertice(), Z->GetSize());
                     if(FW.setRegistros(FakeArrayRegister, 1, true)){
                         FW.exec();
@@ -121,7 +122,7 @@ void SearchWindow::on_interseccao_clicked(){
             }
             else{
                 if(R[0]->tipo == POLIGONO or R[1]->tipo == POLIGONO){ // POLIGONO
-                    int pol = (R[0]->tipo == POLIGONO)?0:1;
+                    bool pol = (R[0]->tipo == POLIGONO)?0:1;
                     Poligono* P = reinterpret_cast<Poligono*>(R[pol]->Conversao());
                     ndtype = R[!pol]->tipo;
                     if(ndtype == PONTO){// ponto no poligono
@@ -134,6 +135,18 @@ void SearchWindow::on_interseccao_clicked(){
                         else
                             QMB.warning(nullptr, "Ponto não está no poligono", "Ponto se encontra fora do poligono.");
                         delete A;
+                    }
+                    else if(ndtype == LINHA){
+                        Aresta* A = reinterpret_cast<Aresta*>(R[!pol]->Conversao());
+                        Aresta* result = P->clipping(*A);
+                        Vertice* vertices = new Vertice(result->GetOrigem());
+                        vertices->Push(result->GetDestino());
+                        FakeArrayRegister[0] = new Registro(ndtype, vertices, 2);
+                        FW.setRegistros(FakeArrayRegister, 1, true);
+                        FW.exec();
+                        delete A;
+                        delete result;
+                        delete FakeArrayRegister[0];
                     }
                     delete P;
                     R[pol]->lista = nullptr;

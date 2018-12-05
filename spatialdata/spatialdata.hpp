@@ -30,6 +30,7 @@ enum Rotacao {HORARIO, ANTIHORARIO}; // SENTIDO DAS ROTAÇÕES NA LISTA DUPLAMEN
 enum Posicao_Relativa_Retas {COLINEAR, PARALELA, CONSECUTIVO, CONSECUTIVO_CRUZADO, CONSECUTIVO_NAO_CRUZADO}; // USADA PELA POSIÇÃO RELATIVA ENTRE SEGMENTOS DE RETA (ARESTAS)
 enum Posicao_Ponto_Poligono {DENTRO, FORA, FRONTEIRA};
 enum Classificadores_Aresta {TOCANDO, CRUZANDO, INESSENTIAL};
+enum Verifica_InterCirculo {NAO_HA_INTERSECCAO=-1, CIRCULOS_INDENTICOS, HA_INTERSECCAO};
 
 class Retangulo;
 class Aresta;
@@ -66,7 +67,7 @@ bool operator>(const Ponto&, const Ponto&);
 class Vertice: public CircularList::Node, public Ponto{
 public:
     Vertice(double x, double y);
-    Vertice(Ponto&);
+    Vertice(Ponto);
     Vertice* Horario(); // percorre a lista em sentido horário
     Vertice* Antihorario(); // percorre a lista em sentido antihorário
     Vertice* Vizinho(int); // retorna o nó vizinho
@@ -109,9 +110,11 @@ public:
     void Pop(); // RETIRA O VERTICE ATUAL DA LISTA
     void Resize(); // RECALCULA O TAMANHO DA LISTA (NECESSÁRIO EM TODO PUSH OU POP)
     Poligono* Split(Vertice*); // DIVIDE O POLIGONO EM RELAÇÃO A UM VERTICE
-    Poligono* Interseccao(Poligono&); // INTERSECÇÃO ENTRE POLÍGONOS
     int PontoNoPoligono(Ponto&);
     bool PontoNoPoligonoConvexo(Ponto&);
+    Aresta* clipping(Aresta&); //
+    Poligono* clipping(Poligono&); // CORTA ESTE POLIGONO EM RELAÇÃO DO PASSADO EM PARAMETRO
+    bool clipPoligonoAresta(Poligono&, Aresta&, Poligono*& result);
     double Area();
     Ponto Centroide(double area);
     void Apagar(); // APAGA A LISTA
@@ -125,14 +128,14 @@ private:
     Ponto destino;
 public:
     Aresta();
-    Aresta(Ponto&, Ponto&);
+    Aresta(Ponto, Ponto);
     Aresta& Rotacao(); // ROTACIONA A RETA EM 90º NO SENTIDO HORÁRIO
     Aresta& Flip(); // ROTACIONA A RETA EM 180º NO SENTIDO HORÁRIO
     Ponto GetPonto(double&); // RETORNA UM PONTO (X, Y) APÓS O X SER INSERIDO
     Ponto GetOrigem() const;
     Ponto GetDestino() const;
     double Dist() const; // RETORNA A DISTANCIA ENTRE ORIGEM E DESTINO
-    int Interseccao(Aresta&, double&); // RETORNA O PONTO DE INTERSECÇÃO ENTRE DUAS RETAS E UM F
+    int Interseccao(Aresta, double&); // RETORNA O PONTO DE INTERSECÇÃO ENTRE DUAS RETAS E UM F
     int Cruza(Aresta&, double&); // RETORNA SE AS RETAS SE CRUZAM
     bool isVertical();
     double Inclinacao(); // RETORNA A INCLINAÇÃO DA RETA
@@ -184,7 +187,7 @@ public:
     double Comprimento(); // PERIMETRO
     double Area(); // AREA
     int Interseccao(Ponto&); //INTERSEÇÃO PONTO ESTA OU NÃO NO CIRCULO
-    int InterCirculo(Circulo&);// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
+    int VerificaInterseccao(Circulo&);// VERIFICA SE EXISTE INTERSEÇÃO ENTRE CIRCULOS
     pair<Vertice*, unsigned> Interseccao(Circulo&); //   PONTOS QUE INTERCEPTA DOIS CIRCULOS
     pair<Vertice*, unsigned> Interseccao(Aresta&); // INTERSEÇÃO CIRCULO E RETAS;
     Retangulo Envelope(); // MBB DO CIRCULO
@@ -194,9 +197,6 @@ public:
 
 int EsquerdaDireita(Ponto*, Ponto*);
 int DireitaEsquerda(Ponto*, Ponto*);
-bool aimsAt(Aresta&, Aresta&, int, int);
-int crossingPoint(Aresta&, Aresta&, Ponto&);
-void advance(Poligono&, Poligono&, bool inside);
 
 bool operator==(const Aresta&, const Aresta&);
 bool operator!=(const Aresta&, const Aresta&);
