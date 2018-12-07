@@ -5,6 +5,7 @@
 #include <QDialog>
 #include "icon.hpp"
 #include "rectanglesearchwindow.hpp"
+#include "findwindow.hpp"
 #include "insertpointwindow.hpp"
 #include "variaveis.hpp"
 #include "stringwindow.hpp"

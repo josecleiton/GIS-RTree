@@ -20,7 +20,7 @@ class FindWindow : public QDialog
 public:
     explicit FindWindow(QWidget *parent = nullptr);
     ~FindWindow();
-    bool setRegistros(DiskAPI::Registro** &, size_t, bool);
+    bool setRegistros(DiskAPI::Registro** &, size_t, bool inter);
     bool getRemove();
     bool listaValida();
     void setInterCircle(bool);

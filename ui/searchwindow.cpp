@@ -243,8 +243,57 @@ void SearchWindow::on_ponto_clicked()
         auto Lista = root.Busca(*P);
         stringstream aux;
         aux << *P;
-        if(!Lista.empty())
+        if(!Lista.empty()){
+            /*
             QMB.information(nullptr, "Sucesso!", QString::number(Lista.size())+" caixa(s) contêm o ponto "+QString::fromStdString(aux.str()));
+            DiskAPI::Registro** listaRegistros = new DiskAPI::Registro*[Lista.size()];
+            unsigned i = 0;
+            for(auto chave: Lista)
+                listaRegistros[i++] = io.Read(chave.Dado);
+            FindWindow FW;
+            FW.setRegistros(listaRegistros, i, false);
+            FW.setModal(true);
+            FW.exec();
+            delete[] listaRegistros;
+            */
+            unsigned char tipo = 0;
+            DiskAPI::Registro** listaRegistros = new DiskAPI::Registro*[Lista.size()];
+            DiskAPI::Registro* handle = nullptr;
+            bool outside;
+            unsigned contador = 0;
+            for(auto chave: Lista){
+                handle = io.Read(chave.Dado);
+                outside = false;
+                tipo = handle->tipo;
+                if(tipo == POLIGONO){
+                    Poligono* polygon = reinterpret_cast<Poligono*>(handle->Conversao());
+                    outside = polygon->PontoNoPoligono(*P) == FORA;
+                    if(!outside) polygon->setFakeKai(true);
+                    delete polygon;
+                }
+                else if(tipo == LINHA){
+                    Aresta* linha = reinterpret_cast<Aresta*>(handle->Conversao());
+                    outside = P->Classificacao(*linha) != ENTRE;
+                    delete linha;
+                }
+                else if(tipo == PONTO){
+                    Ponto* ponto = reinterpret_cast<Ponto*>(handle->Conversao());
+                    outside = *ponto != *P;
+                    delete ponto;
+                }
+                else if(tipo == CIRCULO){
+                    Circulo* circ = reinterpret_cast<Circulo*>(handle->Conversao());
+                    outside = circ->Interseccao(*P) == FORA;
+                    delete circ;
+                }
+                if(!outside) listaRegistros[contador++] = handle;
+            }
+            FindWindow FW;
+            FW.setRegistros(listaRegistros, contador, false);
+            FW.setModal(true);
+            FW.exec();
+            delete[] listaRegistros;
+        }
         else
             QMB.critical(nullptr, "Erro", "Ponto não encontrado na R-Tree.");
         delete P;

@@ -573,7 +573,7 @@ double Aresta::y(double x){
 }
 
 double Aresta::Inclinacao(){
-    if(destino.x - origem.y != 0.0) return 0.0;
+    if(destino.x - origem.y == 0.0) return 0.0;
     if(!isVertical())
         return (destino.y - origem.y)/(destino.x - origem.y);
     return DBL_MAX;
