@@ -155,7 +155,7 @@ bool RTree::ArquivoVazio(){
         return inicio == fim;
     }
     else{
-        cerr << strerror(errno) << endl;
+        cerr << RTREE_FILENAME << " " << strerror(errno) << endl;
         abort();
     }
 }
@@ -674,7 +674,7 @@ void Hash::Insere(string id, streampos& forma){
         forma_file.close();
     }
     else{
-        cerr << "ERRO NA ABERTURA DO ARQUIVO: " << "../GIS/spatialdata/id_"+id+".bin" << endl;
+        cerr << "ERRO NA ABERTURA DO ARQUIVO: " << H_FILENAME << id+".bin" << endl;
         cerr << strerror(errno) << endl;
         abort();
     }
