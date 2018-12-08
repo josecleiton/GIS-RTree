@@ -14,11 +14,11 @@ Diagrama de classes feito no aplicativo Umbrello, basta importá-lo. [**PDF**](h
 ## Instalação
 ### Requisitos
 Para rodar o programa é necessário ter instalado as bibliotecas do QT:
-- Pacote qt5-default para Linux baseado em Ubuntu;
-- Pacote qt5-base para Linux baseado em Arch;
+- Pacote qt5-default para distros Linux baseadas em Ubuntu;
+- Pacote qt5-base para distros Linux baseadas em Arch;
 - Windows/Mac: instale o QTCreator.
 
-Também é necessário o compilador C++ (clang++ ou g++).
+Também é necessário um compilador C++, o qmake tem que ser configurado apropriadamente se o compilador utilizado não for o g++.
 
 Como compilar usando terminal (Linux):\
 OBS: É necessário ter o pacote `cmake`.
@@ -27,12 +27,14 @@ OBS: É necessário ter o pacote `cmake`.
 - `./build.sh`
 - Divirta-se
 
-O programa ficará no diretório `build-GIS-git`.
+O binário ficará no diretório `build-GIS-git`.
 
 Compilar usando QTCreator:
 - Importe o `GIS.pro`
 - Clique em `Run`
 - Divirta-se
+
+O binário ficará no diretório `build-GIS-[...]`.
 
 ### Encontrou algum bug? 
 Fique à vontade de reportar bugs ou resolvê-los. O código está disponível para ser melhorado.
