@@ -9,7 +9,7 @@ Armazenamento, recuperação e representação de formas geométricas 2-D guarda
 - Utilização do framework QT e C++ para a representação gráfica do programa (GUI).
 
 ## UML
-Diagrama de classes feito no aplicativo Umbrello, basta importá-lo. [**PDF**](https://drive.google.com/file/d/1ZGOCYsQ1NC7MJfIM0cWefakV0_k9Ek-y/view?usp=sharing).
+Diagrama de classes feito no aplicativo Umbrello, basta importá-lo. Ou acesse diretamente o [**PDF**](https://drive.google.com/file/d/1ZGOCYsQ1NC7MJfIM0cWefakV0_k9Ek-y/view?usp=sharing).
 
 ## Instalação
 ### Requisitos
@@ -18,7 +18,7 @@ Para rodar o programa é necessário ter instalado as bibliotecas do QT:
 - Pacote qt5-base para distros Linux baseadas em Arch;
 - Windows/Mac: instale o QTCreator.
 
-Também é necessário um compilador C++, o qmake tem que ser configurado apropriadamente se o compilador utilizado não for o g++.
+Também é necessário um compilador C++. O qmake tem que ser configurado apropriadamente se o compilador utilizado não for o g++.
 
 Como compilar usando terminal (Linux):\
 OBS: É necessário ter o pacote `cmake`.
