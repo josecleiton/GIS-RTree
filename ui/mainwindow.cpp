@@ -64,6 +64,6 @@ void MainWindow::on_creditos_clicked()
     QString universidade("UNEB - Universidade do Estado da Bahia\n");
     QString curso("Sistemas de Informação - Estruturas de Dados II\n");
     QString ano("Período: 2018.2\n");
-    QString licensa("Licensa: MIT");
-    QMB.information(nullptr, "Créditos", universidade+curso+orientador+feito+ano+licensa);
+    QString licenca("Licença: MIT");
+    QMB.information(nullptr, "Créditos", universidade+curso+orientador+feito+ano+licenca);
 }
