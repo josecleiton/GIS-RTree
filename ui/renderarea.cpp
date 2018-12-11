@@ -31,9 +31,9 @@ QPainter* RenderArea::defaultPainter(){
 void RenderArea::desenha(){
     QColor cores[QNT_CORES] = {
         Qt::blue, Qt::black, Qt::red, Qt::darkRed,
-        Qt::darkGreen, Qt::darkBlue, Qt::cyan, Qt::magenta,
-        Qt::yellow, Qt::gray, Qt::darkCyan, Qt::darkMagenta,
-        Qt::darkYellow, Qt::darkGray, Qt::lightGray
+        Qt::darkBlue, Qt::cyan, Qt::magenta, Qt::darkMagenta,
+        Qt::yellow, Qt::gray, Qt::darkCyan, Qt::darkYellow,
+        Qt::darkGray, Qt::lightGray, Qt::darkGreen
     };
     QPainter *p = defaultPainter();
     unsigned i=0, tipo;
@@ -51,8 +51,10 @@ void RenderArea::desenha(){
                     p->drawLine(vertices.first[0], vertices.first[1]);
                 else if(tipo == POLIGONAL)
                     p->drawPolyline(vertices.first, vertices.second);
-                else if(tipo == PONTO)
+                else if(tipo == PONTO){
+                    if(r == regs.back() and byPoint) p->setPen(QPen(Qt::green, 0.4, Qt::SolidLine));
                     p->drawPoint(vertices.first[0]);
+                }
                 else{
                     int i=0;
                     while(i < vertices.second)
@@ -62,7 +64,7 @@ void RenderArea::desenha(){
             }
             else{
                 QPointF centro(r->lista->GetX()+gap, r->lista->GetY()+gap);
-                if(!interCircle){
+                if(!interCircle or byPoint){
                     centro.setX(10);
                     centro.setY(10);
                 }
@@ -90,4 +92,8 @@ bool RenderArea::listaValida(){
 
 void RenderArea::setInterCircle(bool op){
     this->interCircle = op;
+}
+
+void RenderArea::setByPoint(bool op){
+    this->byPoint = op;
 }

@@ -22,7 +22,8 @@ public:
     void setRegistros(vector<Registro*>&);
     bool listaValida();
     double getGap();
-    void setInterCircle(bool);
+    void setInterCircle(bool op);
+    void setByPoint(bool op);
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 signals:
@@ -34,6 +35,7 @@ private:
     void desenha();
     QPainter* defaultPainter();
     bool interCircle{};
+    bool byPoint{};
 };
 
 #endif // RENDERAREA_HPP

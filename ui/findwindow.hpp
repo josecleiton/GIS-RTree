@@ -23,7 +23,8 @@ public:
     bool setRegistros(DiskAPI::Registro** &, size_t, bool inter);
     bool getRemove();
     bool listaValida();
-    void setInterCircle(bool);
+    void setInterCircle(bool op);
+    void setByPoint(bool op);
 
 private slots:
     void on_remove_clicked();

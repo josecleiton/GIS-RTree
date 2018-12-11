@@ -255,7 +255,6 @@ void SearchWindow::on_ponto_clicked()
             //bool deleted; // SE A FORMA JÁ TEVE SUA MEMORIA LIBERADA
             unsigned char tipo = 0;
             // COLOCANDO O PONTO BUSCADO NA LISTA DE REGISTROS (PARA SER O PONTO VERMELHO)
-            listaRegistros[contadorRegistros++] = new Registro(PONTO, new Vertice(*P), 1);
             for(auto chave: Lista){
                 handle = io.Read(chave.Dado);
                 outside = false;
@@ -284,8 +283,10 @@ void SearchWindow::on_ponto_clicked()
                 if(!outside) listaRegistros[contadorRegistros++] = handle;
                 else delete handle;
             }
+            listaRegistros[contadorRegistros++] = new Registro(PONTO, new Vertice(*P), 1);
             FindWindow FW;
             FW.setRegistros(listaRegistros, contadorRegistros, false);
+            FW.setByPoint(true); // FLAG QUE GARANTE O DESTAQUE DO PONTO NA TELA
             FW.setModal(true);
             FW.exec();
             delete[] listaRegistros;

@@ -133,3 +133,7 @@ void FindWindow::on_info_clicked() // MOSTRA AS INFORMAÇÕES DOS REGISTROS ENCO
 void FindWindow::setInterCircle(bool op){
     this->ui->ra->setInterCircle(op);
 }
+
+void FindWindow::setByPoint(bool op){
+    this->ui->ra->setByPoint(op);
+}
