@@ -63,7 +63,7 @@ void RectangleSearchWindow::on_button_clicked()
                         this->nuke = true;
                     }
                 }
-                delete Reg[0];
+                //delete Reg[0];
                 delete[] Reg;
             }
             this->listaRegistros = Reg;

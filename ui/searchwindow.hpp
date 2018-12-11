@@ -25,14 +25,19 @@ public:
     bool getNuke();
 
 private slots:
+    //BUSCA SIMPLES NA R-TREE PELA DIAGONAL
     void on_retangulo_clicked();
 
+    //BUSCA POR RELAÇÃO ENTRE DUAS FORMAS BUSCADAS NA R-TREE
     void on_interseccao_clicked();
 
+    //BUSCA TODAS AS FORMAS QUE CONTÉM UM PONTO P
     void on_ponto_clicked();
 
+    //UTILIZA O ID USADO NA INSERÇÃO DA FORMA PARA RETORNÁ-LA (HASH)
     void on_id_clicked();
 
+    //RETORNA TODAS FORMAS INDEXADAS NA R-TREE
     void on_all_clicked();
 
 private:

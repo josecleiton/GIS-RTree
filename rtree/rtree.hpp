@@ -37,7 +37,7 @@ struct Chave{
         streampos ChildPtr; // PONTEIRO PARA O PRÓXIMO NÓ EM DISCO
         streampos Dado; // GUARDA O INDICE DA FORMA EM DISCO
     };
-    Chave(Retangulo&, streampos&, unsigned);
+    Chave(Retangulo, streampos);
     Chave();
     Chave(Node*&);
     bool Ajusta(Retangulo& alvo); // AJUSTA O RETANGULO DA CHAVE EM RELAÇÃO AO ALVO

@@ -31,34 +31,38 @@ void SearchWindow::on_retangulo_clicked(){
 }
 
 void SearchWindow::on_interseccao_clicked(){
-    RectangleSearchWindow RSW;
-    DiskAPI::Registro **R = new DiskAPI::Registro*[2], **temp = nullptr;
-    memset(R, 0, sizeof(DiskAPI::Registro*)*2);
-    SpatialData::Retangulo MBR[2];
-    for(unsigned j=0; j<2; j++){
+    RectangleSearchWindow RSW; // JANELA PARA O FORMULÁRIO DO RETANGULO
+    DiskAPI::Registro **R = new DiskAPI::Registro*[2], **temp = nullptr; // DOIS REGISTROS SERÃO RECUPERADOS
+    memset(R, 0, sizeof(DiskAPI::Registro*)*2); // GARANTINDO QUE NÃO AJA LIXO NO VETOR DE REGISTROS
+    SpatialData::Retangulo MBR[2]; // MBRS DOS REGISTROS QUE SERÃ COMPARADOS
+    for(unsigned j=0; j<2; j++){ // 2 JANELAS -> 2 FORMAS
         RSW.setModal(true);
-        RSW.SetInterseccao(true);
-        RSW.ClearReg();
-        RSW.exec();
-        temp = RSW.GetRegistro();
-        if(temp != nullptr){
-            R[j] = temp[0];
-            MBR[j] = RSW.GetMBR();
-            delete[] temp;
+        RSW.SetInterseccao(true); // LIGA A FLAG DE INTERSECÇÃO
+        RSW.ClearReg(); // REINICIA A LISTA DE REGISTROS
+        RSW.exec(); // EXECUTA A JANELA
+        temp = RSW.GetRegistro(); // PEGA O REGISTRO RETORNADO PELA R-TREE
+        if(temp != nullptr){ // SE ACHOU
+            R[j] = temp[0]; // GUARDO NO VETOR DE REGISTROS
+            MBR[j] = RSW.GetMBR(); //SALVO O MBR
+            delete[] temp; // LIBERO A MEMORIA
         }
-        else break;
-        RSW.ClearForm();
+        else break; // SENÃO ACHOU, PARE O LOOP
+        RSW.ClearForm(); // RESETA O FORMULÁRIO
     }
-    QMessageBox QMB;
-    FindWindow FW;
+    QMessageBox QMB; //BOX NECESSÁRIA PARA ENVIAR AVISOS/ALERTAS AO USUÁRIO
+    FindWindow FW; // JANELA PARA MOSTRAR AS FORMAS GRAFICAMENTE
     FW.setModal(true);
     bool active = true;
-    if(R[0] != nullptr and R[1] != nullptr){
+    if(R[0] != nullptr and R[1] != nullptr){ // SE ENCONTROU OS DOIS
         if(active and MBR[0].Interseccao(MBR[1])){ // TESTA SE HÁ INTERSECÇÃO ENTRE OS RETANGULOS
-            Registro** FakeArrayRegister = new Registro*[1];
-            FakeArrayRegister[0] = nullptr;
-            unsigned char ndtype;
-            if(R[0]->tipo == R[1]->tipo){
+            Registro** FakeArrayRegister = new Registro*[1]; // ARRAY QUE CARREGARÁ O RESULTADO DA INTERSECÇÃO
+            FakeArrayRegister[0] = nullptr; // INICIALIZA O ARRAY
+            unsigned char ndtype; // TIPO DA SEGUNDA FORMA
+            /*
+             * ABAIXO HÁ ALGORITMOS DE RECUPERAÇÃO DO REGISTRO EM TEMPO DE EXECUÇÃO
+             * UM CONCEITO APELIDADO POR CÂNDIDO JUNIOR DE STRUCT DINÂMICA
+             */
+            if(R[0]->tipo == R[1]->tipo){ // SE AS FORMAS TIVEREM O MESMO TIPO
                 ndtype = R[0]->tipo;
                 if(ndtype == POLIGONO){
                     Poligono* P = reinterpret_cast<Poligono*>(R[0]->Conversao());
@@ -120,7 +124,7 @@ void SearchWindow::on_interseccao_clicked(){
                     delete B;
                 }
             }
-            else{
+            else{ //SE AS FORMAS TIVEREM TIPOS DIFERENTES
                 if(R[0]->tipo == POLIGONO or R[1]->tipo == POLIGONO){ // POLIGONO
                     bool pol = (R[0]->tipo == POLIGONO)?0:1;
                     Poligono* P = reinterpret_cast<Poligono*>(R[pol]->Conversao());
@@ -225,7 +229,7 @@ void SearchWindow::on_interseccao_clicked(){
         QMB.critical(nullptr, "Erro na busca!", "Uma das formas geométricas não foram encontradas na estrutura, faça outra busca por intersecção.");
         active = false;
     }
-    //REGISTERS KAI
+    //LIBERA A MEMORIA ALOCADAS PARA OS REGISTROS
     for(unsigned j=0; j<2; j++)
         if(R[j] != nullptr)
             delete R[j];
@@ -244,23 +248,14 @@ void SearchWindow::on_ponto_clicked()
         stringstream aux;
         aux << *P;
         if(!Lista.empty()){
-            /*
-            QMB.information(nullptr, "Sucesso!", QString::number(Lista.size())+" caixa(s) contêm o ponto "+QString::fromStdString(aux.str()));
-            DiskAPI::Registro** listaRegistros = new DiskAPI::Registro*[Lista.size()];
-            unsigned i = 0;
-            for(auto chave: Lista)
-                listaRegistros[i++] = io.Read(chave.Dado);
-            FindWindow FW;
-            FW.setRegistros(listaRegistros, i, false);
-            FW.setModal(true);
-            FW.exec();
-            delete[] listaRegistros;
-            */
-            unsigned char tipo = 0;
-            DiskAPI::Registro** listaRegistros = new DiskAPI::Registro*[Lista.size()];
+            DiskAPI::Registro** listaRegistros = new DiskAPI::Registro*[Lista.size()+1];
             DiskAPI::Registro* handle = nullptr;
-            bool outside;
-            unsigned contador = 0;
+            unsigned contadorRegistros = 0;
+            bool outside; // SE O PONTO ESTIVER FORA DA FORMA
+            //bool deleted; // SE A FORMA JÁ TEVE SUA MEMORIA LIBERADA
+            unsigned char tipo = 0;
+            // COLOCANDO O PONTO BUSCADO NA LISTA DE REGISTROS (PARA SER O PONTO VERMELHO)
+            listaRegistros[contadorRegistros++] = new Registro(PONTO, new Vertice(*P), 1);
             for(auto chave: Lista){
                 handle = io.Read(chave.Dado);
                 outside = false;
@@ -268,7 +263,7 @@ void SearchWindow::on_ponto_clicked()
                 if(tipo == POLIGONO){
                     Poligono* polygon = reinterpret_cast<Poligono*>(handle->Conversao());
                     outside = polygon->PontoNoPoligono(*P) == FORA;
-                    if(!outside) polygon->setFakeKai(true);
+                    polygon->setFakeKai(true);
                     delete polygon;
                 }
                 else if(tipo == LINHA){
@@ -286,10 +281,11 @@ void SearchWindow::on_ponto_clicked()
                     outside = circ->Interseccao(*P) == FORA;
                     delete circ;
                 }
-                if(!outside) listaRegistros[contador++] = handle;
+                if(!outside) listaRegistros[contadorRegistros++] = handle;
+                else delete handle;
             }
             FindWindow FW;
-            FW.setRegistros(listaRegistros, contador, false);
+            FW.setRegistros(listaRegistros, contadorRegistros, false);
             FW.setModal(true);
             FW.exec();
             delete[] listaRegistros;

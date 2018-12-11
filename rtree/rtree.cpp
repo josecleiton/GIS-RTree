@@ -3,11 +3,7 @@
 
 namespace SpatialIndex{
 
-Chave::Chave(Retangulo& _mbr, streampos& _dado, unsigned id): MBR(_mbr){
-    if(id == FOLHA)
-        this->Dado = _dado;
-    else
-        this->ChildPtr = _dado;
+Chave::Chave(Retangulo _mbr, streampos _dado): MBR(_mbr), ChildPtr(_dado){
 }
 
 Chave::Chave(){
@@ -18,7 +14,7 @@ Chave::Chave(){
 
 Chave::Chave(Node*& No){
     Retangulo R1 = No->GetRetangulo();
-    Chave k(R1, No->DiskPos, No->Nivel);
+    Chave k(R1, No->DiskPos);
     *this = k;
 }
 
@@ -29,7 +25,7 @@ bool Chave::Ajusta(Retangulo& alvo){
 }
 
 Node::Node(Retangulo& R, streampos& PosR){
-    Chave k(R, PosR, FOLHA);
+    Chave k(R, PosR);
     Chaves.push_back(k);
     Nivel = FOLHA;
 }
@@ -42,7 +38,7 @@ Node::Node(vector<Node*>& K){
     Nivel = INTERNO;
     for(auto &item: K){
         Retangulo aux(item->GetRetangulo());
-        Chave A(aux, item->DiskPos, INTERNO);
+        Chave A(aux, item->DiskPos);
         Chaves.push_back(A);
         delete item;
     }
@@ -54,11 +50,11 @@ Node::Node(streampos& no){
     root.File().seekg(no, fstream::beg);
     root.File().read(reinterpret_cast<char*>(&active), sizeof(bool));
     if(active){
-        unsigned count;
+        unsigned numChaves;
         root.File().read(reinterpret_cast<char*>(&Nivel), sizeof(unsigned));
-        root.File().read(reinterpret_cast<char*>(&count), sizeof(unsigned));
-        this->Chaves.resize(count);
-        for(unsigned i=0; i<count; i++)
+        root.File().read(reinterpret_cast<char*>(&numChaves), sizeof(unsigned));
+        this->Chaves.resize(numChaves);
+        for(unsigned i=0; i<numChaves; i++)
             root.File().read(reinterpret_cast<char*>(&(Chaves[i])), sizeof(Chave));
         this->DiskPos = no;
     }
@@ -67,11 +63,9 @@ Node::Node(streampos& no){
 }
 
 streampos Node::SalvarNo(){
-    unsigned count = static_cast<unsigned>(this->Chaves.size());
-    Retangulo V;
-    streampos x = 0;
+    unsigned numChaves = static_cast<unsigned>(this->Chaves.size());
     bool active = true;
-    Chave key(V, x, FOLHA);
+    Chave key(Retangulo(), 0);
     if(DiskPos)
         root.File().seekp(this->DiskPos, fstream::beg);
     else{
@@ -80,9 +74,9 @@ streampos Node::SalvarNo(){
     }
     root.File().write(reinterpret_cast<char*>(&active), sizeof(bool));
     root.File().write(reinterpret_cast<char*>(&(this->Nivel)), sizeof(unsigned));
-    root.File().write(reinterpret_cast<char*>(&count), sizeof(unsigned));
+    root.File().write(reinterpret_cast<char*>(&numChaves), sizeof(unsigned));
     for(unsigned i=0; i<MAXCHAVES; i++){
-        if(i<count)
+        if(i<numChaves)
             root.File().write(reinterpret_cast<char*>(&(this->Chaves[i])), sizeof(Chave));
         else
             root.File().write(reinterpret_cast<char*>(&key), sizeof(Chave));
@@ -330,7 +324,7 @@ void RTree::Inserir(Retangulo& MbrForma, streampos& pos){
         no = EscolhaSubArvore(no, CaminhoNo, MbrForma);
 //    if(!CaminhoNo.empty())
 //        CaminhoNo.pop();
-    Chave Key(MbrForma, pos, FOLHA);
+    Chave Key(MbrForma, pos);
     InserirNo(no, CaminhoNo, Key);
     Kai(CaminhoNo);
 }

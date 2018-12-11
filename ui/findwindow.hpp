@@ -35,6 +35,7 @@ private:
     bool remove;
     unsigned count{};
     vector<Registro*> regs{};
+    bool libera;
 };
 
 #endif // FINDWINDOW_HPP

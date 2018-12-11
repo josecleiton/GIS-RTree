@@ -9,10 +9,15 @@ FindWindow::FindWindow(QWidget *parent) :
     this->setWindowTitle("Forma encontrada!");
     this->remove = false;
     this->setWindowIcon(QIcon(ICON));
+    this->libera = true;
 }
 
 FindWindow::~FindWindow()
 {
+    if(libera){
+        for(auto r: this->regs) // LIBERA OS REGISTROS ALOCADOS PREVIAMENTE
+            delete r;
+    }
     delete ui;
 }
 
@@ -37,8 +42,10 @@ bool FindWindow::setRegistros(DiskAPI::Registro** &R, size_t tam, bool inter){
             this->ui->remove->setDisabled(true);
             this->ui->info->setDisabled(true);
         }
-        else if(inter)
+        else if(inter){
             this->ui->remove->setDisabled(true);
+            this->libera = false;
+        }
         return true;
     }
     return false;
