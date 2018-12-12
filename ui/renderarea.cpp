@@ -64,7 +64,7 @@ void RenderArea::desenha(){
             }
             else{
                 QPointF centro(r->lista->GetX()+gap, r->lista->GetY()+gap);
-                if(!interCircle or byPoint){
+                if(!(interCircle or byPoint)){
                     centro.setX(10);
                     centro.setY(10);
                 }

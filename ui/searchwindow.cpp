@@ -284,11 +284,16 @@ void SearchWindow::on_ponto_clicked()
                 else delete handle;
             }
             listaRegistros[contadorRegistros++] = new Registro(PONTO, new Vertice(*P), 1);
+
+            // GUI
             FindWindow FW;
             FW.setRegistros(listaRegistros, contadorRegistros, false);
             FW.setByPoint(true); // FLAG QUE GARANTE O DESTAQUE DO PONTO NA TELA
             FW.setModal(true);
+            QMB.information(nullptr, "AVISO", "O ponto escolhido será destacado em VERDE!");
             FW.exec();
+
+
             delete[] listaRegistros;
         }
         else
