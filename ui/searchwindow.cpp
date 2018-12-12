@@ -344,7 +344,7 @@ void SearchWindow::on_all_clicked()
 {
     //PEGA TODAS AS CHAVES E MOSTRA
     FindWindow FW;
-    FW.setWindowTitle("SELECT *");
+    FW.setWindowTitle("SELECT ALL");
     FW.setModal(true);
     auto ListaChaves = root.EncontreAsFolhas(root.NodePtr(), false);
     DiskAPI::Registro **R = new DiskAPI::Registro*[ListaChaves.size()];
@@ -361,8 +361,5 @@ void SearchWindow::on_all_clicked()
         this->nuke = true;
         this->close();
     }
-    for(i=0; i<ListaChaves.size(); i++)
-        if(R[i] != nullptr)
-            delete R[i];
     delete[] R;
 }
