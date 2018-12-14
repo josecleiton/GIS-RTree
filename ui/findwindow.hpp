@@ -25,6 +25,7 @@ public:
     bool listaValida();
     void setInterCircle(bool op);
     void setByPoint(bool op);
+    void setLibera(bool op);
 
 private slots:
     void on_remove_clicked();

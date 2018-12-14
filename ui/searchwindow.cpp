@@ -32,8 +32,7 @@ void SearchWindow::on_retangulo_clicked(){
 
 void SearchWindow::on_interseccao_clicked(){
     RectangleSearchWindow RSW; // JANELA PARA O FORMULÁRIO DO RETANGULO
-    DiskAPI::Registro **R = new DiskAPI::Registro*[2], **temp = nullptr; // DOIS REGISTROS SERÃO RECUPERADOS
-    memset(R, 0, sizeof(DiskAPI::Registro*)*2); // GARANTINDO QUE NÃO AJA LIXO NO VETOR DE REGISTROS
+    DiskAPI::Registro **R = new DiskAPI::Registro*[2]{}, **temp = nullptr; // DOIS REGISTROS SERÃO RECUPERADOS
     SpatialData::Retangulo MBR[2]; // MBRS DOS REGISTROS QUE SERÃ COMPARADOS
     for(unsigned j=0; j<2; j++){ // 2 JANELAS -> 2 FORMAS
         RSW.setModal(true);
@@ -55,8 +54,7 @@ void SearchWindow::on_interseccao_clicked(){
     bool active = true;
     if(R[0] != nullptr and R[1] != nullptr){ // SE ENCONTROU OS DOIS
         if(active and MBR[0].Interseccao(MBR[1])){ // TESTA SE HÁ INTERSECÇÃO ENTRE OS RETANGULOS
-            Registro** FakeArrayRegister = new Registro*[1]; // ARRAY QUE CARREGARÁ O RESULTADO DA INTERSECÇÃO
-            FakeArrayRegister[0] = nullptr; // INICIALIZA O ARRAY
+            Registro** pseudoListaRegistros = new Registro*[1]{}; // ARRAY QUE CARREGARÁ O RESULTADO DA INTERSECÇÃO
             unsigned char ndtype; // TIPO DA SEGUNDA FORMA
             /*
              * ABAIXO HÁ ALGORITMOS DE RECUPERAÇÃO DO REGISTRO EM TEMPO DE EXECUÇÃO
@@ -69,12 +67,9 @@ void SearchWindow::on_interseccao_clicked(){
                     Poligono* Q = reinterpret_cast<Poligono*>(R[1]->Conversao());
                     //Poligono* Z = P->Interseccao(*Q);
                     Poligono* Z = P->clipping(*Q);
-                    FakeArrayRegister[0] = new Registro(ndtype, Z->GetVertice(), Z->GetSize());
-                    if(FW.setRegistros(FakeArrayRegister, 1, true)){
-                        FW.exec();
-                    }
-                    if(FakeArrayRegister[0] != nullptr)
-                        delete FakeArrayRegister[0];
+                    pseudoListaRegistros[0] = new Registro(ndtype, Z->GetVertice(), Z->GetSize());
+                    FW.setRegistros(pseudoListaRegistros, 1, true);
+                    FW.exec();
                     delete P;
                     delete Q;
                     Z->setFakeKai(true); // FAKE KAI É NECESSÁRIO PORQUE O DESTRUCTOR DO REGISTRO
@@ -116,10 +111,10 @@ void SearchWindow::on_interseccao_clicked(){
                     Circulo* B = reinterpret_cast<Circulo*>(R[1]->Conversao());
                     pair<Vertice*, unsigned> lista = A->Interseccao(*B);
                     if(lista.first != nullptr)
-                        FakeArrayRegister[0] = new Registro(INDEFINIDO, lista.first, lista.second);
-                    if(FW.setRegistros(FakeArrayRegister, 1, true))
-                        FW.exec();
-                    if(FakeArrayRegister[0] != nullptr) delete FakeArrayRegister[0];
+                        pseudoListaRegistros[0] = new Registro(INDEFINIDO, lista.first, lista.second);
+                    FW.setRegistros(pseudoListaRegistros, 1, true);
+                    FW.exec();
+                    //delete pseudoListaRegistros[0]
                     delete A;
                     delete B;
                 }
@@ -134,6 +129,7 @@ void SearchWindow::on_interseccao_clicked(){
                         int classificacao = P->PontoNoPoligono(*A);
                         if(classificacao == DENTRO or classificacao == FRONTEIRA){
                             FW.setRegistros(R, 2, false);
+                            FW.setLibera(false);
                             FW.exec();
                         }
                         else
@@ -145,12 +141,12 @@ void SearchWindow::on_interseccao_clicked(){
                         Aresta* result = P->clipping(*A);
                         Vertice* vertices = new Vertice(result->GetOrigem());
                         vertices->Push(result->GetDestino());
-                        FakeArrayRegister[0] = new Registro(ndtype, vertices, 2);
-                        FW.setRegistros(FakeArrayRegister, 1, true);
+                        pseudoListaRegistros[0] = new Registro(ndtype, vertices, 2);
+                        FW.setRegistros(pseudoListaRegistros, 1, true);
                         FW.exec();
                         delete A;
                         delete result;
-                        delete FakeArrayRegister[0];
+                        //delete pseudoListaRegistros[0];
                     }
                     delete P;
                     R[pol]->lista = nullptr;
@@ -163,10 +159,9 @@ void SearchWindow::on_interseccao_clicked(){
                         Aresta* A = reinterpret_cast<Aresta*>(R[!cic]->Conversao());
                         pair<Vertice*, unsigned> lista = C->Interseccao(*A);
                         if(lista.first != nullptr)
-                            FakeArrayRegister[0] = new Registro(INDEFINIDO, lista.first, lista.second);
-                        if(FW.setRegistros(FakeArrayRegister, 1, true))
+                            pseudoListaRegistros[0] = new Registro(INDEFINIDO, lista.first, lista.second);
+                            FW.setRegistros(pseudoListaRegistros, 1, true);
                             FW.exec();
-                        if(lista.first != nullptr) delete FakeArrayRegister[0];
                         delete A;
                     }
                     else if(ndtype == PONTO){
@@ -179,17 +174,14 @@ void SearchWindow::on_interseccao_clicked(){
                             QMB.information(nullptr, "Ponto", msg);
                             if(classificacao == DENTRO){
                                 FW.setRegistros(R, 2, false);
+                                FW.setLibera(false);
                                 FW.setInterCircle(true);
                                 FW.exec();
                             }
                             else{
-                                Vertice* FakeList = new Vertice(*P);
-                                FakeArrayRegister[0] = new Registro(PONTO, FakeList, 1);
-                                FW.setRegistros(FakeArrayRegister, 1, true);
+                                pseudoListaRegistros[0] = new Registro(PONTO, new Vertice(*P), 1);
+                                FW.setRegistros(pseudoListaRegistros, 1, true);
                                 FW.exec();
-                                FakeArrayRegister[0]->tam = 0;
-                                delete FakeList;
-                                delete FakeArrayRegister[0];
                             }
                         }
                         else QMB.critical(nullptr, "Ponto", "Ponto está fora da circunferência");
@@ -220,7 +212,7 @@ void SearchWindow::on_interseccao_clicked(){
                     delete A;
                 } // linha
             }
-            delete[] FakeArrayRegister;
+            delete[] pseudoListaRegistros;
         } // INTERSECÇÃO ENTRE RETANGULOS
         else if(active)
             QMB.warning(nullptr,"Intersecção entre MBRs", "Não há sobreposição dos MBR, logo não há intersecção entre as formas geométricas.");
@@ -231,8 +223,7 @@ void SearchWindow::on_interseccao_clicked(){
     }
     //LIBERA A MEMORIA ALOCADAS PARA OS REGISTROS
     for(unsigned j=0; j<2; j++)
-        if(R[j] != nullptr)
-            delete R[j];
+        if(R[j] != nullptr) delete R[j];
     delete[] R;
 }
 
@@ -318,24 +309,24 @@ void SearchWindow::on_id_clicked()
     QMessageBox QMB;
     unsigned ativos = 0;
     if(sizeResult){
-        DiskAPI::Registro** ArrayReg = new Registro* [sizeResult];
+        DiskAPI::Registro** listaRegistros = new Registro* [sizeResult];
         for(size_t i=0; i<sizeResult; i++){
-            ArrayReg[i] = io.Read((*result)[i]);
-            if(ArrayReg[i]) ativos++;
+            listaRegistros[i] = io.Read((*result)[i]);
+            if(listaRegistros[i]) ativos++;
         }
         if(ativos){
             QMB.information(nullptr, "Formas encontradas!", "Foram encontradas "+QString::fromStdString(to_string(ativos))+" forma(s) do tipo: "+QString::fromStdString(query)+".");
             FindWindow FW;
             FW.setModal(true);
-            FW.setRegistros(ArrayReg, sizeResult, true);
+            FW.setRegistros(listaRegistros, sizeResult, true);
             FW.exec();
             for(size_t i=0; i<sizeResult; i++)
-                if(ArrayReg[i] != nullptr)
-                    delete ArrayReg[i];
-            delete[] ArrayReg;
+                if(listaRegistros[i] != nullptr)
+                    delete listaRegistros[i];
+            delete[] listaRegistros;
             return;
         }
-        delete[] ArrayReg;
+        delete[] listaRegistros;
     }
     QMB.critical(nullptr, "Não há formas com esse ID", "Tente novamente, por favor.");
 }

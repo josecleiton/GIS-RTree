@@ -14,10 +14,9 @@ FindWindow::FindWindow(QWidget *parent) :
 
 FindWindow::~FindWindow()
 {
-    if(libera){
+    if(libera)
         for(auto r: this->regs) // LIBERA OS REGISTROS ALOCADOS PREVIAMENTE
-            delete r;
-    }
+            if(r != nullptr) delete r;
     delete ui;
 }
 
@@ -42,13 +41,15 @@ bool FindWindow::setRegistros(DiskAPI::Registro** &R, size_t tam, bool inter){
             this->ui->remove->setDisabled(true);
             this->ui->info->setDisabled(true);
         }
-        else if(inter){
+        else if(inter)
             this->ui->remove->setDisabled(true);
-            this->libera = false;
-        }
         return true;
     }
     return false;
+}
+
+void FindWindow::setLibera(bool op){
+    this->libera = op;
 }
 
 bool FindWindow::getRemove(){
