@@ -8,8 +8,8 @@
 #include <fstream>
 #include "spatialdata.hpp"
 
-#define RTREE_FILENAME "../GIS/rtree/rtree.bin" // ARQUIVO BINÁRIO COM A RTREE
-#define H_FILENAME "../GIS/spatialdata/hash/" // CAMINHO PARA A PASTA DO HASH
+#define RTREE_FILENAME "../GIS-RTree-Project/rtree/rtree.bin" // ARQUIVO BINÁRIO COM A RTREE
+#define H_FILENAME "../GIS-RTree-Project/spatialdata/hash/" // CAMINHO PARA A PASTA DO HASH
 
 using namespace std;
 using namespace SpatialData;
@@ -57,7 +57,7 @@ struct Node{
     Node(unsigned, vector<Chave>&);
     Node(streampos&);
     Node(Retangulo& R, streampos& PosR);
-    Node(vector<Node*>&);
+    Node(Node*&, Node*&);
     streampos SalvarNo(); //SALVA NÓ EM DISCO
     streampos Delete(); // REMOVE LOGICAMENTE O NÓ EM DISCO
     bool Folha(); // É FOLHA OU NÃO
@@ -93,8 +93,8 @@ public:
    void CriaArvore(Retangulo&, streampos&); // CRIA ÁRVORE COM UM ELEMENTO
    bool ApagarArvore(); // APAGA TODA A ARVORE (FISICAMENTE)
    list<Chave> Busca(Ponto&); // BUSCA UM PONTO NA ARVORE
-   bool Busca(Node*, Retangulo&, vector<NodeAux>&); // BUSCA UM RETÂNGULO
-   bool Busca(Node*, Chave&, vector<NodeAux>&); // BUSCA UMA CHAVE
+   bool Busca(Node*, Retangulo&, list<NodeAux>&); // BUSCA UM RETÂNGULO
+   bool Busca(Node*, Chave&, list<NodeAux>&); // BUSCA UMA CHAVE
    Node* EscolhaSubArvore(Node*&, stack<NodeAux>&, Retangulo&); // ESCOLHE A MELHOR SUBÁRVORE PARA UM RETANGULO SER INSERIDO
    list<Chave> Traversal(streampos&, Ponto&); // PERCORRE A ÁRVORE
    void InserirNo(Node*&, stack<NodeAux>&, Chave&); // INSERE UMA CHAVE NO NÓ
@@ -103,7 +103,7 @@ public:
    Node* Divide(Node*&);  // DIVIDE PROPRIAMENTE O NÓ QUE TEM CARDINALIDADE >= AO MAXCHAVES
    void CriaNovaRaiz(Node*&, Node*&); // SE A RAIZ FOR DIVIDIDA, CRIA UMA NOVA
    bool Remove(Chave& K); // REMOVE A PARTIR DE UMA CHAVE
-   bool Remove(vector<NodeAux>&); // REMOVE A PARTIR DO CAMINHO
+   bool Remove(list<NodeAux>&); // REMOVE A PARTIR DO CAMINHO
    void Remove(stack<NodeAux>&); // REMOVE A PARTIR DO CAMINHO
    list<Chave> Reorganizar(stack<NodeAux>&); // RETORNA UMA LISTA DE CHAVES QUE NECESSITAM SER REINSERIDAS A PARTIR DE UMA REMOÇÃO
    void Reinserir(list<Chave>&); // REINSERE A LISTA DE CHAVES RETORNADA PELA FUNÇÃO ANTERIOR
@@ -112,7 +112,7 @@ public:
 };
 
 void Kai(stack<NodeAux>&); // LIBERA UMA PILHA DE NÓS
-void Kai(vector<NodeAux>&); // LIBERA UM VETOR DE NÓS
+void Kai(list<NodeAux>&); // LIBERA UM VETOR DE NÓS
 
 class Hash{ // PSEUDO HASH COM FORMAS GEOMETRICAS
 private:

@@ -39,7 +39,7 @@ void RectangleSearchWindow::on_button_clicked()
     SpatialData::Ponto A(ui->p1x->text().toDouble(), ui->p1y->text().toDouble());
     SpatialData::Ponto B(ui->p2x->text().toDouble(), ui->p2y->text().toDouble());
     SpatialData::Retangulo R(A, B);
-    vector<SpatialIndex::NodeAux> caminho;
+    list<SpatialIndex::NodeAux> caminho;
     bool ChaveEncontrada = root.Busca(root.NodePtr(), R, caminho);
     if(ChaveEncontrada){
         SpatialIndex::Chave K = caminho.front().ptr->Chaves[caminho.front().index];

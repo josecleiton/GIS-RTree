@@ -4,7 +4,7 @@
 #include <fstream>
 #include <QDirIterator>
 #include "spatialdata.hpp"
-#define FILENAME "../GIS/spatialdata/formas.bin"
+#define FILENAME "../GIS-RTree-Project/spatialdata/formas.bin"
 
 using namespace std;
 using namespace SpatialData;

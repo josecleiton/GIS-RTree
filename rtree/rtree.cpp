@@ -34,12 +34,15 @@ Node::Node(unsigned nivel, vector<Chave>& itens):
     Nivel(nivel), Chaves(itens){
 }
 
-Node::Node(vector<Node*>& K){
+Node::Node(Node*& no1, Node*& no2){
     Nivel = INTERNO;
-    for(auto &item: K){
-        Retangulo aux(item->GetRetangulo());
-        Chave A(aux, item->DiskPos);
-        Chaves.push_back(A);
+    list<Node*> chavesNovaRaiz;
+    chavesNovaRaiz.push_back(no1);
+    chavesNovaRaiz.push_back(no2);
+    for(auto &item: chavesNovaRaiz){
+        Retangulo MBR_NovaChave(item->GetRetangulo());
+        Chave novaChave(MBR_NovaChave, item->DiskPos);
+        Chaves.push_back(novaChave);
         delete item;
     }
     this->SalvarNo();
@@ -224,7 +227,7 @@ Node* RTree::NodePtr(){
     return this->raiz;
 }
 
-bool RTree::Busca(Node* no, Retangulo& K, vector<NodeAux>& q){
+bool RTree::Busca(Node* no, Retangulo& K, list<NodeAux>& q){
     unsigned i = 0;
     NodeAux temp;
     if(!no->Folha()){
@@ -250,13 +253,13 @@ bool RTree::Busca(Node* no, Retangulo& K, vector<NodeAux>& q){
             temp.index = i;
             q.push_back(temp);
             return true;
-        }
+          }
         i++;
     }
     return false;
 }
 
-bool RTree::Busca(Node* no, Chave& K, vector<NodeAux>& q){
+bool RTree::Busca(Node* no, Chave& K, list<NodeAux>& q){
     unsigned i = 0;
     NodeAux temp;
     if(!no->Folha()){
@@ -348,8 +351,6 @@ void RTree::InserirNo(Node* &No, stack<NodeAux>& caminho, Chave& inserir){
     if(No->Overflow())
         return DividirEAjustar(No, caminho);
     No->SalvarNo();
-    //NodeAux K(No);
-    //caminho.push(K);
     AjustaCaminho(caminho, No->GetRetangulo());
 }
 
@@ -368,17 +369,17 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
         }
         index++;
     }
-    if(contem.size()){
-        Node* resultado = nullptr;
-        if(contem.size()>1){
-            sort(contem.begin(), contem.end(), [](const pair<NodeAux, double>& A, const pair<NodeAux, double>& B){return A.second < B.second;});
-            swap(resultado, contem.front().first.ptr);
-            for(auto &candidatos: contem)
-                if(candidatos.first.ptr != nullptr)
-                    delete candidatos.first.ptr;
-        }
-        else
-            swap(resultado, contem.front().first.ptr);
+    Node* resultado = nullptr;
+    if(!contem.empty()){
+        sort(contem.begin(), contem.end(), // ORDENA CRESCENTEMENTE PELA AREA
+             [](const pair<NodeAux, double>& A, const pair<NodeAux, double>& B){
+            return A.second < B.second;
+          }
+        );
+        swap(resultado, contem.front().first.ptr); //COLOCA O PONTEIRO DO MENOR NO RESULTADO
+        for(auto &candidatos: contem) // LIBERA O RESTO
+          if(candidatos.first.ptr != nullptr)
+            delete candidatos.first.ptr;
         temp.index = contem.front().first.index;
         caminho.push(temp);
         return resultado;
@@ -393,31 +394,15 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
     }
     temp.index = escolha.second;
     caminho.push(temp);
-    Node* ptrNo = new Node(no->Chaves[escolha.second].ChildPtr);
-    return ptrNo;
+    resultado = new Node(no->Chaves[escolha.second].ChildPtr);
+    return resultado;
 }
-
-/*
-void RTree::AjustaCaminho(stack<NodeAux>& caminho){
-    Node* no = caminho.top().ptr;
-    caminho.pop();
-    if(no == raiz) return;
-    Retangulo R = no->GetRetangulo();
-    delete no;
-    NodeAux pai = caminho.top();
-    if(pai.ptr->Ajusta(R, pai.index)){
-        pai.ptr->SalvarNo();
-        AjustaCaminho(caminho);
-    }
-}
-
-*/
 
 void RTree::AjustaCaminho(stack<NodeAux>& caminho, Retangulo R){
     if(!caminho.empty()){
-        NodeAux pai = caminho.top();
         // .INDEX = POSIÇÃO DO NÓ ATUAL NO PAI
         // .PTR = PONTEIRO PARA O PAI
+        NodeAux pai = caminho.top();
         if(pai.ptr->Chaves[pai.index].Ajusta(R)){
             pai.ptr->SalvarNo();
             Retangulo R = pai.ptr->GetRetangulo();
@@ -431,11 +416,11 @@ void RTree::AjustaCaminho(stack<NodeAux>& caminho, Retangulo R){
 
 
 void RTree::DividirEAjustar(Node* &no, stack<NodeAux>& caminho){
-    bool EhRaiz = (no == raiz);
+    bool isRoot = (no == raiz);
     Node* novoNo = Divide(no);
     count++; // quantidade de nós na árvore cresce em 1
-    if(!EhRaiz){
-        Chave k(novoNo);
+    if(!isRoot){
+        Chave chaveNovoNo(novoNo);
         NodeAux pai = caminho.top();
         // .INDEX = POSIÇÃO DO NÓ ATUAL NO PAI
         // .PTR = PONTEIRO PARA O PAI
@@ -445,22 +430,24 @@ void RTree::DividirEAjustar(Node* &no, stack<NodeAux>& caminho){
         delete no;
         if(pai.ptr->Chaves[pai.index].Ajusta(R))
             pai.ptr->SalvarNo();
-        InserirNo(pai.ptr, caminho, k);
+        InserirNo(pai.ptr, caminho, chaveNovoNo);
     }
     else
         CriaNovaRaiz(no, novoNo);
 }
 
 void RTree::CriaNovaRaiz(Node* &no, Node* &novoNo){
-    vector<Node*> v(2);
-    v[0] = no;
-    v[1] = novoNo;
-    Node* novaRaiz = new Node(v);
+    Node* novaRaiz = new Node(no, novoNo);
     raiz = novaRaiz;
     count++;
     altura++;
 }
 
+
+/*
+ * CÓDIGO ABAIXO RETIRADO DO LIVRO:
+ *  SPATIAL DATABASES WITH APPLICATION TO GIS - RIGGAUX
+*/
 Node* RTree::Divide(Node* &no){
     Retangulo J;
     pair<unsigned, unsigned> escolhas;
@@ -533,7 +520,7 @@ Node* RTree::Divide(Node* &no){
 }
 
 bool RTree::Remove(Chave& K){
-    vector<NodeAux> toStack;
+    list<NodeAux> toStack;
     stack<NodeAux> caminho;
     Busca(root.NodePtr(), K, toStack);
     while(!toStack.empty()){
@@ -544,7 +531,7 @@ bool RTree::Remove(Chave& K){
     return root.NodePtr()->Chaves.empty(); //SE A RAIZ ESTIVER VAZIA
 }
 
-bool RTree::Remove(vector<NodeAux>& toStack){
+bool RTree::Remove(list<NodeAux>& toStack){
     stack<NodeAux> caminho;
     while(!toStack.empty()){
         caminho.push(toStack.back());
@@ -628,7 +615,7 @@ void Kai(stack<NodeAux>& pilha){
     }
 }
 
-void Kai(vector<NodeAux>& DS){
+void Kai(list<NodeAux>& DS){
     Node* raiz = root.NodePtr(), *aux = nullptr;
     while(!DS.empty()){
         aux = DS.back().ptr;
