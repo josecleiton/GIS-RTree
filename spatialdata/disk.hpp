@@ -9,7 +9,7 @@
 using namespace std;
 using namespace SpatialData;
 
-namespace DiskAPI{
+namespace disk{
 
 
 enum TiposForma{PONTO, LINHA, POLIGONAL, POLIGONO, POLIGONO_NAO_CONVEXO, INDEFINIDO, CIRCULO};

@@ -359,27 +359,23 @@ Node* RTree::EscolhaSubArvore(Node* &no, stack<NodeAux>& caminho, Retangulo& Mbr
     NodeAux temp;
     temp.ptr = no;
     unsigned index = 0;
-    for(auto chaves: no->Chaves){
-        if(chaves.MBR.Contem(MbrForma)){
-            Node* ptrNo = new Node(chaves.ChildPtr);
-            double area = chaves.MBR.GetArea();
-            NodeAux aux(ptrNo, index);
-            pair<NodeAux, double> candidato = make_pair(aux, area);
-            contem.push_back(candidato);
+    for(auto chave: no->Chaves){
+        if(chave.MBR.Contem(MbrForma)){
+            NodeAux aux(new Node(chave.ChildPtr), index);
+            contem.push_back(make_pair(aux, chave.MBR.GetArea()));
         }
         index++;
     }
     Node* resultado = nullptr;
     if(!contem.empty()){
-        sort(contem.begin(), contem.end(), // ORDENA CRESCENTEMENTE PELA AREA
-             [](const pair<NodeAux, double>& A, const pair<NodeAux, double>& B){
-            return A.second < B.second;
-          }
-        );
-        swap(resultado, contem.front().first.ptr); //COLOCA O PONTEIRO DO MENOR NO RESULTADO
-        for(auto &candidatos: contem) // LIBERA O RESTO
-          if(candidatos.first.ptr != nullptr)
-            delete candidatos.first.ptr;
+        size_t max = 0;
+        for(auto it = contem.begin()+1; it != contem.end(); it++)
+            if(it->second > contem[max].second)
+               max = it-contem.begin();
+        swap(contem[max].first.ptr, resultado);
+        for(auto &candidato: contem) // LIBERA O RESTO
+          if(candidato.first.ptr != nullptr)
+            delete candidato.first.ptr;
         temp.index = contem.front().first.index;
         caminho.push(temp);
         return resultado;

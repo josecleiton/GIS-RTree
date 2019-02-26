@@ -1,3 +1,3 @@
 #include "variaveis.hpp"
 SpatialIndex::RTree root;
-DiskAPI::Disk io(FILENAME);
+disk::Disk io(FILENAME);
